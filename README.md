@@ -1,93 +1,193 @@
-# Zhang Family Kitchen · 张家厨房
+# Zhang Kitchen · 张家厨房
 
-**版本 0.1 · 作者 Frank Zhang**
+**Version 0.1 · by Frank Zhang**
 
-原生 SwiftUI iPhone 首版，iOS 17+。实际工程目录：`/Users/frank/Documents/Claude_Projects/Zhang_Family_Kitchen`。没有网页替代品，没有第三方依赖或服务购买。
+An iPhone app that turns "what's for dinner?" into a question the whole family answers once a week — and then does the shopping list, the fridge map and the recipe for you.
 
-应用图标与 App 内标识由 `scripts/make_icon.swift` 用 Core Graphics 直接绘制（一碗热饭 + 筷子，深绿底），`FamilyTable/Brand.swift` 中的 `BrandMark` 用同一套坐标在 SwiftUI 里重绘，因此主屏图标和 Today 页顶部标识完全一致。重新生成：
+一款 iPhone 应用：一周只操心一次"今天吃什么"，剩下的采购清单、冰箱位置和菜谱，交给它。
+
+---
+
+# English
+
+## What this app is for
+
+Cooking for a family of five is rarely about cooking. It's the deciding, the forgetting, the second trip to the store, and the ten minutes spent looking for the ginger. Zhang Kitchen exists to take those parts away.
+
+Once a week you sit down together for a few minutes. The app proposes seven days of breakfasts and dinners. The children swap what they don't want. You confirm. From that one decision the app produces the grocery list, tells everyone where to put the food when it comes home, and each evening shows the recipe in Chinese with the exact shelf each ingredient is sitting on.
+
+It is built around one particular family: five people, mild Chinese and simple Western food, dinner on the table in about half an hour, noodles and rice taking turns, and three children who should have a say in what they eat.
+
+## A week in five steps
+
+The Today screen shows these five steps and where you are in them, so nobody has to remember the order.
+
+**1. Plan the week · 排菜单**
+Open **Week**, pick the starting day, tap *Plan this week's menu*. You get seven days of breakfast and dinner. The suggestions avoid spice, alternate rice and noodles, vary the protein, keep dinners around thirty minutes, never repeat a dinner within the week, and favour food you already have.
+
+**2. Everyone chooses · 一起点餐**
+Tap any meal. Each child votes, sees the picture, and can swap the dish — the six closest alternatives come first, the full catalogue is one tap further. A parent confirms each meal, or confirms all fourteen at once. Disagreement is settled by the parent, on purpose.
+
+**3. Shop once · 一次买齐**
+The **Shopping** list is built from the confirmed menu: every ingredient scaled to your family size, added up across the week, minus whatever you have already confirmed in the pantry. Names are in English and Chinese, grouped by aisle-like categories. Tick items off as you go.
+
+**4. Put it away · 收纳归位**
+After shopping, **Put away** suggests a shelf for each item based on how it needs to be stored and how your kitchen is actually laid out. Whoever puts it away confirms where it really went and how much was really bought — children can do this part. Only then does it count as pantry stock.
+
+**5. Cook tonight · 照着做饭**
+**Today** shows the day's breakfast and dinner, the recipe steps in Chinese, the amounts for your family size, and — the part that saves the most time — where each ingredient is right now. After dinner, one tap records the meal as cooked.
+
+## Nutrition
+
+Every recipe and every planned day shows an estimate, per person: calories, a labelled bar for protein / carbohydrate / fat, plus fibre and sodium.
+
+- Figures come from reference values for ingredients **as bought** — raw meat, dry pasta, drained cans.
+- They are not measurements of the finished dish, and cooking losses, leftovers and who eats how much are not modelled.
+- Only breakfast and dinner are planned here, so a day total is **never** a claim about a whole day's needs. Lunch and snacks are outside the app.
+- It is a way to compare one meal or one week against another. It is not medical or age-specific advice.
+
+## What it deliberately does not do
+
+Being honest about this is part of the design.
+
+- **No automatic photo recognition.** You can photograph a shelf to jog your memory, but you confirm each ingredient yourself. A photo never decides freshness or quantity.
+- **Nothing is assumed into your pantry.** Only amounts someone confirmed are subtracted from the shopping list.
+- **Planning a meal does not consume ingredients.** Stock changes when you shop, put away, or finish cooking.
+- **Suggested shelves are suggestions**, shown separately from the place you actually confirmed.
+- **Everything stays on this iPhone.** No account, no cloud sync, no uploads. Parent and child roles are a family agreement on a shared device, not passwords.
+- **Recipe pictures are AI-generated illustrations** made for this app — not photographs of tested cooking.
+- **Times and nutrition are estimates**, not kitchen-tested or laboratory-measured.
+
+## Running it on your iPhone
+
+1. Install the full Xcode (16 or newer) on a Mac.
+2. Open `FamilyTable.xcodeproj` and choose the **FamilyTable** scheme.
+3. To use a simulator, pick one and press **⌘R**. No account or API key is ever required.
+4. To use a real iPhone: connect it, enable Developer Mode, then under **Signing & Capabilities** choose your own Apple team and, if needed, a unique bundle identifier. Then run.
+5. The camera needs a real iPhone; the simulator can still import from Photos. Photo access uses the system picker, so only the pictures you choose ever reach the app.
+
+## For developers
 
 ```sh
-swift scripts/make_icon.swift FamilyTable/Assets.xcassets/AppIcon.appiconset/icon-1024.png 1024
-```
-
-## 点餐与采购主线（0.1 新增）
-
-以前"排下周菜单"只是 Week 页里一个不显眼的按钮。现在是一条明确的三步主线：
-
-1. **Plan（排菜单）**：Today 页在没有当日安排时直接给出 **Plan next week's menu** 按钮；Week 页在未排菜单时显示大卡片，选起始日后点 **Plan this week's menu · 生成一周菜单**，得到连续七天早餐与晚餐。
-2. **Order（点餐确认）**：Week 页顶部显示周区间与"已确认 X/14"进度条。点任意一餐可投票、换菜或 **Confirm this meal · 确认这一餐**；也可以一次 **Confirm all 14 meals**。换菜页先给 6 个最合适的备选（不辣、快手、本周未重复），再按需展开全部选项，可选打开辣味。
-3. **Shop（采购）**：Week 页底部 **Build my shopping list · N items to buy** 直接跳到 Shopping 页；Shopping 页顶部写明"这是哪一周菜单的清单、还有几样要买"，清单为空时也给出返回排菜单的按钮。未确认的餐仍会标注清单为临时状态。
-
-## 在 iPhone / 模拟器运行
-
-1. 在 Mac 安装完整 Xcode（建议 Xcode 16 或更新；核心 Package 测试需要支持 Swift 6 的工具链），并安装 iOS Simulator runtime。
-2. 用 Xcode 打开 `FamilyTable.xcodeproj`，选择 **FamilyTable** scheme。
-3. 选择 iPhone 模拟器，按 **⌘R**。首次无需注册账号或填写 API key。
-4. 真机：连接 iPhone，打开 Developer Mode；在 target 的 **Signing & Capabilities** 选择自己的 Apple Team，必要时改成唯一 Bundle Identifier，再选择设备运行。无需发布 App Store。
-5. 相机功能需真实 iPhone；模拟器可测试 Photos 导入。照片权限采用系统 PhotosPicker，仅选中的照片会进入本地 App。
-
-有完整 Xcode 时也可构建：
-
-```sh
-xcodebuild -project FamilyTable.xcodeproj -scheme FamilyTable -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
-```
-
-## 首次体验流程
-
-1. **Pantry → Family & storage settings**：默认五人，可调六人；按真实布局添加冷藏层、抽屉、酸奶区、门格、冷冻柜、常温柜等，选择温区。系统不预设真实位置。
-2. **Pantry**：导入数张照片或拍照；点照片查看，再手动确认食材、实际数量和位置。相同食材+位置替换总量，避免重复入账。未确认数量不抵扣。
-3. **Week**：默认下周一，可改起始日，点 **Plan this week's menu · 生成一周菜单**，生成连续七天早餐/晚餐。推荐考虑不辣、整餐时间、喜欢的菜、主食交替、库存和七种不重复晚餐。早餐从20套中轮换，不声称了解孩子偏好。
-4. 点某餐，三个孩子分别投票、看图换菜；家长逐餐确认，或在 Week 页一次确认全部。换菜清空原投票与确认，采购自动重算。连续同主食或超出时间目标会提示。
-5. **Shopping**：双语分类清单，人数缩放、跨菜合并、扣确认库存。标记购买后数量留在待收纳状态，可 Undo。
-6. **Put away**：区分建议位置与实际位置；确认实际购买数量和放置处才入库存。孩子放好后可一起确认。额外采购量保留为库存。
-7. **Today / Recipes**：直接查每样食材的实际位置。做完饭后选择扣除配方量或仅标记完成；剩余和实际用量差异在 Pantry 点库存修正。
-
-## 已交付
-
-- 五个原生页面与收纳、设置、选餐详情；温暖奶油色/绿色配色、菜品图片卡片、自绘应用图标与品牌标识。
-- 排菜单 → 逐餐确认 → 采购清单的引导式主线，各页之间可直接跳转。
-- 56 套完整晚餐、20 套早餐、79 种统一双语食材/调料；每套都有中文步骤、份数和整餐时间；70 张 AI 菜品示意图已全部入库，完整清单见 `MENU_CATALOG.md`。
-- 晚餐均配主食、蛋白质与蔬菜；蛋白来源含鸡、牛、鱼、蛋、豆腐。仅规划早餐晚餐，不保证全天或特定年龄营养。
-- 规则推荐无未配置 AI 依赖；照片全留本机，识别接口明确抛出未配置错误。
-- JSON 原子持久化；保存失败显式提示，损坏存档不静默覆盖。数量、位置、投票、购物、收纳、照片列表均持久化。
-- 已购、已收纳、已做饭为独立状态；仅安排菜单不消耗库存。
-
-## 验证与实际限制
-
-本轮已增加早餐/晚餐筛选、60周推荐覆盖回归、相机权限拒绝提示、照片后台处理及独立 UI 测试目标。完整菜单见 `MENU_CATALOG.md`，设备验收阻塞与步骤见 `DEVICE_ACCEPTANCE.md`。
-
-0.1 已用 Xcode 27 对 iOS Simulator SDK 完成整体编译，`** BUILD SUCCEEDED **`：
-
-```sh
+# Build
 DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild \
   -project FamilyTable.xcodeproj -scheme FamilyTable -sdk iphonesimulator \
   -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
+
+# Core logic checks (no XCTest runtime needed)
+python3 scripts/check_core.py
+
+# Regenerate the app icon
+swift scripts/make_icon.swift FamilyTable/Assets.xcassets/AppIcon.appiconset/icon-1024.png 1024
 ```
 
-系统默认开发路径仍指向 Command Line Tools，因此命令里显式指定 `DEVELOPER_DIR`；标准 `swift test` 在该环境导入 XCTest 时仍被阻止。提供 `scripts/check_core.py`，用原有 XCTest 场景生成独立 Swift 断言运行器，不依赖 XCTest；执行记录见 `VALIDATION.md`。注意 `swiftc -parse` 只检查语法，不检查调用签名——0.1 就曾因此漏掉一处 `LabeledContent` 参数标签错误，改动 SwiftUI 后应以上面的 `xcodebuild` 为准。**编译通过不等于验收：启动、布局、相机及完整交互仍未在模拟器或 iPhone 上逐项确认。**
+- `FamilyTable/` — SwiftUI screens, the `Brand` design system, and recipe images.
+- `Sources/FamilyCore/` — recipes, ingredients, nutrition tables and all planning logic, free of UI.
+- `Tests/` — core scenarios and UI tests. `scripts/check_core.py` runs the core scenarios without XCTest, which this machine's default toolchain cannot import; it compiles every file in `Sources/FamilyCore` automatically.
+- The icon is drawn in Core Graphics by `scripts/make_icon.swift`, and `BrandMark` in `FamilyTable/Brand.swift` redraws the same 1024-unit coordinates in SwiftUI, so the home-screen icon and the in-app mark stay identical.
+- Note that `swiftc -parse` only checks syntax, never call signatures. Use the `xcodebuild` command above after touching SwiftUI.
+- Current scope: one active week at a time, on one device. No cloud sync, week history, list export, store grouping, barcode scanning, custom recipes or custom ingredients. 56 dinners, 20 breakfasts, 79 bilingual ingredients.
+- **Not yet accepted on a device.** It compiles, and the core logic is covered by 23 scenarios and ~3,000 assertions, but launch, layout, camera and full interaction have not been signed off on a real iPhone.
+
+## Food safety
+
+The app links to these rather than guessing at shelf life from a photo:
+
+- [FDA · Are You Storing Food Safely?](https://www.fda.gov/consumers/consumer-updates/are-you-storing-food-safely)
+- [FDA · Safe Food Handling](https://www.fda.gov/food/buy-store-serve-safe-food/safe-food-handling)
+- [FoodSafety.gov · Cold Food Storage Charts](https://www.foodsafety.gov/food-safety-charts/cold-food-storage-charts)
+
+Fridge ≤ 40°F / 4°C, freezer ≤ 0°F / −18°C. Freeze raw meat and fish meant for later in the week, and move it to the fridge to thaw in advance.
+
+---
+
+# 中文
+
+## 这个应用是做什么的
+
+给五口之家做饭，难的往往不是做饭本身，而是决定吃什么、忘了买什么、再跑一趟超市，以及找生姜花掉的那十分钟。张家厨房就是来拿掉这些部分的。
+
+每周全家只需坐下来几分钟：应用先排出七天的早餐和晚餐，孩子把不想吃的换掉，家长确认。从这一次决定出发，应用会生成采购清单，告诉大家买回来的东西该放哪里，并在每天傍晚显示中文菜谱，以及每样食材此刻放在哪一层。
+
+它是按一个具体的家庭做的：五口人、不辣的中餐和简单西餐、晚餐大约半小时上桌、面食与米饭轮换，以及三个应该对吃什么有发言权的孩子。
+
+## 一周五步
+
+Today 页会显示这五步和你当前所在的位置，不需要记顺序。
+
+**1. 排菜单 · Plan the week**
+打开 **Week**，选择起始日，点 *Plan this week's menu*，得到七天早餐和晚餐。推荐会避开辣味、米面轮换、蛋白质来源有变化、晚餐控制在半小时左右、一周内晚餐不重复，并优先用上家里已有的食材。
+
+**2. 一起点餐 · Everyone chooses**
+点任意一餐：孩子看图投票，也可以换菜——最合适的六个备选排在前面，全部菜品再点一下就能展开。家长逐餐确认，或一次确认全部十四餐。出现分歧时由家长决定，这是有意的设计。
+
+**3. 一次买齐 · Shop once**
+**Shopping** 清单由确认后的菜单生成：每样食材按家庭人数缩放、跨菜合并，再减去你已在储藏中确认的数量。中英文对照，按类别分组，买的时候逐项打勾。
+
+**4. 收纳归位 · Put it away**
+买完后，**Put away** 会结合储存要求和你家的真实布局，为每件物品建议位置。谁收纳谁确认实际放在哪里、实际买了多少——这一步孩子可以做。确认之后才算入库存。
+
+**5. 照着做饭 · Cook tonight**
+**Today** 显示当天的早餐和晚餐、中文步骤、按家庭人数的用量，以及最省时间的那一项：每样食材现在放在哪里。吃完后一点即可记录为已完成。
+
+## 营养
+
+每道菜、每个已排好的日子，都会显示每人的估算：热量，带文字标签的蛋白质／碳水／脂肪比例条，以及膳食纤维和钠。
+
+- 数值来自食材**购买状态**的参考值——生肉、干意面、沥干的罐头。
+- 这不是成品菜的实测值，烹饪损耗、剩菜、每个人实际吃多少都没有计入。
+- 这里只安排早餐和晚餐，所以一天的合计**绝不**代表全天所需。午餐和零食不在本应用范围内。
+- 它适合用来比较不同餐次或不同周之间的差异，不能作为医学建议或按年龄的营养指导。
+
+## 刻意不做的事
+
+把这些说清楚，本身就是设计的一部分。
+
+- **不做照片自动识别。** 可以拍下冰箱帮助回忆，但每样食材由你自己确认。照片不判断新鲜度和数量。
+- **不替你假设库存。** 只有确认过的数量才会从采购清单中扣除。
+- **只是排进菜单不会消耗食材。** 库存只在采购、收纳、做完饭时变化。
+- **建议位置只是建议**，与你实际确认的位置分开显示。
+- **数据全部留在这台 iPhone 上。** 没有账号、云同步或上传。家长与孩子的角色是共用设备上的家庭约定，不是密码账户。
+- **菜品图片是为本应用生成的 AI 示意图**，不是实拍。
+- **时间与营养都是估算**，没有经过厨房实测或实验室测定。
+
+## 在 iPhone 上运行
+
+1. 在 Mac 上安装完整版 Xcode（建议 16 或更新）。
+2. 打开 `FamilyTable.xcodeproj`，选择 **FamilyTable** scheme。
+3. 用模拟器：选好设备后按 **⌘R**。全程不需要注册账号或填写 API key。
+4. 用真机：连接 iPhone 并开启开发者模式，在 **Signing & Capabilities** 中选择自己的 Apple Team，必要时改一个唯一的 Bundle Identifier，然后运行。
+5. 相机功能需要真机；模拟器可以测试从"照片"导入。照片使用系统选择器，只有你选中的图片会进入应用。
+
+## 开发者信息
 
 ```sh
+# 编译
+DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild \
+  -project FamilyTable.xcodeproj -scheme FamilyTable -sdk iphonesimulator \
+  -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
+
+# 核心逻辑检查（不需要 XCTest 运行环境）
 python3 scripts/check_core.py
-# 完整 Xcode 环境下：
-swift test
+
+# 重新生成应用图标
+swift scripts/make_icon.swift FamilyTable/Assets.xcassets/AppIcon.appiconset/icon-1024.png 1024
 ```
 
-当前范围限制：单机一份活动周计划，无云同步、历史周管理、购物导出、商店分组、条码/自动视觉识别、营养素精算、年龄档案、任意自建菜谱与自建食材。手动库存支持内置79种食材。推荐从50套不辣完整晚餐模板中逐日安排一周，不是自由组合多道独立菜；寿司未加入。每次重建计划会确认替换，但保留购买记录和库存。家长/孩子是共享设备上的协作角色，没有 PIN 身份验证。照片删除与存档恢复界面尚未加入。
+- `FamilyTable/`：SwiftUI 页面、`Brand` 设计系统与菜品图片。
+- `Sources/FamilyCore/`：菜谱、食材、营养表与全部排菜逻辑，不含 UI。
+- `Tests/`：核心场景与 UI 测试。`scripts/check_core.py` 在不依赖 XCTest 的情况下运行核心场景（本机默认工具链无法导入 XCTest），并自动编译 `Sources/FamilyCore` 下的所有文件。
+- 图标由 `scripts/make_icon.swift` 用 Core Graphics 绘制，`FamilyTable/Brand.swift` 中的 `BrandMark` 用同一套 1024 坐标在 SwiftUI 里重绘，因此主屏图标与应用内标识完全一致。
+- 注意 `swiftc -parse` 只检查语法，不检查调用签名。改动 SwiftUI 后请用上面的 `xcodebuild` 验证。
+- 当前范围：单设备、单个进行中的周计划。没有云同步、历史周、清单导出、按商店分组、条码扫描、自建菜谱与自建食材。共 56 套晚餐、20 套早餐、79 种双语食材。
+- **尚未在设备上完成验收。** 可以编译，核心逻辑有 23 个场景约 3000 条断言覆盖，但启动、布局、相机与完整交互还没有在真机上逐项确认。
 
-菜谱时间是5–6人的估计，需速煮米、已解冻食材、双灶并行；超过6人提示额外时间，尚未经家庭实测。食材量按人数等比例并对个/片每餐向上取整，不能代替儿童按年龄的实际分量调整。默认食材储存区仅针对通常包装状态，开封后按标签；收纳时请冻结稍后几天使用的生肉/鱼并提前冷藏解冻。
+## 食品安全
 
-图片由内置 image_gen 工具逐道生成，已完成的图片均标记 AI 成品示意图；不是占位素材或菜谱实拍。完整生成提示及本地资源清单见 `IMAGE_PROVENANCE.json`。视觉主料已逐图人工检查，细小装饰不作为采购依据。
+应用不会根据照片猜测保质期，而是链接到以下权威资料：
 
-## 储存安全依据
+- [FDA · 安全储存食物](https://www.fda.gov/consumers/consumer-updates/are-you-storing-food-safely)
+- [FDA · 食品安全操作](https://www.fda.gov/food/buy-store-serve-safe-food/safe-food-handling)
+- [FoodSafety.gov · 冷藏储存时间表](https://www.foodsafety.gov/food-safety-charts/cold-food-storage-charts)
 
-- [FDA 安全储存食物](https://www.fda.gov/consumers/consumer-updates/are-you-storing-food-safely)：冷藏温度、不依赖外观判断安全。
-- [FDA 食品安全操作](https://www.fda.gov/food/buy-store-serve-safe-food/safe-food-handling)：生熟分开、温度计、解冻。
-- [FoodSafety.gov 冷藏时间表](https://www.foodsafety.gov/food-safety-charts/cold-food-storage-charts)：不同食材储存期限；应用内提供链接，不根据照片猜保鲜期。
-
-## 工程结构
-
-`FamilyTable/` 为 SwiftUI 与图片资源；`Sources/FamilyCore/` 为共享业务逻辑与内置菜谱；`Tests/FamilyCoreTests/` 为测试；`scripts/create_project.py` 可重建工程文件。没有账号凭证或上传端点。迁移时已逐文件 SHA-256 校验，新目录与原文件完全一致后移除旧副本。
-
-## 可选辣味湘菜与川菜
-
-新增湘味辣椒炒肉、小炒牛肉、剁椒鱼柳，以及川味麻婆豆腐、宫保鸡丁、鱼香肉丝，共6套家常整餐。Recipes 的 Flavor 菜单可筛选湘菜/川菜，卡片与详情标注辣度；默认推荐始终保持不辣，收藏辣菜也不会自动纳入。Week 中可主动换入辣菜，按家庭人数计入采购；换菜页明确提示辣味。详情 View portions 可查看1–12人用量，仅用于查看，不改变周计划采购人数。单独给一人做的额外餐尚不能独立排入同一天计划。新增6套以菜系标识展示，尚无菜品图片，原70张图片保留。辣度取决于辣椒品种和品牌，步骤提供减辣方式。
+冷藏 ≤ 40°F / 4°C，冷冻 ≤ 0°F / −18°C。本周后几天才用的生肉和鱼请及时冷冻，并提前移到冷藏室解冻。

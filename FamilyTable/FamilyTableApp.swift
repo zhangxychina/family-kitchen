@@ -101,38 +101,102 @@ struct TodayView: View {
     @EnvironmentObject var store: FamilyStore
     @State private var finishMeal: Meal?
     var today: [Meal] { store.state.meals.filter { Calendar.current.isDateInToday($0.date) } }
+    private var dayNutrition: Nutrition { store.state.nutrition(on: .now) }
+
     var body: some View {
         ScrollView {
-            VStack(alignment:.leading,spacing:20) {
-                BrandHeader()
-                Text("A little less planning.\nA little more together.").font(.system(.largeTitle, design:.serif).bold())
-                Text(Date.now.formatted(date:.complete,time:.omitted)).foregroundStyle(.secondary)
-                if store.state.locations.isEmpty { NavigationLink("Start here: set up your pantry",destination:SettingsView()).buttonStyle(.borderedProminent) }
-                if today.isEmpty {
-                    ContentUnavailableView {
-                        Label(store.state.isPlanned ? "Nothing scheduled today" : "Let's plan a week",systemImage:"fork.knife")
-                    } description: {
-                        Text(store.state.isPlanned ? "This week's menu doesn't cover today. Open Week to plan another stretch of days." : "Pick a start date and get seven days of breakfast and dinner, then a shopping list for exactly what's missing.")
-                    } actions: {
-                        Button { store.tab = 1 } label: { Label(store.state.isPlanned ? "Open the week" : "Plan next week's menu",systemImage:"calendar").frame(maxWidth:.infinity) }
-                            .buttonStyle(.borderedProminent).controlSize(.large).accessibilityIdentifier("todayPlanWeek")
-                    }
-                }
-                ForEach(today) { meal in
-                    if let r = Catalog.recipe(meal.recipe) {
-                        Text(meal.breakfast ? "BREAKFAST" : "DINNER").font(.caption.bold()).tracking(2)
-                        NavigationLink { RecipeDetail(recipe:r) } label: { RecipeCard(recipe:r) }.buttonStyle(.plain)
-                        Text(meal.approved ? "Parent confirmed" : "Waiting for parent review").font(.caption).foregroundStyle(.secondary)
-                        Button(meal.cooked ? "Meal completed" : "We cooked this") { finishMeal = meal }.buttonStyle(.borderedProminent).disabled(meal.cooked)
-                    }
-                }
-                Text("Breakfast + dinner only. Portions are a starting point, not age-specific nutrition advice. Lunch and individual needs are not included.").font(.footnote).foregroundStyle(.secondary)
+            VStack(alignment:.leading,spacing:18) {
+                BrandHeader(subtitle: Date.now.formatted(.dateTime.weekday(.wide).month(.wide).day()))
+                SectionHeading(en:"A little less planning.\nA little more together.",zh:"少一点操心，多一点一起吃饭")
+                if store.state.locations.isEmpty { setupCard }
+                if today.isEmpty { emptyDayCard } else { mealCards; nutritionCard }
+                JourneyStrip(steps:journey) { store.tab = $0 }.kitchenCard()
+                InfoNote(title:"What this app does not do · 这个应用不做什么",lines:[
+                    "Breakfast and dinner only — lunch, snacks and what each person actually eats are not counted.",
+                    "Portions are a starting point for the whole family, not age-specific nutrition advice.",
+                    "Nutrition figures are reference values for ingredients as bought, not measurements of the finished dish."
+                ]).kitchenCard()
             }.padding(20)
         }.background(Brand.paper).navigationTitle(Brand.appName).navigationBarTitleDisplayMode(.inline)
         .confirmationDialog("Update confirmed pantry quantities? Adjust leftovers in Pantry afterward.",isPresented:Binding(get:{ finishMeal != nil },set:{ if !$0 { finishMeal = nil } }),titleVisibility:.visible) {
             Button("Complete & deduct recipe amounts") { if let m = finishMeal { store.update { $0.finish(m.id,consume:true) } }; finishMeal = nil }
             Button("Complete without deducting") { if let m = finishMeal { store.update { $0.finish(m.id,consume:false) } }; finishMeal = nil }
         }
+    }
+
+    @ViewBuilder private var setupCard: some View {
+        VStack(alignment:.leading,spacing:10) {
+            SectionHeading(en:"First, where does food live?",zh:"先告诉我食物放在哪里")
+            Text("Add your real fridge shelves, drawers and cupboards once. After that the app can tell everyone where each ingredient is.").font(.footnote).foregroundStyle(.secondary)
+            NavigationLink { SettingsView() } label: { Label("Set up our kitchen",systemImage:"cabinet").frame(maxWidth:.infinity) }
+                .buttonStyle(.borderedProminent).controlSize(.large)
+        }.kitchenCard()
+    }
+
+    @ViewBuilder private var emptyDayCard: some View {
+        VStack(alignment:.leading,spacing:12) {
+            SectionHeading(en:store.state.isPlanned ? "Nothing scheduled today" : "Let's plan a week",
+                           zh:store.state.isPlanned ? "今天没有安排" : "来排一周的饭")
+            Text(store.state.isPlanned
+                 ? "This week's menu doesn't cover today. Open Week to plan another stretch of days."
+                 : "Pick a start date and get seven days of breakfast and dinner — then a shopping list for exactly what's missing.")
+                .font(.footnote).foregroundStyle(.secondary)
+            Button { store.tab = 1 } label: {
+                Label(store.state.isPlanned ? "Open the week" : "Plan next week's menu",systemImage:"calendar").frame(maxWidth:.infinity)
+            }.buttonStyle(.borderedProminent).controlSize(.large).accessibilityIdentifier("todayPlanWeek")
+        }.kitchenCard()
+    }
+
+    @ViewBuilder private var mealCards: some View {
+        ForEach(today) { meal in
+            if let r = Catalog.recipe(meal.recipe) {
+                VStack(alignment:.leading,spacing:12) {
+                    HStack {
+                        Text(meal.breakfast ? "BREAKFAST · 早餐" : "DINNER · 晚餐").font(.caption.bold()).tracking(1.5).foregroundStyle(.secondary)
+                        Spacer()
+                        StatusPill(text: meal.cooked ? "Cooked" : meal.approved ? "Confirmed" : "Needs review",
+                                   state: meal.cooked ? .done : meal.approved ? .done : .active)
+                    }
+                    NavigationLink { RecipeDetail(recipe:r) } label: { RecipeCard(recipe:r) }.buttonStyle(.plain)
+                    Button(meal.cooked ? "Meal completed" : "We cooked this") { finishMeal = meal }
+                        .buttonStyle(.borderedProminent).disabled(meal.cooked).frame(maxWidth:.infinity)
+                }.kitchenCard()
+            }
+        }
+    }
+
+    @ViewBuilder private var nutritionCard: some View {
+        NutritionCard(title:"Today, per person",zh:"今天每人（早餐+晚餐）",nutrition:dayNutrition,
+                      note:"Breakfast and dinner only. Lunch and snacks are not part of this plan, so this is not a whole day of eating.",
+                      complete:today.compactMap { Catalog.recipe($0.recipe) }.allSatisfy(\.nutritionIsComplete))
+            .kitchenCard()
+    }
+
+    /// The whole app, described as the five things a week actually involves.
+    private var journey: [JourneyStep] {
+        let progress = store.state.approvalProgress
+        let planned = store.state.isPlanned
+        let allConfirmed = planned && progress.approved == progress.total
+        let toBuy = store.state.itemsToBuy
+        let waitingToStore = store.state.purchases.filter { !$0.stored }.count
+        let cookedToday = !today.isEmpty && today.allSatisfy(\.cooked)
+        return [
+            JourneyStep(title:"Plan the week",zh:"排菜单",
+                        detail: planned ? "Seven days of breakfast and dinner are on the calendar." : "Pick a start date and get a week of meals.",
+                        symbol:"calendar",state: planned ? .done : .active,tab:1),
+            JourneyStep(title:"Everyone chooses",zh:"一起点餐",
+                        detail: !planned ? "The children vote and swap once a menu exists." : allConfirmed ? "All \(progress.total) meals are confirmed." : "\(progress.total - progress.approved) meals still need a swap or a confirmation.",
+                        symbol:"hand.thumbsup",state: !planned ? .waiting : allConfirmed ? .done : .active,tab:1),
+            JourneyStep(title:"Shop once",zh:"一次买齐",
+                        detail: !planned ? "The list builds itself from the menu." : toBuy > 0 ? "\(toBuy) items are missing from the pantry." : "Nothing left to buy for this menu.",
+                        symbol:"basket",state: !planned ? .waiting : toBuy > 0 ? .active : .done,tab:3),
+            JourneyStep(title:"Put it away",zh:"收纳归位",
+                        detail: waitingToStore > 0 ? "\(waitingToStore) bought items are waiting for a shelf." : "Everything bought has a confirmed place.",
+                        symbol:"shippingbox",state: waitingToStore > 0 ? .active : planned ? .done : .waiting,tab:3),
+            JourneyStep(title:"Cook tonight",zh:"照着做饭",
+                        detail: today.isEmpty ? "Today's meals appear here once the week covers today." : cookedToday ? "Today's meals are done. Nice work." : "Today's recipe, amounts and where each ingredient is.",
+                        symbol:"flame",state: today.isEmpty ? .waiting : cookedToday ? .done : .active,tab:0)
+        ]
     }
 }
 struct WeekView: View {
@@ -145,7 +209,7 @@ struct WeekView: View {
         List {
             if store.state.isPlanned { plannedHeader } else { starter }
             ForEach(dates,id:\.self) { date in
-                Section(date.formatted(.dateTime.weekday(.wide).month(.abbreviated).day())) {
+                Section {
                     ForEach(store.state.meals.filter { $0.date == date }) { meal in
                         NavigationLink { MealReview(mealID:meal.id) } label: {
                             if let r = Catalog.recipe(meal.recipe) {
@@ -160,6 +224,13 @@ struct WeekView: View {
                                 }
                             }
                         }
+                    }
+                } header: {
+                    HStack {
+                        Text(date.formatted(.dateTime.weekday(.wide).month(.abbreviated).day()))
+                        Spacer()
+                        Text("\(Int(store.state.nutrition(on:date).kcal.rounded())) kcal / person")
+                            .font(.caption).foregroundStyle(.secondary)
                     }
                 }
             }
@@ -180,7 +251,13 @@ struct WeekView: View {
                     .buttonStyle(.borderedProminent).controlSize(.large).accessibilityIdentifier("planWeek")
             }.padding(.vertical,6)
         } footer: {
-            Text("Mild meals · rice and noodles alternate · confirmed pantry items come first. Breakfast preferences are not yet known; review them together. Dinner estimates assume 5–6 people, quick-cooking rice, thawed ingredients and two burners. No lunch planning.")
+            InfoNote(title:"How the week is chosen · 菜单怎么排出来的",lines:[
+                "Mild meals only; spicy dishes are never recommended, though you can swap one in.",
+                "Rice and noodles alternate, and no dinner repeats within the week.",
+                "Ingredients you have confirmed in the pantry raise a meal's chances, so less is bought twice.",
+                "Dinner times assume 5–6 people, quick-cooking rice, thawed ingredients and two burners.",
+                "Breakfast preferences are not known yet — review the first week together and swap freely."
+            ])
         }
     }
 
@@ -195,6 +272,10 @@ struct WeekView: View {
                 ProgressView(value:Double(progress.approved),total:Double(max(1,progress.total))).tint(Brand.green)
                 Text(progress.approved == progress.total ? "Everything is confirmed. Your shopping list below is final." : "Tap any meal to swap it or confirm it. Swapping updates the shopping list right away.").font(.footnote).foregroundStyle(.secondary)
             }.padding(.vertical,4)
+            NutritionCard(title:"Average day, per person",zh:"本周平均每天每人（早餐+晚餐）",
+                          nutrition:store.state.averagePlannedDay,
+                          note:"Breakfast and dinner only, so this is not a full day of eating. Useful for comparing one week with another.")
+                .padding(.vertical,6)
             Button { store.update { $0.approveAll() } } label: { Label("Confirm all \(progress.total) meals",systemImage:"checkmark.seal") }
                 .disabled(progress.approved == progress.total).accessibilityIdentifier("confirmAllMeals")
             Button(role:.destructive) { replacePlan = true } label: { Label("Plan a different week",systemImage:"arrow.triangle.2.circlepath") }
@@ -232,6 +313,9 @@ struct MealReview: View {
                 Section("Why this meal") {
                     Text("\(r.starch) + \(r.protein)\(r.vegetable ? " + vegetables" : " + fruit / grain") · \(r.flavor) · \(r.minutes) minutes including preparation.")
                     if store.state.preferred.contains(r.id) { Text("A family favorite") }
+                    let perPerson = r.nutrition(per:store.state.people)
+                    Text("About \(Int(perPerson.kcal.rounded())) kcal and \(Int(perPerson.protein.rounded()))g protein per person · 每人约 \(Int(perPerson.kcal.rounded())) 千卡")
+                        .font(.footnote).foregroundStyle(.secondary)
                     ForEach(store.state.warnings(for:m),id:\.self) { Text($0).foregroundStyle(.orange) }
                 }
                 Section("Everyone gets a say") {
@@ -325,6 +409,13 @@ struct RecipeDetail: View {
                 Text("\(servings) servings · \(recipe.minutes) min including prep\n用量按上方所选人数缩放；整餐时间以五人为参考，大份量或未解冻需额外时间。")
                 Button(store.state.preferred.contains(recipe.id) ? "♥ Family favorite" : "♡ Add to favorites") { store.update { s in if s.preferred.contains(recipe.id) { s.preferred.remove(recipe.id) } else { s.preferred.insert(recipe.id) } } }
             }
+            Section {
+                NutritionCard(title:"Per person · \(servings) servings",zh:"按 \(servings) 人分，每人约",
+                              nutrition:recipe.nutrition(per:servings),
+                              note:"Estimated from ingredients as bought, before cooking. Oil and seasoning are counted only in the amounts this recipe lists.",
+                              complete:recipe.nutritionIsComplete)
+                    .listRowInsets(EdgeInsets(top:14,leading:16,bottom:14,trailing:16))
+            } header: { Text("Nutrition estimate · 营养估算") }
             Section("Ingredients & locations · 食材与位置") {
                 ForEach(recipe.scaled(servings),id:\.ingredient) { portion in
                     let item = Catalog.ingredient(portion.ingredient)

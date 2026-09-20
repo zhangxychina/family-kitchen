@@ -22,7 +22,11 @@ struct ShoppingView: View {
                         Text("For the menu of \(first.formatted(.dateTime.month(.abbreviated).day())) – \(last.formatted(.dateTime.month(.abbreviated).day())) · \(store.state.itemsToBuy) items to buy").font(.headline)
                     }
                     NavigationLink { PutAwayView() } label: { Label("Put away · \(store.state.purchases.filter{!$0.stored}.count) waiting",systemImage:"shippingbox") }
-                    Text("For \(store.state.people) people. Recipe amounts are combined before rounding; buy the next suitable package. Only confirmed pantry amounts are deducted.").font(.footnote)
+                    InfoNote(title:"How these amounts are worked out · 数量怎么来的",lines:[
+                        "Every meal on the menu is scaled to \(store.state.people) people, then the same ingredient is added up across the week.",
+                        "Only pantry amounts you have confirmed are subtracted — a photo alone never counts as stock.",
+                        "Buy the next suitable package size; the figure here is what the recipes ask for, not a shelf size."
+                    ])
                     if store.state.meals.contains(where:{ !$0.approved && !$0.cooked }) {
                         Label("Some meals still need parent approval. List is provisional.",systemImage:"exclamationmark.circle").font(.footnote).foregroundStyle(.orange)
                         Button("Review the menu") { store.tab = 1 }.font(.footnote)
@@ -58,7 +62,13 @@ struct PutAwayView: View {
     @EnvironmentObject var store: FamilyStore
     var body: some View {
         List {
-            Section { Text("Suggestions are not actual locations. Choose where you really put each item and confirm the actual purchased amount. Only then will it count as pantry stock.").font(.footnote)
+            Section {
+                Text("Confirm where each item really went, and how much you actually bought.").font(.subheadline)
+                InfoNote(title:"Why confirm instead of assume · 为什么要确认",lines:[
+                    "A suggested shelf is only a suggestion; the app never records it as the real place.",
+                    "Stock counts only after someone confirms the amount and the location, so the shopping list cannot quietly under-buy.",
+                    "Children can do this step; changing a location later is always allowed."
+                ])
                 NavigationLink("Edit storage locations",destination:SettingsView())
             }
             ForEach(store.state.purchases.filter{!$0.stored}) { p in PutAwayRow(purchase:p) }
@@ -102,7 +112,12 @@ struct PantryView: View {
                 Button { add = true } label: { Label("Confirm an ingredient",systemImage:"plus.circle") }
             }
             Section("Pantry photos · private on this device") {
-                Text("Automatic recognition is not enabled. Add photos, inspect them, then manually confirm ingredients and quantities below. Photos never determine freshness or amounts and are not uploaded.").font(.footnote).foregroundStyle(.secondary)
+                Text("Photograph a shelf, then confirm what you see.").font(.subheadline)
+                InfoNote(title:"What happens to these photos · 照片如何处理",lines:[
+                    "Photos stay on this iPhone. Nothing is uploaded and no account is involved.",
+                    "Automatic recognition is not enabled — you confirm each ingredient yourself.",
+                    "A photo never decides freshness or quantity; only what you confirm becomes stock."
+                ])
                 PhotosPicker(selection:$photos,maxSelectionCount:8,matching:.images) { Label("Import photos",systemImage:"photo.on.rectangle") }
                 Button {
                     Task {
@@ -194,8 +209,13 @@ struct SettingsView: View {
             }
             Section("About this first edition") {
                 LabeledContent("Version",value:"\(Brand.appName) · \(Brand.appNameZh) \(Brand.version)")
-                Text("Local to this iPhone. No account, cloud sync or photo uploads. Parent/child roles are social controls on a shared device. 50 dinner and 20 breakfast recipes; breakfast preferences and children's ages have not been assumed.").font(.footnote)
-                Text("Images: AI-generated recipe illustrations, created for this app. They are not photographs of tested recipes. Cooking times are estimates, not kitchen-tested guarantees.").font(.footnote)
+                InfoNote(title:"What this edition is · 这一版是什么",lines:[
+                    "Everything lives on this iPhone: no account, no cloud sync, no photo uploads.",
+                    "Parent and child roles are an agreement on a shared device, not password-protected accounts.",
+                    "56 dinners and 20 breakfasts. Children's ages and breakfast preferences have not been assumed.",
+                    "Recipe pictures are AI-generated illustrations made for this app, not photographs of tested cooking.",
+                    "Cooking times and nutrition figures are estimates, not kitchen-tested or laboratory-measured."
+                ])
             }
         }.navigationTitle("Family & storage")
     }

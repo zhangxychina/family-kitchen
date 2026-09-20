@@ -206,6 +206,57 @@ final class FamilyCoreTests: XCTestCase {
             XCTAssertEqual(copy.meals.first { $0.id == dinner.id }?.recipe,option.id)
         }
     }
+    func testEveryIngredientHasReferenceNutrition() {
+        for ingredient in Catalog.ingredients {
+            guard let values = Catalog.nutritionTable[ingredient.id] else {
+                XCTFail("Missing nutrition for \(ingredient.id)"); continue
+            }
+            XCTAssertTrue([values.kcal,values.protein,values.carbs,values.fat,values.fiber,values.sodium].allSatisfy { $0.isFinite && $0 >= 0 })
+            XCTAssertGreaterThanOrEqual(values.carbs,values.fiber,"\(ingredient.id): fiber exceeds carbohydrate")
+            // Energy recomputed from the macros must land near the stated calories.
+            // Atwater factors, counting fiber at 2 kcal/g rather than 4, which is what
+            // keeps low-calorie high-fiber foods like lemon and berries honest.
+            if values.kcal >= 30 {
+                let net = max(0, values.carbs - values.fiber)
+                let atwater = values.protein * 4 + net * 4 + values.fiber * 2 + values.fat * 9
+                XCTAssertTrue((0.6...1.4).contains(atwater / values.kcal),
+                              "\(ingredient.id): \(Int(values.kcal)) kcal stated, \(Int(atwater)) from macros")
+            }
+        }
+        XCTAssertEqual(Set(Catalog.nutritionTable.keys),Set(Catalog.ingredients.map(\.id)))
+        XCTAssertTrue(Catalog.recipes.allSatisfy(\.nutritionIsComplete))
+    }
+    func testMealNutritionIsPerPersonAndPlausible() {
+        let sesame = Catalog.recipe("sesame")!
+        let single = sesame.nutrition(per:1)
+        let family = sesame.nutrition(per:5)
+        // Per-person energy barely moves with family size; only whole-item rounding shifts it.
+        XCTAssertEqual(single.kcal,family.kcal,accuracy:family.kcal * 0.25)
+        XCTAssertGreaterThan(family.protein,15)
+        for recipe in Catalog.recipes {
+            let perPerson = recipe.nutrition(per:5)
+            let range = recipe.breakfast ? 120.0...800.0 : 300.0...1200.0
+            XCTAssertTrue(range.contains(perPerson.kcal),"\(recipe.id) at \(Int(perPerson.kcal)) kcal")
+            XCTAssertGreaterThan(perPerson.protein,recipe.breakfast ? 4 : 15)
+            XCTAssertTrue(perPerson.sodium.isFinite && perPerson.sodium >= 0)
+        }
+    }
+    func testDayAndWeekNutritionCoversPlannedMealsOnly() {
+        var s = FamilyState()
+        XCTAssertEqual(s.averagePlannedDay,Nutrition.zero)
+        let start = FamilyState.nextMonday(after:Date())
+        s.plan(start:start)
+        let day = s.nutrition(on:start)
+        let mealsThatDay = s.meals.filter { Calendar.current.isDate($0.date,inSameDayAs:start) }
+        XCTAssertEqual(mealsThatDay.count,2)
+        let expected = mealsThatDay.compactMap { Catalog.recipe($0.recipe) }.reduce(Nutrition.zero) { $0 + $1.nutrition(per:s.people) }
+        XCTAssertEqual(day.kcal,expected.kcal,accuracy:0.001)
+        // Breakfast + dinner only: a day total is well under a full day of eating.
+        XCTAssertTrue((500...2200).contains(day.kcal))
+        XCTAssertEqual(s.averagePlannedDay.kcal,(0..<7).map { s.nutrition(on:Calendar.current.date(byAdding:.day,value:$0,to:start)!).kcal }.reduce(0,+) / 7,accuracy:0.001)
+        // Unplanned days contribute nothing rather than guessing.
+        XCTAssertEqual(s.nutrition(on:Calendar.current.date(byAdding:.day,value:30,to:start)!),Nutrition.zero)
+    }
     func testNoConsumptionWhenPlanningOrSkippingDeduction() {
         var state = FamilyState(); state.stock = [Stock(ingredient:"rice",quantity:2000,confirmed:true)]
         state.plan(start:Date()); XCTAssertEqual(state.stock[0].quantity,2000)
