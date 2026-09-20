@@ -736,4 +736,97 @@ final class FamilyCoreTests: XCTestCase {
         XCTAssertEqual(s.stock.first{ $0.ingredient == "rice" }!.quantity,
                        s.shopping().first{ $0.ingredient == "rice" }!.required,accuracy:0.001)
     }
+
+    // MARK: - Safety net
+
+    func testEverySynonymNamesARealIngredient() {
+        // Catalog.ingredient is called with whatever this table returns, straight into
+        // a view. A typo here used to be a crash; it must stay impossible.
+        let known = Set(Catalog.ingredients.map(\.id))
+        for (ident, words) in PantryMatcher.synonyms {
+            XCTAssertTrue(known.contains(ident),"synonym table names an ingredient that does not exist: \(ident)")
+            XCTAssertFalse(words.isEmpty,"\(ident) has no words to match on")
+        }
+        // And every ingredient can be recognised at all, or the shop check would be
+        // silently blind to part of the catalogue.
+        for ingredient in Catalog.ingredients {
+            XCTAssertNotNil(PantryMatcher.synonyms[ingredient.id],"no photo words for \(ingredient.id)")
+        }
+    }
+
+    func testAnUnknownIngredientIsShownRatherThanCrashing() {
+        let unknown = Catalog.ingredient("something-this-app-never-heard-of")
+        XCTAssertEqual(unknown.id,"something-this-app-never-heard-of")
+        XCTAssertEqual(unknown.en,"Unknown ingredient")
+        XCTAssertFalse(Catalog.knowsIngredient("something-this-app-never-heard-of"))
+        XCTAssertTrue(Catalog.knowsIngredient("chicken"))
+        // The real ones are untouched by the fallback.
+        XCTAssertEqual(Catalog.ingredient("chicken").en,"Boneless chicken breast")
+    }
+
+    func testAFileWhoseOwnDishNamesAMissingIngredientIsRefused() throws {
+        // Not a crash on launch, and not silently loaded either: refused, which the
+        // app reports without overwriting the file.
+        let legacy = """
+        {"version":3,"people":4,"locations":[],"stock":[],"purchases":[],"photoFiles":[],"meals":[],
+         "customRecipes":[{"id":"family-1","en":"Test","zh":"测试","breakfast":false,"minutes":20,
+                           "starch":"Rice","protein":"Other","vegetable":true,
+                           "ingredients":[{"ingredient":"unobtainium","quantity":100}],
+                           "steps":["x"],"favorite":false}]}
+        """
+        let file = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString).appendingPathComponent("state.json")
+        try FileManager.default.createDirectory(at:file.deletingLastPathComponent(),withIntermediateDirectories:true)
+        defer { try? FileManager.default.removeItem(at:file.deletingLastPathComponent()); Catalog.setCustomRecipes([]) }
+        try Data(legacy.utf8).write(to:file)
+        do { _ = try StateFile.load(from:file); XCTFail("a dish naming a missing ingredient must not load") }
+        catch { XCTAssertEqual(error as? StateError,StateError.invalidData) }
+    }
+
+    func testScanSuggestionIgnoresAmountsNobodyConfirmed() {
+        // An unconfirmed amount was never subtracted from the shortage, so adding it
+        // to the suggestion would record the same food twice.
+        var s = FamilyState()
+        s.meals = [Meal(date:Date(),recipe:"sesame",breakfast:false)]
+        let fridge = s.addAppliance(.fridge)!
+        let shelf = s.compartments(of:fridge.id)[1]
+        let required = s.shopping().first{ $0.ingredient == "chicken" }!.required
+        s.stock = [Stock(ingredient:"chicken",quantity:200,confirmed:false,location:shelf.id)]
+        let suggested = s.suggestedScanQuantity("chicken",at:shelf.id)
+        XCTAssertEqual(suggested,required,accuracy:0.001,"the unconfirmed 200 must not inflate the suggestion")
+        s.applyScan([ScanConfirmation(ingredient:"chicken",quantity:suggested,location:shelf.id)])
+        XCTAssertEqual(s.shopping().first{ $0.ingredient == "chicken" }!.shortage,0)
+        XCTAssertEqual(s.shopping().first{ $0.ingredient == "chicken" }!.stock,required,accuracy:0.001,
+                       "and the kitchen must not end up holding more than was ever there")
+    }
+
+    func testAShelfPointingAtANothingIsStillReachable() {
+        var s = FamilyState()
+        let fridge = s.addAppliance(.fridge)!
+        let shelf = s.compartments(of:fridge.id)[0]
+        // Force the state a removal would never produce, and check no screen loses it.
+        s.appliances.removeAll()
+        XCTAssertTrue(s.looseLocations.contains{ $0.id == shelf.id },"an orphaned shelf must still be listed")
+        XCTAssertEqual(s.locationLabel(shelf.id),shelf.name,"and still name itself")
+        s.removeLocation(shelf.id)
+        XCTAssertFalse(s.locations.contains{ $0.id == shelf.id },"and still be removable")
+        XCTAssertEqual(s.locations.count,6,"removing one orphan leaves the other shelves alone")
+    }
+
+    func testNamesNeverGoBlank() {
+        var s = FamilyState()
+        let fridge = s.addAppliance(.fridge, named:"Garage fridge")!
+        s.renameAppliance(fridge.id, to:"   ")
+        XCTAssertEqual(s.appliance(fridge.id)?.name,"Fridge","an emptied name falls back, never blank")
+        s.renameAppliance(fridge.id, to:"  Kitchen fridge  ")
+        XCTAssertEqual(s.appliance(fridge.id)?.name,"Kitchen fridge","and is trimmed")
+        let shelf = s.compartments(of:fridge.id)[0]
+        s.renameLocation(shelf.id, to:"")
+        XCTAssertEqual(s.locations.first{ $0.id == shelf.id }?.name,"Unnamed place")
+        // A name long enough to break a layout is cut, not refused.
+        s.renameAppliance(fridge.id, to:String(repeating:"x",count:200))
+        XCTAssertEqual(s.appliance(fridge.id)?.name.count,40)
+        // Renaming something that is not there changes nothing and does not crash.
+        s.renameAppliance(UUID(), to:"ghost"); s.renameLocation(UUID(), to:"ghost")
+        XCTAssertEqual(s.appliances.count,1)
+    }
 }

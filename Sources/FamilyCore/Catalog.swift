@@ -82,7 +82,18 @@ public enum Catalog {
         .init(id:"groundpork",en:"Ground pork",zh:"猪肉末",unit:"g",category:"Protein",storage:"Refrigerated")
     ]
     private static let ingredientByID = Dictionary(uniqueKeysWithValues: ingredients.map { ($0.id, $0) })
-    public static func ingredient(_ id: String) -> Ingredient { ingredientByID[id]! }
+    /// Looks up an ingredient by id.
+    ///
+    /// An id this app does not know can only come from a file it did not write, and a
+    /// kitchen app must not die over one. The family sees a clearly-labelled unknown
+    /// row they can delete, rather than a crash on launch.
+    public static func ingredient(_ id: String) -> Ingredient {
+        ingredientByID[id] ?? Ingredient(id: id, en: "Unknown ingredient", zh: "未知食材",
+                                         unit: "", category: "Other", storage: "Pantry")
+    }
+    /// Whether this app knows the id at all, for the checks that run before a saved
+    /// file is trusted.
+    public static func knowsIngredient(_ id: String) -> Bool { ingredientByID[id] != nil }
     /// Dishes the family added themselves, kept in their saved file and registered
     /// here so that planning, shopping and nutrition treat them like any other dish.
     nonisolated(unsafe) private static var customRecipes: [Recipe] = []

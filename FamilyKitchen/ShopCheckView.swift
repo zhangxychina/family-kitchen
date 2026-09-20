@@ -26,6 +26,9 @@ struct ShopCheckView: View {
     @State private var accepted: Set<String> = []
     @State private var amounts: [String: String] = [:]
     @State private var failure: String?
+    /// True between the tap and the camera actually appearing, so the button says
+    /// something is happening instead of looking dead.
+    @State private var opening = false
 
     private let recognizer = VisionPantryRecognizer()
 
@@ -60,15 +63,24 @@ struct ShopCheckView: View {
             Button("Open Settings") { if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) } }
             Button("Cancel", role: .cancel) {}
         } message: { Text("Allow camera access in Settings, or import photos from your library instead.") }
-        .sheet(isPresented: $camera) { CameraCapture { data in Task { await scan([data]) } } }
+        // Full screen rather than a sheet: the system camera is a full-screen
+        // controller, and presenting it in a card is what makes it stutter on the way in.
+        .fullScreenCover(isPresented: $camera, onDismiss: { opening = false }) {
+            CameraCapture { data in Task { await scan([data]) } }
+        }
         .onChange(of: photos) { _, items in
+            guard !items.isEmpty else { return }
             Task {
-                var images: [Data] = []
-                for item in items {
-                    if let data = try? await item.loadTransferable(type: Data.self) { images.append(data) }
-                }
                 photos = []
-                await scan(images)
+                // One photo at a time. Eight full-size pictures held together is a
+                // memory spike on an older iPhone, and nothing here needs them at once.
+                for item in items {
+                    guard let data = try? await item.loadTransferable(type: Data.self) else {
+                        failure = "One photo could not be opened."
+                        continue
+                    }
+                    await scan([data])
+                }
             }
         }
         .onChange(of: location) { _, _ in
@@ -124,12 +136,10 @@ struct ShopCheckView: View {
 
     @ViewBuilder private var captureSection: some View {
         Section {
-            Button {
-                Task {
-                    if await AVCaptureDevice.requestAccess(for: .video) { camera = true } else { cameraDenied = true }
-                }
-            } label: { Label("Take a photo · 拍照", systemImage: "camera") }
-                .disabled(!UIImagePickerController.isSourceTypeAvailable(.camera) || scanning)
+            Button { openCamera() } label: {
+                Label(opening ? "Opening the camera…" : "Take a photo · 拍照", systemImage: "camera")
+            }
+                .disabled(!CameraAccess.hasCamera || scanning || opening)
                 .accessibilityIdentifier("shopCheckCamera")
             PhotosPicker(selection: $photos, maxSelectionCount: 8, matching: .images) {
                 Label("Use photos from my library · 从相册选择", systemImage: "photo.on.rectangle")
@@ -225,6 +235,20 @@ struct ShopCheckView: View {
     }
 
     // MARK: - Work
+
+    /// Opens the camera with as little between the tap and the viewfinder as
+    /// possible. Permission is only *asked* for the first time; after that the
+    /// answer is already known, so the camera is presented on the spot.
+    private func openCamera() {
+        guard CameraAccess.hasCamera else { return }
+        if CameraAccess.isAuthorized { opening = true; camera = true; return }
+        if CameraAccess.isDenied { cameraDenied = true; return }
+        opening = true
+        Task {
+            let granted = await AVCaptureDevice.requestAccess(for: .video)
+            if granted { camera = true } else { opening = false; cameraDenied = true }
+        }
+    }
 
     /// Reads a batch of photos and merges what they show into the findings already on
     /// screen, so several trips to the camera build one list.

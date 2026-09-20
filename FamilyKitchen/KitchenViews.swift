@@ -156,6 +156,17 @@ struct KitchenView: View {
     @State private var addAfterPhoto = false
     @State private var showPhotos = false
 
+    /// The same fast path as the shop check: ask only when there is something left
+    /// to ask, and otherwise go straight to the viewfinder.
+    private func openCamera() {
+        guard CameraAccess.hasCamera else { return }
+        if CameraAccess.isAuthorized { camera = true; return }
+        if CameraAccess.isDenied { cameraDenied = true; return }
+        Task {
+            if await AVCaptureDevice.requestAccess(for: .video) { camera = true } else { cameraDenied = true }
+        }
+    }
+
     private var confirmed: [Stock] { store.state.stock.filter(\.confirmed) }
     private var unconfirmed: [Stock] { store.state.stock.filter { !$0.confirmed } }
     private var placesWithFood: [Location] {
@@ -171,7 +182,8 @@ struct KitchenView: View {
         }
     }
     private var looseWithFood: [Location] {
-        placesWithFood.filter { $0.applianceID == nil }
+        let loose = Set(store.state.looseLocations.map(\.id))
+        return placesWithFood.filter { loose.contains($0.id) }
     }
     private var unplaced: [Stock] {
         store.state.stock.filter { stock in
@@ -199,7 +211,7 @@ struct KitchenView: View {
             Button("Open Settings") { if let url = URL(string:UIApplication.openSettingsURLString) { UIApplication.shared.open(url) } }
             Button("Cancel", role:.cancel) {}
         } message: { Text("Allow camera access in Settings, or use Import photos instead.") }
-        .sheet(isPresented:$camera) { CameraCapture { data in Task { await store.importPhoto(data) } } }
+        .fullScreenCover(isPresented:$camera) { CameraCapture { data in Task { await store.importPhoto(data) } } }
         .sheet(isPresented:Binding(get:{selectedPhoto != nil},set:{if !$0 {selectedPhoto = nil}}), onDismiss:{ if addAfterPhoto { addAfterPhoto = false; add = true } }) {
             NavigationStack { if let name = selectedPhoto, let img = UIImage(contentsOfFile:store.directory.appendingPathComponent(name).path) {
                 ScrollView { Image(uiImage:img).resizable().scaledToFit(); Text("Inspect this photo, then confirm each ingredient manually. Existing ingredient + location entries are replaced, not duplicated.").padding(); Button("Add what you see") { addAfterPhoto = true; selectedPhoto = nil }.buttonStyle(.borderedProminent) }.toolbar { Button("Done") { selectedPhoto = nil } }
@@ -286,12 +298,8 @@ struct KitchenView: View {
         Section {
             DisclosureGroup(isExpanded: $showPhotos) {
                 PhotosPicker(selection:$photos,maxSelectionCount:8,matching:.images) { Label("Import photos",systemImage:"photo.on.rectangle") }
-                Button {
-                    Task {
-                        if await AVCaptureDevice.requestAccess(for: .video) { camera = true }
-                        else { cameraDenied = true }
-                    }
-                } label:{ Label("Take a photo",systemImage:"camera") }.disabled(!UIImagePickerController.isSourceTypeAvailable(.camera))
+                Button { openCamera() } label:{ Label("Take a photo",systemImage:"camera") }
+                    .disabled(!CameraAccess.hasCamera)
                 if !store.state.photoFiles.isEmpty {
                     ScrollView(.horizontal) { LazyHStack { ForEach(store.state.photoFiles,id:\.self) { name in
                         if let image = UIImage(contentsOfFile:store.directory.appendingPathComponent(name).path) {
@@ -707,17 +715,16 @@ struct ApplianceSection: View {
 
     var body: some View {
         Section {
-            TextField("Name", text: Binding(
-                get: { store.state.appliance(appliance.id)?.name ?? "" },
-                set: { value in store.update { $0.renameAppliance(appliance.id, to: value) } }))
-                .font(.headline)
+            InlineTextField(prompt: "Name", value: store.state.appliance(appliance.id)?.name ?? "") { name in
+                store.update { $0.renameAppliance(appliance.id, to: name) }
+            }.font(.headline)
             HStack {
                 Text("Room").foregroundStyle(.secondary)
                 Spacer()
-                TextField("Kitchen, garage…", text: Binding(
-                    get: { store.state.appliance(appliance.id)?.place ?? "" },
-                    set: { value in store.update { $0.setPlace(value, forAppliance: appliance.id) } }))
-                    .multilineTextAlignment(.trailing)
+                InlineTextField(prompt: "Kitchen, garage…",
+                                value: store.state.appliance(appliance.id)?.place ?? "") { place in
+                    store.update { $0.setPlace(place, forAppliance: appliance.id) }
+                }.multilineTextAlignment(.trailing)
             }
             if (store.state.appliance(appliance.id)?.place ?? "").isEmpty {
                 // Suggestions, not a fixed list: plenty of homes keep a fridge
@@ -912,6 +919,32 @@ struct AboutSettingsView: View {
 /// One shelf, drawer or cupboard space.
 /// One shelf, drawer or door. Renaming it, changing how cold it is, and removing it
 /// are all one tap away, because no two kitchens are laid out the same.
+/// A text field that saves when you finish, not on every letter.
+///
+/// Writing through to the store on each keystroke rewrites the whole family file and
+/// redraws the list underneath the keyboard. Names are typed rarely and read often,
+/// so the field keeps its own text while it is being edited and hands it over once —
+/// on return, or when the cursor moves elsewhere. A change made somewhere else still
+/// lands here, because the field re-reads the stored value whenever it is not the
+/// one being edited.
+struct InlineTextField: View {
+    let prompt: String
+    let value: String
+    let commit: (String) -> Void
+    @State private var draft: String = ""
+    @FocusState private var editing: Bool
+
+    var body: some View {
+        TextField(prompt, text: $draft)
+            .focused($editing)
+            .submitLabel(.done)
+            .onSubmit { commit(draft) }
+            .onChange(of: editing) { _, nowEditing in if !nowEditing { commit(draft) } }
+            .onChange(of: value) { _, latest in if !editing { draft = latest } }
+            .onAppear { draft = value }
+    }
+}
+
 struct LocationRow: View {
     @EnvironmentObject var store: FamilyStore
     let location: Location
@@ -925,13 +958,10 @@ struct LocationRow: View {
     }
     var body: some View {
         HStack {
-            TextField("Place name", text: Binding(
-                get: { store.state.locations.first { $0.id == location.id }?.name ?? "" },
-                set: { value in store.update { state in
-                    if let index = state.locations.firstIndex(where: { $0.id == location.id }) {
-                        state.locations[index].name = String(value.prefix(40))
-                    }
-                } }))
+            InlineTextField(prompt: "Place name",
+                            value: store.state.locations.first { $0.id == location.id }?.name ?? "") { name in
+                store.update { $0.renameLocation(location.id, to: name) }
+            }
             Spacer()
             Menu(zoneLabel) {
                 ForEach(zones, id: \.self) { zone in

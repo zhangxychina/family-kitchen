@@ -232,7 +232,10 @@ public extension FamilyState {
     /// pretend to know. Recording exactly enough closes the line without inventing
     /// food on any other shelf, and the family can correct the number on the spot.
     func suggestedScanQuantity(_ ingredient: String, at location: UUID?) -> Double {
-        let here = stock.first { $0.ingredient == ingredient && $0.location == location }?.quantity ?? 0
+        // Only a confirmed amount counts here, because only a confirmed amount was
+        // subtracted when the shortage was worked out. Adding an unconfirmed figure
+        // to a shortage that never knew about it would record food twice.
+        let here = stock.first { $0.ingredient == ingredient && $0.location == location && $0.confirmed }?.quantity ?? 0
         let shortage = shopping().first { $0.ingredient == ingredient }?.shortage ?? 0
         return here + shortage
     }

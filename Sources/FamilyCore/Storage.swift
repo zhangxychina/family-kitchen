@@ -131,7 +131,16 @@ public extension FamilyState {
         locations.filter { $0.applianceID == applianceID }
     }
     /// Places that belong to no appliance — a shelf in the garage, a fruit bowl.
-    var looseLocations: [Location] { locations.filter { $0.applianceID == nil } }
+    ///
+    /// A shelf pointing at an appliance that is no longer there counts as loose too.
+    /// It should not happen, but if it ever does the family must still be able to see
+    /// it and delete it, rather than it sitting in the file where no screen shows it.
+    var looseLocations: [Location] {
+        locations.filter { location in
+            guard let id = location.applianceID else { return true }
+            return !appliances.contains { $0.id == id }
+        }
+    }
 
     func applianceCount(of kind: ApplianceKind) -> Int {
         appliances.filter { $0.kind == kind }.count
@@ -215,9 +224,19 @@ public extension FamilyState {
         for index in stock.indices where stock[index].location == id { stock[index].location = nil }
     }
 
+    /// Renames an appliance. An emptied field falls back to the plain name for its
+    /// kind rather than leaving a nameless box in the list — the family can see what
+    /// happened and type over it.
     mutating func renameAppliance(_ id: UUID, to name: String) {
         guard let index = appliances.firstIndex(where: { $0.id == id }) else { return }
-        appliances[index].name = String(name.prefix(40))
+        let trimmed = name.trimmingCharacters(in: .whitespaces)
+        appliances[index].name = trimmed.isEmpty ? appliances[index].kind.defaultName : String(trimmed.prefix(40))
+    }
+    /// The same for a shelf: never nameless, because its name is how food is found.
+    mutating func renameLocation(_ id: UUID, to name: String) {
+        guard let index = locations.firstIndex(where: { $0.id == id }) else { return }
+        let trimmed = name.trimmingCharacters(in: .whitespaces)
+        locations[index].name = trimmed.isEmpty ? "Unnamed place" : String(trimmed.prefix(40))
     }
     mutating func setPlace(_ place: String, forAppliance id: UUID) {
         guard let index = appliances.firstIndex(where: { $0.id == id }) else { return }

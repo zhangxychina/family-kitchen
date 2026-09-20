@@ -699,6 +699,14 @@ public enum StateFile {
               state.stock.allSatisfy({ ingredientIDs.contains($0.ingredient) && $0.quantity.isFinite && $0.quantity >= 0 }),
               state.purchases.allSatisfy({ ingredientIDs.contains($0.ingredient) && $0.quantity.isFinite && $0.quantity > 0 }),
               state.meals.allSatisfy({ Catalog.recipe($0.recipe)?.breakfast == $0.breakfast }),
+              // A family's own dishes are checked on the same terms as everything
+              // else: every portion must name an ingredient this app knows and an
+              // amount it can do arithmetic with.
+              state.customRecipes.allSatisfy({ recipe in
+                  recipe.ingredients.allSatisfy {
+                      Catalog.knowsIngredient($0.ingredient) && $0.quantity.isFinite && $0.quantity >= 0
+                  }
+              }),
               state.photoFiles.allSatisfy({ !$0.contains("/") && !$0.contains("..") }),
               Set(state.stock.map(\.id)).count == state.stock.count,
               Set(state.locations.map(\.id)).count == state.locations.count,

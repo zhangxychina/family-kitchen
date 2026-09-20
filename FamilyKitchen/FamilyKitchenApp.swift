@@ -51,7 +51,9 @@ import ImageIO
             return false
         }
     }
-    func location(_ id: UUID?) -> String { state.locations.first { $0.id == id }?.name ?? "Location unconfirmed · 位置待确认" }
+    /// Where something is, in words worth reading: the appliance and the shelf, not
+    /// the shelf alone. With two fridges in the house, "Top shelf" answers nothing.
+    func location(_ id: UUID?) -> String { state.locationLabel(id) }
     func importPhoto(_ data: Data) async {
         guard !loadBlocked else { return }
         let name = UUID().uuidString + ".jpg"
