@@ -130,6 +130,8 @@ Tap **+** on the Recipes screen to add a dish, either by typing it in or by past
 
 Pasting a link is **the only time this app uses the internet**. It opens the page you gave it and reads the recipe data most recipe sites publish. What comes back is a draft: the name, the steps, the time and the ingredient lines. Ingredients the app recognises are matched for you; the rest stay as notes, shown with the recipe but deliberately left out of the shopping list and the nutrition estimate, which says so rather than undercounting.
 
+While you are typing, **Done · 完成** sits above the keyboard. The amounts use a number pad, which has no return key of its own, so without it there was no way to put the keyboard down and reach *Save*.
+
 Tell it how many adult portions those amounts serve and everything is rescaled to your family. Saved dishes then behave like any other: planned into weeks, added to the shopping list, counted in nutrition, and editable or deletable at any time.
 
 Imported text stays on your iPhone for your own kitchen. The wording of someone else's recipe belongs to them — the link is kept with the dish, and it is not for republishing.
@@ -211,7 +213,7 @@ swift scripts/make_icon.swift FamilyKitchen/Assets.xcassets/AppIcon.appiconset/i
 - Current scope: one active week at a time, on one device. No cloud sync, list export, store grouping, barcode scanning, custom recipes or custom ingredients. Spoken and typed commands cover stock, purchases and meal swaps only — not planning, approving, adding dishes or naming shelves. 56 dinners, 20 breakfasts, 79 bilingual ingredients with nutrition, allergen and seasonality tables.
 - Still on the list before selling: real food photography, cooking every recipe to verify the times, CloudKit family sharing, and App Store paperwork (privacy labels, policy URL, listing).
 - Core checks: **63 scenarios, ~4,700 assertions**, run without XCTest by `scripts/check_core.py`.
-- UI tests: **13 of 14 pass** on an iPhone 17 simulator (iOS 27). The failing one is `testAddingAFamilyDish` — the first recipe-step box on the add-a-dish sheet cannot be reached by the test's scrolling. The dish feature itself is covered by `testFamilyAddedDishesBehaveLikeAnyOther` in the core checks; it is the UI test that is wrong, and it is left failing rather than quietly deleted.
+- UI tests: **14 of 14 pass** on an iPhone 17 simulator (iOS 27), covering planning, the shopping list, adding a dish, adding a fridge, and the whole of saying and typing a change.
 - **Not yet accepted on a device.** The simulator now covers launch, layout, planning, the list, adding a fridge, and the whole of saying and typing a change. It cannot cover the camera, and it cannot cover speech: a simulator has no offline recogniser, so the UI tests hand the app a transcript instead of a spoken one. Whether Apple's recogniser actually hears "家里已经有胡萝卜了" correctly is the one thing still untested, and it needs a real iPhone.
 
 ## Food safety
@@ -348,6 +350,8 @@ Today、Week、Shopping 顶部的对话气泡，可以直接听中文或英文�
 
 粘贴链接是**本应用唯一一次联网**：它会打开你给的网页，读取大多数菜谱网站都会发布的结构化菜谱数据。返回的内容是草稿——菜名、步骤、时间和食材行。应用认识的食材会自动匹配，其余保留为备注，会随菜谱显示，但刻意不计入采购清单和营养估算，并明确标注出来。
 
+输入时键盘上方有 **Done · 完成**。用量用的是数字键盘，本身没有回车键，没有这个按钮就没法收起键盘去点*保存*。
+
 填写这些用量对应多少份成人量，其余会按你家的份数换算。保存后的菜品与内置菜品一样：可排入周计划、计入采购清单、计入营养估算，也可以随时编辑或删除。
 
 导入的文字只保存在这台 iPhone 上，供自家使用。别人菜谱的文字版权属于对方——链接会随菜品一起保留，请不要转发发布。
@@ -429,7 +433,7 @@ swift scripts/make_icon.swift FamilyKitchen/Assets.xcassets/AppIcon.appiconset/i
 - 当前范围：单设备、单个进行中的周计划。没有云同步、清单导出、按商店分组、条码扫描、自建菜谱与自建食材。语音与文字指令只涉及库存、采购与换菜，不涉及排菜单、确认餐次、添加菜品与命名隔层。共 56 套晚餐、20 套早餐、79 种双语食材，并配有营养、过敏原与时令数据。
 - 上架前仍待完成：真实菜品摄影、逐道实测烹饪时间、CloudKit 家庭共享，以及 App Store 材料（隐私标签、隐私政策链接、商店页面）。
 - 核心检查：**63 个场景、约 4700 条断言**，由 `scripts/check_core.py` 在不依赖 XCTest 的情况下运行。
-- 界面测试：在 iPhone 17 模拟器（iOS 27）上**14 个通过 13 个**。未通过的是 `testAddingAFamilyDish`——测试的滚动够不到"添加菜品"页上的第一个步骤输入框。该功能本身由核心检查中的 `testFamilyAddedDishesBehaveLikeAnyOther` 覆盖；错的是这条界面测试，因此保留其失败状态，而不是悄悄删掉。
+- 界面测试：在 iPhone 17 模拟器（iOS 27）上**14 条全部通过**，覆盖排菜单、采购清单、添加菜品、添加冰箱，以及“说一句/输入一句”的全过程。
 - **尚未在设备上完成验收。** 模拟器现已覆盖启动、布局、排菜单、采购清单、添加冰箱，以及"说一句/输入一句"的全过程；但覆盖不到相机，也覆盖不到语音识别本身：模拟器没有离线识别语言包，因此界面测试是把转写文本直接交给应用，而不是真的说出来。Apple 的识别能否把"家里已经有胡萝卜了"听对，是唯一仍未验证的一环，需要真机。
 
 ## 食品安全

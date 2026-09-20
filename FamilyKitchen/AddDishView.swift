@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// One ingredient line while a dish is being written: either matched to something the
 /// kitchen knows, or kept as plain text that the shopping list will not count.
@@ -65,7 +66,16 @@ struct AddDishView: View {
         }
         .navigationTitle(existing == nil ? "Add a dish" : "Edit dish")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } } }
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
+            // The amounts use a number pad, which has no return key, so without this
+            // there is no way to put the keyboard away and reach Save. The Chinese
+            // and multi-line boxes have the same problem: return adds a line there.
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("Done · 完成") { endEditing() }.accessibilityIdentifier("dismissKeyboard")
+            }
+        }
         .alert("Could not import", isPresented: $importFailed) {
             Button("OK", role: .cancel) {}
         } message: { Text(importMessage ?? "") }
@@ -177,17 +187,27 @@ struct AddDishView: View {
     @ViewBuilder private var stepsSection: some View {
         Section("Steps · 做法") {
             ForEach(stepsZh.indices, id: \.self) { index in
-                TextField("中文步骤 \(index + 1)", text: $stepsZh[index], axis: .vertical).lineLimit(1...6)
+                // Named, because a box identified only by the words printed in it
+                // stops being findable the moment somebody types over them.
+                TextField("中文步骤 \(index + 1)", text: $stepsZh[index], axis: .vertical)
+                    .lineLimit(1...6).accessibilityIdentifier("stepZh-\(index + 1)")
             }
             Button { stepsZh.append("") } label: { Label("Add a Chinese step", systemImage: "plus") }.font(.footnote)
             Divider()
             ForEach(stepsEn.indices, id: \.self) { index in
-                TextField("English step \(index + 1)", text: $stepsEn[index], axis: .vertical).lineLimit(1...6)
+                TextField("English step \(index + 1)", text: $stepsEn[index], axis: .vertical)
+                    .lineLimit(1...6).accessibilityIdentifier("stepEn-\(index + 1)")
             }
             Button { stepsEn.append("") } label: { Label("Add an English step", systemImage: "plus") }.font(.footnote)
             Text("One language is enough. Whichever you write is what everyone sees for this dish.")
                 .font(.caption).foregroundStyle(.secondary)
         }
+    }
+
+    /// Puts the keyboard away from wherever it is.
+    private func endEditing() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
+                                        to: nil, from: nil, for: nil)
     }
 
     // MARK: - Saving
