@@ -77,14 +77,22 @@ import ImageIO
 @main struct FamilyKitchenApp: App {
     @StateObject private var store = FamilyStore()
     var body: some Scene {
-        WindowGroup {
-            RootView().environmentObject(store).tint(Brand.green)
-                .preferredColorScheme(store.state.appearance == .system ? nil : (store.state.appearance == .night ? .dark : .light))
-        }
+        WindowGroup { RootView().environmentObject(store).tint(Brand.green) }
     }
 }
 struct RootView: View {
     @EnvironmentObject var store: FamilyStore
+    @Environment(\.scenePhase) private var scenePhase
+    /// Re-read every minute so the view turns over on the hour by itself, and again
+    /// whenever the app comes back to the foreground after being away all evening.
+    @State private var now = Date()
+    private let clock = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
+
+    /// nil hands the choice to iOS, which has its own sunrise-to-sunset switching.
+    private var scheme: ColorScheme? {
+        store.state.prefersNight(at: now).map { $0 ? .dark : .light }
+    }
+
     var body: some View {
         TabView(selection:$store.tab) {
             NavigationStack { TodayView() }.tabItem { Label("Today", systemImage:"sun.max") }.tag(0)
@@ -93,6 +101,10 @@ struct RootView: View {
             NavigationStack { ShoppingView() }.tabItem { Label("Shopping", systemImage:"basket") }.tag(3)
             NavigationStack { KitchenView() }.tabItem { Label("Kitchen", systemImage:"refrigerator") }.tag(4)
         }.safeAreaInset(edge:.top) { if let error = store.error { Text(error).font(.caption).foregroundStyle(.red).padding().background(Brand.card) } }
+        .preferredColorScheme(scheme)
+        .onReceive(clock) { now = $0 }
+        .onChange(of: scenePhase) { _, phase in if phase == .active { now = Date() } }
+        .animation(.easeInOut(duration: 0.35), value: scheme)
     }
 }
 struct RecipeArtwork: View {

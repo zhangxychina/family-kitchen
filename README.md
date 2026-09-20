@@ -44,7 +44,9 @@ The **Kitchen** tab is what you have at home, grouped by the shelf it actually s
 
 Name your kitchen in **Kitchen → ⚙︎ Settings** — *Zhang Kitchen*, *The Lee Family Table*, whatever you call it at home — and that name appears at the top of Today and on the week. The app is called Family Kitchen; the kitchen is yours.
 
-Settings is a short menu rather than one long form: **Family & portions**, **Allergies**, **Where food lives**, **Language & appearance** (day or night view, and recipes in 中文, English or both), and **About**. Each row shows what it is currently set to.
+Settings is a short menu rather than one long form: **Family & portions**, **Allergies**, **Where food lives**, **Language & appearance**, and **About**. Each row shows what it is currently set to.
+
+**Day and night.** By default the app matches your iPhone, so if iOS is set to Automatic it turns dark at sunset along with everything else. If your phone stays in Light mode, choose **By time** and pick the hours — 7pm to 7am by default — and the app switches itself. It changes on its own as the hour passes and whenever you reopen it, with no location needed: the app has no idea where you are, so it works off the clock rather than your real sunset. *Day* and *Night* pin it either way.
 
 ## Who's at the table
 
@@ -194,7 +196,9 @@ Today 页会显示这五步和你当前所在的位置，不需要记顺序。
 
 在 **Kitchen → ⚙︎ Settings** 里给厨房起个名字——张家厨房、李家餐桌，家里怎么叫就怎么写——这个名字会显示在 Today 和周计划顶部。应用叫 Family Kitchen，厨房是你们自己的。
 
-设置是一个简短的菜单，而不是一张长表单：**Family & portions**（家人与份量）、**Allergies**（过敏与忌口）、**Where food lives**（食物放在哪里）、**Language & appearance**（语言与显示：白天／夜间，以及菜谱用中文、英文或双语）和 **About**（关于）。每一行都会显示当前的设置值。
+设置是一个简短的菜单，而不是一张长表单：**Family & portions**（家人与份量）、**Allergies**（过敏与忌口）、**Where food lives**（食物放在哪里）、**Language & appearance**（语言与显示）和 **About**（关于）。每一行都会显示当前的设置值。
+
+**白天与夜间。** 默认跟随 iPhone：如果 iOS 设为"自动"，应用会和系统一起在日落时转为深色。如果手机一直是浅色模式，可以选择 **By time（按时间）** 并设定时段——默认晚上 7 点到早上 7 点——由应用自己切换。切换会随整点自动发生，重新打开应用时也会重新判断；全程不需要定位权限：应用并不知道你在哪里，因此按时钟而不是真实日落时间工作。*Day* 与 *Night* 则固定不变。
 
 ## 家里有谁
 

@@ -523,6 +523,50 @@ final class FamilyCoreTests: XCTestCase {
         XCTAssertNil(Catalog.recipe("family-test-dish"))
         XCTAssertEqual(Catalog.recipes.count,76)
     }
+    func testDayAndNightFollowTheClockAndThePhone() {
+        var s = FamilyState()
+        let calendar = Calendar(identifier:.gregorian)
+        func at(_ hour: Int) -> Date {
+            var c = DateComponents(); c.year = 2026; c.month = 6; c.day = 15; c.hour = hour
+            return calendar.date(from:c)!
+        }
+        // Matching the phone means the app expresses no preference at all.
+        XCTAssertEqual(s.appearance,.system)
+        XCTAssertNil(s.prefersNight(at:at(23),calendar:calendar))
+        XCTAssertNil(s.nextAppearanceChange(after:at(23),calendar:calendar))
+        // Fixed choices ignore the clock.
+        s.appearance = .night
+        XCTAssertEqual(s.prefersNight(at:at(9),calendar:calendar),true)
+        s.appearance = .day
+        XCTAssertEqual(s.prefersNight(at:at(23),calendar:calendar),false)
+        // By time: the default window crosses midnight, 19:00 to 07:00.
+        s.appearance = .automatic
+        XCTAssertEqual(s.nightStartHour,19)
+        XCTAssertEqual(s.nightEndHour,7)
+        for hour in [19,22,23,0,3,6] {
+            XCTAssertEqual(s.prefersNight(at:at(hour),calendar:calendar),true,"\(hour):00 should be night")
+        }
+        for hour in [7,8,12,17,18] {
+            XCTAssertEqual(s.prefersNight(at:at(hour),calendar:calendar),false,"\(hour):00 should be day")
+        }
+        // A window inside one day works too.
+        s.nightStartHour = 21; s.nightEndHour = 23
+        XCTAssertEqual(s.prefersNight(at:at(22),calendar:calendar),true)
+        XCTAssertEqual(s.prefersNight(at:at(23),calendar:calendar),false)
+        XCTAssertEqual(s.prefersNight(at:at(2),calendar:calendar),false)
+        // Equal hours mean no night window rather than an always-on one.
+        s.nightStartHour = 8; s.nightEndHour = 8
+        XCTAssertEqual(s.prefersNight(at:at(8),calendar:calendar),false)
+        XCTAssertNil(s.nextAppearanceChange(after:at(8),calendar:calendar))
+        // The app knows when it next needs to change, to the hour.
+        s.nightStartHour = 19; s.nightEndHour = 7
+        let eveningSwitch = s.nextAppearanceChange(after:at(15),calendar:calendar)!
+        XCTAssertEqual(calendar.component(.hour,from:eveningSwitch),19)
+        XCTAssertEqual(calendar.component(.day,from:eveningSwitch),15)
+        let morningSwitch = s.nextAppearanceChange(after:at(23),calendar:calendar)!
+        XCTAssertEqual(calendar.component(.hour,from:morningSwitch),7)
+        XCTAssertEqual(calendar.component(.day,from:morningSwitch),16,"after midnight the change is tomorrow morning")
+    }
     func testNoConsumptionWhenPlanningOrSkippingDeduction() {
         var state = FamilyState(); state.stock = [Stock(ingredient:"rice",quantity:2000,confirmed:true)]
         state.plan(start:Date()); XCTAssertEqual(state.stock[0].quantity,2000)

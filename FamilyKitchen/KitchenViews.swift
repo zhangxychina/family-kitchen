@@ -631,6 +631,12 @@ struct StorageSettingsView: View {
 
 struct DisplaySettingsView: View {
     @EnvironmentObject var store: FamilyStore
+    /// Hours shown the way the reader's own clock shows them, 24h or am/pm.
+    static func hourLabel(_ hour: Int) -> String {
+        var components = DateComponents(); components.hour = hour; components.minute = 0
+        let date = Calendar.current.date(from: components) ?? Date()
+        return date.formatted(.dateTime.hour().minute())
+    }
     var body: some View {
         List {
             Section("Recipe language · 菜谱语言") {
@@ -648,8 +654,33 @@ struct DisplaySettingsView: View {
                     set: { v in store.update { $0.appearance = v } })) {
                     ForEach(Appearance.allCases, id: \.self) { Text("\($0.en) · \($0.zh)").tag($0) }
                 }.pickerStyle(.segmented)
-                Text("Night view keeps the same colours, stepped for a dark screen — easier on the eyes when you are cooking late or checking tomorrow's menu in bed.")
-                    .font(.caption).foregroundStyle(.secondary)
+                Text(store.state.appearance.detail).font(.caption).foregroundStyle(.secondary)
+
+                if store.state.appearance == .automatic {
+                    Picker("Night from", selection: Binding(
+                        get: { store.state.nightStartHour },
+                        set: { h in store.update { $0.nightStartHour = h } })) {
+                        ForEach(0..<24, id: \.self) { Text(Self.hourLabel($0)).tag($0) }
+                    }
+                    Picker("Back to day at", selection: Binding(
+                        get: { store.state.nightEndHour },
+                        set: { h in store.update { $0.nightEndHour = h } })) {
+                        ForEach(0..<24, id: \.self) { Text(Self.hourLabel($0)).tag($0) }
+                    }
+                    Label(store.state.isNightHour() ? "Night view right now" : "Day view right now",
+                          systemImage: store.state.isNightHour() ? "moon.stars" : "sun.max")
+                        .font(.footnote).foregroundStyle(.secondary)
+                    if store.state.nightStartHour == store.state.nightEndHour {
+                        Text("Both times are the same, so it stays on the day view. Choose different hours.")
+                            .font(.caption).foregroundStyle(Brand.clay)
+                    }
+                }
+                InfoNote(title: "Which setting does what · 各项含义", lines: [
+                    "Match phone follows iOS — including the Automatic setting in iOS Display & Brightness, which switches at sunrise and sunset.",
+                    "By time switches on the hours you pick here, even when the phone stays in Light mode. The app has no location, so it works off the clock rather than your real sunset.",
+                    "Either way the change happens on its own: the view turns over on the hour and again whenever you reopen the app.",
+                    "Night view keeps the same colours, stepped for a dark screen — easier on the eyes when cooking late or checking tomorrow's menu in bed."
+                ])
             }
         }.navigationTitle("Language & appearance").navigationBarTitleDisplayMode(.inline)
     }

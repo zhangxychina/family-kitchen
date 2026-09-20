@@ -256,12 +256,17 @@ public enum RecipeLanguage: String, Codable, CaseIterable, Sendable {
     public var showsEnglish: Bool { self != .chinese }
 }
 
-/// Day, night, or whatever the phone is doing.
+/// Day, night, the clock, or whatever the phone is doing.
 public enum Appearance: String, Codable, CaseIterable, Sendable {
-    case system, day, night
+    /// Follow iOS, including its own sunrise/sunset Automatic setting.
+    case system
+    /// Switch on this app's own schedule, for a phone left in Light mode.
+    case automatic
+    case day, night
     public var en: String {
         switch self {
         case .system: return "Match phone"
+        case .automatic: return "By time"
         case .day: return "Day"
         case .night: return "Night"
         }
@@ -269,8 +274,17 @@ public enum Appearance: String, Codable, CaseIterable, Sendable {
     public var zh: String {
         switch self {
         case .system: return "跟随系统"
+        case .automatic: return "按时间"
         case .day: return "白天"
         case .night: return "夜间"
+        }
+    }
+    public var detail: String {
+        switch self {
+        case .system: return "Follows your iPhone, including its own sunrise-to-sunset switching."
+        case .automatic: return "Switches on the hours you choose, whatever the phone is set to."
+        case .day: return "Always the light view."
+        case .night: return "Always the dark view."
         }
     }
 }
@@ -302,6 +316,10 @@ public struct FamilyState: Codable, Sendable {
     public var excludedAllergens: Set<Allergen> = []
     /// Day or night view.
     public var appearance: Appearance = .system
+    /// When the app switches itself over, for the "By time" setting. Hours of the
+    /// local clock; the app has no location, so it cannot know your real sunset.
+    public var nightStartHour: Int = 19
+    public var nightEndHour: Int = 7
     /// Which language recipes are shown in.
     public var recipeLanguage: RecipeLanguage = .both
     public init() {}
@@ -309,7 +327,7 @@ public struct FamilyState: Codable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case version, people, locations, stock, meals, purchases, photoFiles, preferred
         case members, history, excludedAllergens, appearance, recipeLanguage
-        case kitchenName, guests, customRecipes
+        case kitchenName, guests, customRecipes, nightStartHour, nightEndHour
     }
     /// Every field is decoded leniently, so a file written by an older version of the
     /// app opens instead of being discarded. Fields added later simply take their
@@ -333,6 +351,8 @@ public struct FamilyState: Codable, Sendable {
         history = try container.decodeIfPresent([MealRecord].self, forKey: .history) ?? []
         excludedAllergens = try container.decodeIfPresent(Set<Allergen>.self, forKey: .excludedAllergens) ?? []
         appearance = try container.decodeIfPresent(Appearance.self, forKey: .appearance) ?? .system
+        nightStartHour = try container.decodeIfPresent(Int.self, forKey: .nightStartHour) ?? 19
+        nightEndHour = try container.decodeIfPresent(Int.self, forKey: .nightEndHour) ?? 7
         recipeLanguage = try container.decodeIfPresent(RecipeLanguage.self, forKey: .recipeLanguage) ?? .both
         kitchenName = try container.decodeIfPresent(String.self, forKey: .kitchenName) ?? ""
         guests = try container.decodeIfPresent(Int.self, forKey: .guests) ?? 0
@@ -484,6 +504,38 @@ public struct FamilyState: Codable, Sendable {
             stock[index].location = nil
         }
     }
+    /// Whether the night hours cover this moment. The window usually crosses
+    /// midnight — 19:00 to 07:00 — which is why this is not a simple comparison.
+    public func isNightHour(at date: Date = Date(), calendar: Calendar = .current) -> Bool {
+        let hour = calendar.component(.hour, from: date)
+        let start = min(23, max(0, nightStartHour))
+        let end = min(23, max(0, nightEndHour))
+        if start == end { return false }
+        return start < end ? (hour >= start && hour < end) : (hour >= start || hour < end)
+    }
+
+    /// Which view to show: true for night, false for day, and nil to hand the
+    /// decision to the phone.
+    public func prefersNight(at date: Date = Date(), calendar: Calendar = .current) -> Bool? {
+        switch appearance {
+        case .system: return nil
+        case .day: return false
+        case .night: return true
+        case .automatic: return isNightHour(at: date, calendar: calendar)
+        }
+    }
+
+    /// The next moment the automatic setting would change the view, so the app can
+    /// wake up exactly then instead of polling.
+    public func nextAppearanceChange(after date: Date = Date(), calendar: Calendar = .current) -> Date? {
+        guard appearance == .automatic, nightStartHour != nightEndHour else { return nil }
+        let target = isNightHour(at: date, calendar: calendar) ? nightEndHour : nightStartHour
+        var components = calendar.dateComponents([.year, .month, .day], from: date)
+        components.hour = min(23, max(0, target)); components.minute = 0; components.second = 0
+        guard let candidate = calendar.date(from: components) else { return nil }
+        return candidate > date ? candidate : calendar.date(byAdding: .day, value: 1, to: candidate)
+    }
+
     /// Monday of the planned week, or nil when nothing is planned yet.
     public var planStart: Date? { meals.map(\.date).min() }
     public var planEnd: Date? { meals.map(\.date).max() }
