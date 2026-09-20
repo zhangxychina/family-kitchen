@@ -1,4 +1,5 @@
 import XCTest
+import UIKit
 
 final class FamilyKitchenUITests: XCTestCase {
     var app: XCUIApplication!
@@ -396,6 +397,56 @@ final class FamilyKitchenUITests: XCTestCase {
         field.tap(); field.typeText("hello")
         app.buttons["kitchenChatSend"].tap()
         XCTAssertTrue(app.staticTexts["“hello”"].waitForExistence(timeout: 10))
+    }
+
+    // MARK: - Day and night
+
+    /// How light the page behind the content is, 0 to 1.
+    ///
+    /// Sampled from the left margin a third of the way down, which is page background
+    /// in every screen of the app — away from the cards, the artwork and the bars.
+    private func pageBrightness() -> CGFloat {
+        let image = XCUIScreen.main.screenshot().image
+        guard let full = image.cgImage else { return 1 }
+        let patch = CGRect(x: CGFloat(full.width) * 0.03, y: CGFloat(full.height) * 0.30,
+                           width: 12, height: 12)
+        guard let crop = full.cropping(to: patch) else { return 1 }
+        var pixel = [UInt8](repeating: 0, count: 4)
+        guard let context = CGContext(data: &pixel, width: 1, height: 1, bitsPerComponent: 8,
+                                      bytesPerRow: 4, space: CGColorSpaceCreateDeviceRGB(),
+                                      bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
+        else { return 1 }
+        context.draw(crop, in: CGRect(x: 0, y: 0, width: 1, height: 1))
+        return (CGFloat(pixel[0]) + CGFloat(pixel[1]) + CGFloat(pixel[2])) / (3 * 255)
+    }
+
+    func testDayAndNightFollowTheSetting() {
+        openSettings("Language & appearance")
+        let options = app.segmentedControls.buttons
+        XCTAssertTrue(options["Night · 夜间"].waitForExistence(timeout: 15))
+
+        options["Night · 夜间"].tap()
+        XCTAssertLessThan(pageBrightness(), 0.3, "Night should darken the page")
+
+        options["Day · 白天"].tap()
+        XCTAssertGreaterThan(pageBrightness(), 0.7, "Day should light it again")
+
+        // By time, with the default 19:00–07:00 window. Whichever side of it the test
+        // is running on, the app must agree with its own reading of the clock — which
+        // it prints on this very screen.
+        options["By time · 按时间"].tap()
+        let night = app.staticTexts["Night view right now"].exists
+        XCTAssertTrue(night || app.staticTexts["Day view right now"].exists,
+                      "By time should say which view it is showing")
+        if night {
+            XCTAssertLessThan(pageBrightness(), 0.3, "it says night, so it should look like night")
+        } else {
+            XCTAssertGreaterThan(pageBrightness(), 0.7, "it says day, so it should look like day")
+        }
+
+        // Match phone expresses no preference, and the simulator is in light mode.
+        options["Match phone · 跟随系统"].tap()
+        XCTAssertGreaterThan(pageBrightness(), 0.7, "matching a light phone means the light view")
     }
 
     func testRecipeScrollingPerformance() {

@@ -8,6 +8,13 @@ import ImageIO
     @Published var error: String?
     /// Selected tab, so one screen can send the family to the next step.
     @Published var tab: Int = 0
+    /// Whether to show the night view right now, or nil to let iOS decide.
+    ///
+    /// This lives here rather than in the view because the switching has to be driven
+    /// by a timer, and a timer owned by a `View` is rebuilt — and so restarted — every
+    /// time anything republishes. A store is made once and kept.
+    @Published private(set) var prefersNight: Bool?
+    private var appearanceTimer: Timer?
     private var loadBlocked = false
     let directory: URL
     let file: URL
@@ -37,12 +44,41 @@ import ImageIO
                     : "Saved data could not be read. Original file is preserved. Restart before making changes or restore your backup."
             }
         }
+        refreshAppearance()
+        // A phone that was asleep at 7am, or whose clock moved, gets the same answer
+        // as one that was awake for it.
+        NotificationCenter.default.addObserver(
+            forName: UIApplication.significantTimeChangeNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in self?.refreshAppearance() }
+        }
+    }
+
+    /// Works out which view to show, and wakes up exactly when it next changes.
+    ///
+    /// The old version asked the clock every sixty seconds. It never got there: the
+    /// timer was a property of the root view, so every tab tap and every saved change
+    /// rebuilt the view, replaced the timer, and started the minute again. "By time"
+    /// therefore only ever switched on launch. This schedules the one moment that
+    /// matters — `nextAppearanceChange` — which is an absolute time, so rescheduling
+    /// it cannot push it away.
+    func refreshAppearance() {
+        prefersNight = state.prefersNight()
+        appearanceTimer?.invalidate()
+        appearanceTimer = nil
+        guard let next = state.nextAppearanceChange() else { return }
+        appearanceTimer = Timer.scheduledTimer(
+            withTimeInterval: max(1, next.timeIntervalSinceNow), repeats: false
+        ) { [weak self] _ in
+            Task { @MainActor in self?.refreshAppearance() }
+        }
     }
     @discardableResult func update(_ action: (inout FamilyState) -> Void) -> Bool {
         guard !loadBlocked else { return false }
         var next = state; action(&next)
         do {
             try StateFile.save(next, to: file); state = next; error = nil
+            refreshAppearance()
             return true
         } catch {
             // A dish that could not be saved must not linger in the catalogue.
@@ -85,14 +121,10 @@ import ImageIO
 struct RootView: View {
     @EnvironmentObject var store: FamilyStore
     @Environment(\.scenePhase) private var scenePhase
-    /// Re-read every minute so the view turns over on the hour by itself, and again
-    /// whenever the app comes back to the foreground after being away all evening.
-    @State private var now = Date()
-    private let clock = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
 
     /// nil hands the choice to iOS, which has its own sunrise-to-sunset switching.
     private var scheme: ColorScheme? {
-        store.state.prefersNight(at: now).map { $0 ? .dark : .light }
+        store.prefersNight.map { $0 ? .dark : .light }
     }
 
     var body: some View {
@@ -104,8 +136,9 @@ struct RootView: View {
             NavigationStack { KitchenView() }.tabItem { Label("Kitchen", systemImage:"refrigerator") }.tag(4)
         }.safeAreaInset(edge:.top) { if let error = store.error { Text(error).font(.caption).foregroundStyle(.red).padding().background(Brand.card) } }
         .preferredColorScheme(scheme)
-        .onReceive(clock) { now = $0 }
-        .onChange(of: scenePhase) { _, phase in if phase == .active { now = Date() } }
+        // Timers do not fire while the app is in the background, so the evening it
+        // spent in a pocket is caught up with here.
+        .onChange(of: scenePhase) { _, phase in if phase == .active { store.refreshAppearance() } }
         .animation(.easeInOut(duration: 0.35), value: scheme)
     }
 }

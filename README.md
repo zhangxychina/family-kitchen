@@ -213,7 +213,7 @@ swift scripts/make_icon.swift FamilyKitchen/Assets.xcassets/AppIcon.appiconset/i
 - Current scope: one active week at a time, on one device. No cloud sync, list export, store grouping, barcode scanning, custom recipes or custom ingredients. Spoken and typed commands cover stock, purchases and meal swaps only — not planning, approving, adding dishes or naming shelves. 56 dinners, 20 breakfasts, 79 bilingual ingredients with nutrition, allergen and seasonality tables.
 - Still on the list before selling: real food photography, cooking every recipe to verify the times, CloudKit family sharing, and App Store paperwork (privacy labels, policy URL, listing).
 - Core checks: **63 scenarios, ~4,700 assertions**, run without XCTest by `scripts/check_core.py`.
-- UI tests: **14 of 14 pass** on an iPhone 17 simulator (iOS 27), covering planning, the shopping list, adding a dish, adding a fridge, and the whole of saying and typing a change.
+- UI tests: **15 of 15 pass** on an iPhone 17 simulator (iOS 27), covering planning, the shopping list, adding a dish, adding a fridge, day and night, and the whole of saying and typing a change. One of them (`testTheOtherEarIsOneTapAway`) hit a test-runner crash-and-restart once and passed on the retry and in isolation; it has not been reproduced.
 - **Not yet accepted on a device.** The simulator now covers launch, layout, planning, the list, adding a fridge, and the whole of saying and typing a change. It cannot cover the camera, and it cannot cover speech: a simulator has no offline recogniser, so the UI tests hand the app a transcript instead of a spoken one. Whether Apple's recogniser actually hears "家里已经有胡萝卜了" correctly is the one thing still untested, and it needs a real iPhone.
 
 ## Food safety
@@ -433,7 +433,7 @@ swift scripts/make_icon.swift FamilyKitchen/Assets.xcassets/AppIcon.appiconset/i
 - 当前范围：单设备、单个进行中的周计划。没有云同步、清单导出、按商店分组、条码扫描、自建菜谱与自建食材。语音与文字指令只涉及库存、采购与换菜，不涉及排菜单、确认餐次、添加菜品与命名隔层。共 56 套晚餐、20 套早餐、79 种双语食材，并配有营养、过敏原与时令数据。
 - 上架前仍待完成：真实菜品摄影、逐道实测烹饪时间、CloudKit 家庭共享，以及 App Store 材料（隐私标签、隐私政策链接、商店页面）。
 - 核心检查：**63 个场景、约 4700 条断言**，由 `scripts/check_core.py` 在不依赖 XCTest 的情况下运行。
-- 界面测试：在 iPhone 17 模拟器（iOS 27）上**14 条全部通过**，覆盖排菜单、采购清单、添加菜品、添加冰箱，以及“说一句/输入一句”的全过程。
+- 界面测试：在 iPhone 17 模拟器（iOS 27）上**15 条全部通过**，覆盖排菜单、采购清单、添加菜品、添加冰箱、白天与夜间，以及“说一句/输入一句”的全过程。其中 `testTheOtherEarIsOneTapAway` 曾出现过一次测试进程崩溃重启，重试与单独运行均通过，未能复现。
 - **尚未在设备上完成验收。** 模拟器现已覆盖启动、布局、排菜单、采购清单、添加冰箱，以及"说一句/输入一句"的全过程；但覆盖不到相机，也覆盖不到语音识别本身：模拟器没有离线识别语言包，因此界面测试是把转写文本直接交给应用，而不是真的说出来。Apple 的识别能否把"家里已经有胡萝卜了"听对，是唯一仍未验证的一环，需要真机。
 
 ## 食品安全
