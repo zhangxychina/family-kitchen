@@ -23,7 +23,7 @@ struct ShoppingView: View {
                     }
                     NavigationLink { PutAwayView() } label: { Label("Put away · \(store.state.purchases.filter{!$0.stored}.count) waiting",systemImage:"shippingbox") }
                     InfoNote(title:"How these amounts are worked out · 数量怎么来的",lines:[
-                        "Every meal on the menu is scaled to \(store.state.people) people, then the same ingredient is added up across the week.",
+                        "Every meal on the menu is scaled to \(store.state.servings.formatted(.number.precision(.fractionLength(0...2)))) adult portions (\(store.state.servingsExplanation)), then the same ingredient is added up across the week.",
                         "Only pantry amounts you have confirmed are subtracted — a photo alone never counts as stock.",
                         "Buy the next suitable package size; the figure here is what the recipes ask for, not a shelf size."
                     ])
@@ -36,15 +36,7 @@ struct ShoppingView: View {
             ForEach(categories,id:\.self) { category in
                 Section(category) {
                     ForEach(lines.filter{ Catalog.ingredient($0.ingredient).category == category }) { line in
-                        let ingredient = Catalog.ingredient(line.ingredient)
-                        HStack(alignment:.top) {
-                            Button { store.update { $0.buy(line.ingredient) } } label: { Image(systemName:line.shortage > 0 ? "circle" : "checkmark.circle.fill").font(.title2).padding(.vertical,6) }.buttonStyle(.borderless).disabled(line.shortage <= 0).accessibilityLabel("Mark \(ingredient.en) purchased")
-                            VStack(alignment:.leading,spacing:5) {
-                                Text(ingredient.name).font(.headline)
-                                Text(line.shortage > 0 ? "Buy \(quantityText(line.shortage,unit:ingredient.unit))" : "Covered ✓").foregroundStyle(line.shortage > 0 ? Color.primary : Color.secondary)
-                                Text("Need \(quantityText(line.required,unit:ingredient.unit)) · pantry \(quantityText(line.stock,unit:ingredient.unit)) · bought \(quantityText(line.purchased,unit:ingredient.unit))").font(.caption).foregroundStyle(.secondary)
-                            }
-                        }
+                        ShoppingRow(line: line)
                     }
                 }
             }
@@ -58,6 +50,42 @@ struct ShoppingView: View {
         }.navigationTitle("Shopping")
     }
 }
+/// One line of the shopping list. Ticking it off records the purchase; tapping again
+/// puts it back, for as long as it has not been put away.
+struct ShoppingRow: View {
+    @EnvironmentObject var store: FamilyStore
+    let line: ShoppingLine
+    private var ingredient: Ingredient { Catalog.ingredient(line.ingredient) }
+    private var undoable: Bool { store.state.canUnbuy(line.ingredient) }
+    private var bought: Bool { line.shortage <= 0 }
+    private var statusText: String {
+        if !bought { return "Buy \(quantityText(line.shortage, unit: ingredient.unit))" }
+        return undoable ? "In the basket · tap to undo" : "Covered by the pantry ✓"
+    }
+    var body: some View {
+        HStack(alignment: .top) {
+            Button {
+                store.update { state in
+                    if bought { state.unbuy(line.ingredient) } else { state.buy(line.ingredient) }
+                }
+            } label: {
+                Image(systemName: bought ? "checkmark.circle.fill" : "circle")
+                    .font(.title2).padding(.vertical, 6)
+                    .foregroundStyle(bought ? Brand.protein : Color.secondary)
+            }
+            .buttonStyle(.borderless)
+            .disabled(bought && !undoable)
+            .accessibilityLabel(bought ? "Put \(ingredient.en) back on the list" : "Mark \(ingredient.en) purchased")
+            VStack(alignment: .leading, spacing: 5) {
+                Text(ingredient.name).font(.headline)
+                Text(statusText).foregroundStyle(bought ? Color.secondary : Color.primary)
+                Text("Need \(quantityText(line.required, unit: ingredient.unit)) · pantry \(quantityText(line.stock, unit: ingredient.unit)) · bought \(quantityText(line.purchased, unit: ingredient.unit))")
+                    .font(.caption).foregroundStyle(.secondary)
+            }
+        }
+    }
+}
+
 struct PutAwayView: View {
     @EnvironmentObject var store: FamilyStore
     var body: some View {
@@ -191,79 +219,232 @@ struct SettingsView: View {
     @EnvironmentObject var store: FamilyStore
     @State private var newMember = ""
     @State private var newMemberIsChild = true
+    @State private var newMemberAge = 8
     @State private var name = ""
     @State private var zone = "Refrigerated"
     let zones = ["Refrigerated","Frozen","Pantry"]
+
     var body: some View {
         Form {
-            Section("Who eats here · 家里有谁") {
-                ForEach(store.state.members) { member in
-                    HStack {
-                        TextField("Name",text:Binding(
-                            get:{ store.state.members.first { $0.id == member.id }?.name ?? "" },
-                            set:{ value in store.update { s in if let i = s.members.firstIndex(where:{ $0.id == member.id }) { s.members[i].name = value } } }))
-                        Picker("",selection:Binding(
-                            get:{ store.state.members.first { $0.id == member.id }?.isChild ?? true },
-                            set:{ value in store.update { s in if let i = s.members.firstIndex(where:{ $0.id == member.id }) { s.members[i].isChild = value } } })) {
-                            Text("Child").tag(true); Text("Adult").tag(false)
-                        }.pickerStyle(.segmented).frame(width:150)
-                    }
-                }.onDelete { offsets in store.update { s in s.members.remove(atOffsets:offsets); s.people = max(1,s.members.isEmpty ? s.people : s.members.count) } }
-                HStack {
-                    TextField("Add a name",text:$newMember)
-                    Button("Add") {
-                        let name = newMember.trimmingCharacters(in:.whitespaces)
-                        store.update { s in s.members.append(FamilyMember(name:name,isChild:newMemberIsChild)); s.people = s.members.count }
-                        newMember = ""
-                    }.disabled(newMember.trimmingCharacters(in:.whitespaces).isEmpty)
-                }
-                Picker("New person is",selection:$newMemberIsChild) { Text("A child").tag(true); Text("An adult").tag(false) }
-                Text("Children get a vote on each meal. Add as many or as few people as your family has.").font(.caption).foregroundStyle(.secondary)
-            }
-            Section("Portions · 份量") {
-                Stepper("\(store.state.people) people",value:Binding(get:{store.state.people},set:{ n in store.update { $0.people = n; for i in $0.meals.indices where !$0.meals[i].cooked { $0.meals[i].approved = false } } }),in:1...12)
-                Text("Follows your family list, and you can raise it for guests. Amounts scale immediately. Above six people, allow more preparation and batch-cooking time.").font(.caption).foregroundStyle(.secondary)
-            }
-            Section("Allergies & foods to avoid · 过敏与忌口") {
-                ForEach(Allergen.allCases,id:\.self) { allergen in
-                    Toggle(allergen.name,isOn:Binding(
-                        get:{ store.state.excludedAllergens.contains(allergen) },
-                        set:{ on in store.update { s in
-                            if on { s.excludedAllergens.insert(allergen) } else { s.excludedAllergens.remove(allergen) }
-                        } }))
-                }
-                InfoNote(title:"What excluding does — and does not do · 排除的含义",lines:[
-                    "Excluded allergens are never recommended and never offered as a swap.",
-                    "A meal you choose yourself is still allowed, but it is clearly flagged.",
-                    "This matches ingredients, not labels. Brands, sauces and shared equipment cause cross-contact that no app can see — a family managing a real allergy still reads every package.",
-                    "Ordinary soy sauce contains wheat, and most dried soba is cut with wheat flour; both are marked accordingly."
-                ])
-            }
-            Section("Your real storage locations") {
-                Text("These are your labels, not a map of your fridge. You can use Fridge shelf 1/2/3, Produce drawer, Yogurt zone, Door, Freezer or Pantry. Set the correct temperature zone.").font(.caption)
-                ForEach(store.state.locations) { location in
-                    VStack {
-                        TextField("Location name",text:Binding(get:{store.state.locations.first{$0.id == location.id}?.name ?? ""},set:{ v in store.update { s in if let i = s.locations.firstIndex(where:{$0.id == location.id}) { s.locations[i].name = v } } }))
-                        Text(location.zone).font(.caption).foregroundStyle(.secondary)
-                    }
-                }.onDelete { offsets in store.update { s in let deleted = offsets.map { s.locations[$0].id }; s.locations.remove(atOffsets:offsets); for i in s.stock.indices where deleted.contains(s.stock[i].location ?? UUID()) { s.stock[i].location = nil } } }
-                TextField("New location name",text:$name)
-                Picker("Temperature zone",selection:$zone) { ForEach(zones,id:\.self) { Text($0).tag($0) } }
-                Button("Add location") { store.update { $0.locations.append(Location(name:name.trimmingCharacters(in:.whitespaces),zone:zone)) }; name = "" }.disabled(name.trimmingCharacters(in:.whitespaces).isEmpty)
-            }
-            Section("About this first edition") {
-                LabeledContent("Version",value:"\(Brand.appName) · \(Brand.appNameZh) \(Brand.version)")
-                InfoNote(title:"What this edition is · 这一版是什么",lines:[
-                    "Everything lives on this iPhone: no account, no cloud sync, no photo uploads.",
-                    "Parent and child roles are an agreement on a shared device, not password-protected accounts.",
-                    "56 dinners and 20 breakfasts. Children's ages and breakfast preferences have not been assumed.",
-                    "Recipe pictures are AI-generated illustrations made for this app, not photographs of tested cooking.",
-                    "Cooking times and nutrition figures are estimates, not kitchen-tested or laboratory-measured."
-                ])
-            }
+            kitchenNameSection
+            familySection
+            portionsSection
+            allergenSection
+            storageSection
+            languageSection
+            appearanceSection
+            aboutSection
         }.navigationTitle("Family & storage")
     }
+
+    /// Whose kitchen this is. The app takes this name everywhere.
+    @ViewBuilder private var kitchenNameSection: some View {
+        Section("Our kitchen · 我们的厨房") {
+            TextField("Name your kitchen, e.g. Zhang Kitchen",text:Binding(
+                get:{ store.state.kitchenName },
+                set:{ v in store.update { $0.kitchenName = String(v.prefix(40)) } }))
+            Text("Shown at the top of Today and on the week. Leave it empty to just say \(Brand.appName).").font(.caption).foregroundStyle(.secondary)
+        }
+    }
+
+    @ViewBuilder private var familySection: some View {
+        Section("Who eats here · 家里有谁") {
+            ForEach(store.state.members) { member in FamilyMemberRow(member: member) }
+                .onDelete { offsets in store.update { $0.members.remove(atOffsets:offsets) } }
+            VStack(alignment:.leading,spacing:8) {
+                TextField("Add a name",text:$newMember)
+                Picker("They are",selection:$newMemberIsChild) { Text("A child").tag(true); Text("An adult").tag(false) }
+                    .pickerStyle(.segmented)
+                if newMemberIsChild {
+                    Stepper("Age \(newMemberAge)",value:$newMemberAge,in:0...17)
+                }
+                Button {
+                    let trimmed = newMember.trimmingCharacters(in:.whitespaces)
+                    store.update { $0.members.append(FamilyMember(name:trimmed,isChild:newMemberIsChild,age:newMemberIsChild ? newMemberAge : nil)) }
+                    newMember = ""
+                } label: { Label("Add to the family",systemImage:"person.badge.plus") }
+                .disabled(newMember.trimmingCharacters(in:.whitespaces).isEmpty)
+            }
+            Text("Children get a vote on every meal, and their age sets how much food is cooked for them.").font(.caption).foregroundStyle(.secondary)
+        }
+    }
+
+    /// What all of that adds up to at the stove.
+    @ViewBuilder private var portionsSection: some View {
+        Section("Portions · 份量") {
+            LabeledContent("Cooking for") {
+                Text("\(store.state.servings.formatted(.number.precision(.fractionLength(0...2)))) adult portions")
+                    .font(.headline)
+            }
+            Text(store.state.servingsExplanation).font(.caption).foregroundStyle(.secondary)
+            Stepper("Guests this week: \(store.state.guests)",value:Binding(
+                get:{store.state.guests},
+                set:{ n in store.update { $0.guests = n } }),in:0...8)
+            if store.state.members.isEmpty {
+                Stepper("\(store.state.people) people",value:Binding(
+                    get:{store.state.people},
+                    set:{ n in store.update { $0.people = n } }),in:1...12)
+                Text("Add your family above and portions will follow each person instead of a flat headcount.").font(.caption).foregroundStyle(.secondary)
+            }
+            InfoNote(title:"How portions are worked out · 份量怎么算",lines:[
+                "Recipes are written for five adult portions. Everything is scaled from that.",
+                "An adult counts as one portion. A child counts by age: about a quarter under 2, 0.4 at 2–3, 0.65 at 4–8, 0.85 at 9–13, and a full portion from 14.",
+                "These are household planning figures, not nutrition requirements. Tap anyone above to set their own amount if they eat more or less.",
+                "The shopping list follows this number directly, so a family with young children buys less than a family of five adults."
+            ])
+        }
+    }
+
+    @ViewBuilder private var allergenSection: some View {
+        Section("Allergies & foods to avoid · 过敏与忌口") {
+            ForEach(Allergen.allCases,id:\.self) { allergen in
+                Toggle(allergen.name,isOn:Binding(
+                    get:{ store.state.excludedAllergens.contains(allergen) },
+                    set:{ on in store.update { s in
+                        if on { s.excludedAllergens.insert(allergen) } else { s.excludedAllergens.remove(allergen) }
+                    } }))
+            }
+            InfoNote(title:"What excluding does — and does not do · 排除的含义",lines:[
+                "Excluded allergens are never recommended and never offered as a swap.",
+                "A meal you choose yourself is still allowed, but it is clearly flagged.",
+                "This matches ingredients, not labels. Brands, sauces and shared equipment cause cross-contact that no app can see — a family managing a real allergy still reads every package.",
+                "Ordinary soy sauce contains wheat, and most dried soba is cut with wheat flour; both are marked accordingly."
+            ])
+        }
+    }
+
+    /// Fridges, freezers and cupboards, each with its own shelves.
+    @ViewBuilder private var storageSection: some View {
+        Section("Where food lives · 食物放在哪里") {
+            ForEach(store.state.appliances,id:\.self) { appliance in
+                DisclosureGroup {
+                    ForEach(store.state.compartments(of: appliance)) { location in
+                        LocationRow(location: location)
+                    }
+                    Button(role:.destructive) { store.update { $0.removeAppliance(appliance) } } label: {
+                        Label("Remove \(appliance)",systemImage:"trash")
+                    }.font(.footnote)
+                } label: {
+                    HStack {
+                        Text(appliance).font(.headline)
+                        Spacer()
+                        Text("\(store.state.compartments(of: appliance).count) places").font(.caption).foregroundStyle(.secondary)
+                    }
+                }
+            }
+            ForEach(store.state.looseLocations) { location in LocationRow(location: location) }
+            HStack(spacing:10) {
+                ForEach(ApplianceKind.allCases,id:\.self) { kind in
+                    Button {
+                        store.update { $0.addAppliance(kind) }
+                    } label: {
+                        Label("\(kind.en)",systemImage:kind.symbol).font(.footnote)
+                    }
+                    .buttonStyle(.bordered)
+                    .disabled(store.state.applianceCount(of: kind) >= FamilyState.maxAppliancesPerKind)
+                }
+            }
+            Text("Add up to three fridges, three freezers and three cupboards. Each one arrives with the usual shelves — rename them to match your kitchen, or delete the ones you do not have.").font(.caption).foregroundStyle(.secondary)
+            DisclosureGroup("Add a single place by hand") {
+                TextField("Place name",text:$name)
+                Picker("Temperature zone",selection:$zone) { ForEach(zones,id:\.self) { Text($0).tag($0) } }
+                Button("Add place") {
+                    store.update { $0.locations.append(Location(name:name.trimmingCharacters(in:.whitespaces),zone:zone)) }
+                    name = ""
+                }.disabled(name.trimmingCharacters(in:.whitespaces).isEmpty)
+            }.font(.footnote)
+        }
+    }
+
+    @ViewBuilder private var languageSection: some View {
+        Section("Recipe language · 菜谱语言") {
+            Picker("Show recipes in",selection:Binding(get:{store.state.recipeLanguage},set:{ v in store.update { $0.recipeLanguage = v } })) {
+                ForEach(RecipeLanguage.allCases,id:\.self) { Text($0.en).tag($0) }
+            }.pickerStyle(.segmented)
+            Text("Every built-in dish is written in both languages — the same steps, the same temperatures. Ingredient names and the shopping list stay bilingual whatever you choose here, so whoever is shopping can read them.").font(.caption).foregroundStyle(.secondary)
+        }
+    }
+
+    @ViewBuilder private var appearanceSection: some View {
+        Section("Day & night · 白天与夜间") {
+            Picker("View",selection:Binding(get:{store.state.appearance},set:{ v in store.update { $0.appearance = v } })) {
+                ForEach(Appearance.allCases,id:\.self) { Text("\($0.en) · \($0.zh)").tag($0) }
+            }.pickerStyle(.segmented)
+            Text("Night view keeps the same colours, stepped for a dark screen — easier on the eyes when you are cooking late or checking tomorrow's menu in bed.").font(.caption).foregroundStyle(.secondary)
+        }
+    }
+
+    @ViewBuilder private var aboutSection: some View {
+        Section("About this edition") {
+            LabeledContent("Version",value:"\(Brand.appName) \(Brand.version)")
+            InfoNote(title:"What this edition is · 这一版是什么",lines:[
+                "Everything lives on this iPhone: no account, no cloud sync, no photo uploads.",
+                "Parent and child roles are an agreement on a shared device, not password-protected accounts.",
+                "56 dinners and 20 breakfasts, each written in Chinese and English.",
+                "Recipe pictures are AI-generated illustrations made for this app, not photographs of tested cooking.",
+                "Cooking times and nutrition figures are estimates, not kitchen-tested or laboratory-measured."
+            ])
+        }
+    }
 }
+
+/// One person: their name, whether they are a child, their age and their portion.
+struct FamilyMemberRow: View {
+    @EnvironmentObject var store: FamilyStore
+    let member: FamilyMember
+    private func update(_ change: @escaping (inout FamilyMember) -> Void) {
+        store.update { state in
+            guard let index = state.members.firstIndex(where: { $0.id == member.id }) else { return }
+            change(&state.members[index])
+        }
+    }
+    var body: some View {
+        DisclosureGroup {
+            Picker("They are",selection:Binding(get:{member.isChild},set:{ isChild in update { $0.isChild = isChild; if !isChild { $0.age = nil } else if $0.age == nil { $0.age = 8 } } })) {
+                Text("A child").tag(true); Text("An adult").tag(false)
+            }.pickerStyle(.segmented)
+            if member.isChild {
+                Stepper("Age \(member.age ?? 8)",value:Binding(get:{member.age ?? 8},set:{ age in update { $0.age = age } }),in:0...17)
+            }
+            Toggle("Set their portion by hand",isOn:Binding(
+                get:{ member.portionOverride != nil },
+                set:{ on in update { $0.portionOverride = on ? $0.portionFactor : nil } }))
+            if let override = member.portionOverride {
+                Stepper("\(override.formatted(.number.precision(.fractionLength(0...2)))) adult portions",
+                        value:Binding(get:{override},set:{ v in update { $0.portionOverride = v } }),
+                        in:0.25...3,step:0.25)
+            }
+        } label: {
+            HStack {
+                TextField("Name",text:Binding(get:{member.name},set:{ v in update { $0.name = v } }))
+                Spacer()
+                Text(member.portionDescription).font(.caption).foregroundStyle(.secondary)
+            }
+        }
+    }
+}
+
+/// One shelf, drawer or cupboard space.
+struct LocationRow: View {
+    @EnvironmentObject var store: FamilyStore
+    let location: Location
+    var body: some View {
+        HStack {
+            TextField("Place name",text:Binding(
+                get:{ store.state.locations.first{ $0.id == location.id }?.name ?? "" },
+                set:{ v in store.update { s in if let i = s.locations.firstIndex(where:{$0.id == location.id}) { s.locations[i].name = v } } }))
+            Spacer()
+            Text(location.zone).font(.caption).foregroundStyle(.secondary)
+            Button(role:.destructive) {
+                store.update { s in
+                    s.locations.removeAll { $0.id == location.id }
+                    for i in s.stock.indices where s.stock[i].location == location.id { s.stock[i].location = nil }
+                }
+            } label: { Image(systemName:"minus.circle") }.buttonStyle(.borderless)
+        }
+    }
+}
+
 struct CameraCapture: UIViewControllerRepresentable {
     @Environment(\.dismiss) private var dismiss
     var onCapture: (Data) -> Void

@@ -28,22 +28,81 @@ public struct Recipe: Codable, Identifiable, Sendable {
     public var favorite: Bool
     public var cuisine: String? = nil
     public var heat: Int = 0
+    /// English steps for a dish the family added themselves. Built-in recipes keep
+    /// theirs in `Catalog.stepsEN` instead.
+    public var stepsEnglish: [String]? = nil
     public var isSpicy: Bool { heat > 0 }
     public var flavor: String { heat == 0 ? "Mild · 不辣" : "\(cuisine ?? "Spicy") · \(heat == 1 ? "Medium · 中辣" : "Hot · 辣")" }
     public var name: String { "\(en) · \(zh)" }
-    public func scaled(_ people: Int) -> [Portion] {
+    /// Ingredient amounts for a number of adult portions. The catalogue is written
+    /// for five, and whole items are rounded up per meal — half an egg is not a
+    /// thing a kitchen can buy.
+    public func scaled(_ servings: Double) -> [Portion] {
         ingredients.map { item in
             let unit = Catalog.ingredient(item.ingredient).unit
-            let quantity = item.quantity * Double(max(1, people)) / 5
+            let quantity = item.quantity * max(0.25, servings) / 5
             return Portion(item.ingredient, (unit == "each" || unit == "slice") ? ceil(quantity) : quantity)
         }
     }
 }
+/// A kitchen appliance or cupboard that holds food. Optional so that files written
+/// before appliances existed still load.
+public enum ApplianceKind: String, Codable, CaseIterable, Sendable {
+    case fridge, freezer, cupboard
+    public var en: String {
+        switch self {
+        case .fridge: return "Fridge"
+        case .freezer: return "Freezer"
+        case .cupboard: return "Cupboard"
+        }
+    }
+    public var zh: String {
+        switch self {
+        case .fridge: return "冷藏"
+        case .freezer: return "冷冻"
+        case .cupboard: return "储物柜"
+        }
+    }
+    public var zone: String {
+        switch self {
+        case .fridge: return "Refrigerated"
+        case .freezer: return "Frozen"
+        case .cupboard: return "Pantry"
+        }
+    }
+    public var symbol: String {
+        switch self {
+        case .fridge: return "refrigerator"
+        case .freezer: return "snowflake"
+        case .cupboard: return "cabinet"
+        }
+    }
+    /// A sensible starting layout. Every family renames these to match the room
+    /// they actually stand in.
+    public var defaultCompartments: [String] {
+        switch self {
+        case .fridge: return ["Top shelf", "Middle shelf", "Bottom shelf", "Produce drawer", "Door"]
+        case .freezer: return ["Top basket", "Bottom basket"]
+        case .cupboard: return ["Shelf 1", "Shelf 2"]
+        }
+    }
+}
+
 public struct Location: Codable, Identifiable, Sendable {
     public var id: UUID = UUID()
     public var name: String
     public var zone: String
-    public init(name: String, zone: String) { self.name = name; self.zone = zone }
+    /// Which appliance or cupboard this shelf belongs to. Nil for locations created
+    /// before appliances existed, which keep working exactly as they did.
+    public var appliance: String?
+    public init(name: String, zone: String, appliance: String? = nil) {
+        self.name = name; self.zone = zone; self.appliance = appliance
+    }
+    /// How this place reads on its own, away from its group.
+    public var fullName: String {
+        guard let appliance, !appliance.isEmpty else { return name }
+        return "\(appliance) · \(name)"
+    }
 }
 public struct Stock: Codable, Identifiable, Sendable {
     public var id: UUID = UUID()
@@ -70,8 +129,38 @@ public struct FamilyMember: Codable, Identifiable, Sendable, Hashable {
     public var id: UUID = UUID()
     public var name: String
     public var isChild: Bool
-    public init(id: UUID = UUID(), name: String, isChild: Bool) {
+    /// A child's age in years, which sets how much food is cooked for them.
+    /// Adults do not need one.
+    public var age: Int?
+    /// Overrides the age-based amount when a family knows better — a teenager who
+    /// eats like two adults, or an adult with a small appetite.
+    public var portionOverride: Double?
+
+    public init(id: UUID = UUID(), name: String, isChild: Bool, age: Int? = nil, portionOverride: Double? = nil) {
         self.id = id; self.name = name; self.isChild = isChild
+        self.age = age; self.portionOverride = portionOverride
+    }
+
+    /// How much of an adult portion this person eats.
+    ///
+    /// These are rough household planning figures, not nutrition requirements: a
+    /// four-year-old does not eat an adult's dinner, and a fifteen-year-old often
+    /// eats more than one. Anyone can be adjusted by hand.
+    public var portionFactor: Double {
+        if let portionOverride, portionOverride > 0 { return portionOverride }
+        guard isChild else { return 1.0 }
+        guard let age else { return 0.7 }
+        switch age {
+        case ..<2: return 0.25
+        case 2...3: return 0.4
+        case 4...8: return 0.65
+        case 9...13: return 0.85
+        default: return 1.0
+        }
+    }
+    public var portionDescription: String {
+        let factor = portionFactor
+        return "\(factor.formatted(.number.precision(.fractionLength(0...2)))) adult portion\(factor == 1 ? "" : "s")"
     }
 }
 
@@ -106,12 +195,57 @@ public struct ShoppingLine: Identifiable, Sendable {
     public var purchased: Double
     public var shortage: Double { max(0, required - stock - purchased) }
 }
+/// Which language the recipe is written in when the family reads it.
+public enum RecipeLanguage: String, Codable, CaseIterable, Sendable {
+    case both, chinese, english
+    public var en: String {
+        switch self {
+        case .both: return "Both"
+        case .chinese: return "中文"
+        case .english: return "English"
+        }
+    }
+    public var zh: String {
+        switch self {
+        case .both: return "双语"
+        case .chinese: return "中文"
+        case .english: return "英文"
+        }
+    }
+    public var showsChinese: Bool { self != .english }
+    public var showsEnglish: Bool { self != .chinese }
+}
+
+/// Day, night, or whatever the phone is doing.
+public enum Appearance: String, Codable, CaseIterable, Sendable {
+    case system, day, night
+    public var en: String {
+        switch self {
+        case .system: return "Match phone"
+        case .day: return "Day"
+        case .night: return "Night"
+        }
+    }
+    public var zh: String {
+        switch self {
+        case .system: return "跟随系统"
+        case .day: return "白天"
+        case .night: return "夜间"
+        }
+    }
+}
+
 public struct FamilyState: Codable, Sendable {
     /// Bump this when the stored shape changes, and teach `migrate()` how to get here
     /// from the version before. Saved files are never rejected for being older.
     public static let currentVersion = 2
     public var version = FamilyState.currentVersion
+    /// What this family calls their kitchen, shown in place of the app's own name.
+    public var kitchenName: String = ""
+    /// Headcount, used when no family list exists yet.
     public var people = 5
+    /// Extra mouths this week — visiting grandparents, a friend staying for dinner.
+    public var guests: Int = 0
     public var locations: [Location] = []
     public var stock: [Stock] = []
     public var meals: [Meal] = []
@@ -124,11 +258,16 @@ public struct FamilyState: Codable, Sendable {
     public var history: [MealRecord] = []
     /// Allergens this household avoids entirely.
     public var excludedAllergens: Set<Allergen> = []
+    /// Day or night view.
+    public var appearance: Appearance = .system
+    /// Which language recipes are shown in.
+    public var recipeLanguage: RecipeLanguage = .both
     public init() {}
 
     private enum CodingKeys: String, CodingKey {
         case version, people, locations, stock, meals, purchases, photoFiles, preferred
-        case members, history, excludedAllergens
+        case members, history, excludedAllergens, appearance, recipeLanguage
+        case kitchenName, guests
     }
     /// Every field is decoded leniently, so a file written by an older version of the
     /// app opens instead of being discarded. Fields added later simply take their
@@ -151,6 +290,10 @@ public struct FamilyState: Codable, Sendable {
         members = try container.decodeIfPresent([FamilyMember].self, forKey: .members) ?? []
         history = try container.decodeIfPresent([MealRecord].self, forKey: .history) ?? []
         excludedAllergens = try container.decodeIfPresent(Set<Allergen>.self, forKey: .excludedAllergens) ?? []
+        appearance = try container.decodeIfPresent(Appearance.self, forKey: .appearance) ?? .system
+        recipeLanguage = try container.decodeIfPresent(RecipeLanguage.self, forKey: .recipeLanguage) ?? .both
+        kitchenName = try container.decodeIfPresent(String.self, forKey: .kitchenName) ?? ""
+        guests = try container.decodeIfPresent(Int.self, forKey: .guests) ?? 0
         migrate()
     }
 
@@ -180,7 +323,7 @@ public struct FamilyState: Codable, Sendable {
         var totals: [String: Double] = [:]
         for meal in meals where !meal.cooked {
             guard let recipe = Catalog.recipe(meal.recipe) else { continue }
-            for item in recipe.scaled(people) { totals[item.ingredient, default: 0] += item.quantity }
+            for item in recipe.scaled(servings) { totals[item.ingredient, default: 0] += item.quantity }
         }
         return totals.map { key, qty in
             ShoppingLine(ingredient: key, required: qty, stock: stock.filter { $0.ingredient == key && $0.confirmed }.reduce(0) { $0 + $1.quantity }, purchased: purchases.filter { $0.ingredient == key && !$0.stored }.reduce(0) { $0 + $1.quantity })
@@ -195,6 +338,18 @@ public struct FamilyState: Codable, Sendable {
         guard let line = shopping().first(where: { $0.ingredient == ingredient }), line.shortage > 0 else { return }
         purchases.append(Purchase(ingredient: ingredient, quantity: line.shortage))
     }
+    /// Unticks an item: removes the most recent purchase that has not been put away.
+    /// Anything already stored stays, because that is real food on a real shelf —
+    /// correct it in the pantry instead.
+    @discardableResult public mutating func unbuy(_ ingredient: String) -> Bool {
+        guard let index = purchases.lastIndex(where: { $0.ingredient == ingredient && !$0.stored }) else { return false }
+        purchases.remove(at: index)
+        return true
+    }
+    /// Whether ticking this line off can still be undone here.
+    public func canUnbuy(_ ingredient: String) -> Bool {
+        purchases.contains { $0.ingredient == ingredient && !$0.stored }
+    }
     public mutating func storePurchase(_ id: UUID, location: UUID, actualQuantity: Double) {
         guard actualQuantity.isFinite, actualQuantity > 0, locations.contains(where: { $0.id == location }), let index = purchases.firstIndex(where: { $0.id == id && !$0.stored }) else { return }
         let item = purchases[index]
@@ -202,6 +357,73 @@ public struct FamilyState: Codable, Sendable {
         else { stock.append(Stock(ingredient: item.ingredient, quantity: actualQuantity, confirmed: true, location: location)) }
         purchases[index].quantity = actualQuantity
         purchases[index].stored = true
+    }
+    /// How many adult portions to cook. Built from the family list when there is
+    /// one — each child counted by age — plus any guests. Recipes are written for
+    /// five adult portions, so this is the number they are scaled against.
+    public var servings: Double {
+        let family = members.isEmpty ? Double(max(1, people)) : members.reduce(0) { $0 + $1.portionFactor }
+        return max(0.25, family + Double(max(0, guests)))
+    }
+    /// How this figure was arrived at, in words the family can check.
+    public var servingsExplanation: String {
+        guard !members.isEmpty else { return "\(people) people" }
+        let adults = members.filter { !$0.isChild }.count
+        let children = members.filter(\.isChild).count
+        var parts: [String] = []
+        if adults > 0 { parts.append("\(adults) adult\(adults == 1 ? "" : "s")") }
+        if children > 0 { parts.append("\(children) child\(children == 1 ? "" : "ren") by age") }
+        if guests > 0 { parts.append("\(guests) guest\(guests == 1 ? "" : "s")") }
+        return parts.joined(separator: " + ")
+    }
+    /// Appliances and cupboards in the order they were added.
+    public var appliances: [String] {
+        var seen: [String] = []
+        for location in locations {
+            guard let appliance = location.appliance, !appliance.isEmpty, !seen.contains(appliance) else { continue }
+            seen.append(appliance)
+        }
+        return seen
+    }
+    /// Locations that were created before appliances, or added by hand.
+    public var looseLocations: [Location] { locations.filter { ($0.appliance ?? "").isEmpty } }
+    public func compartments(of appliance: String) -> [Location] {
+        locations.filter { $0.appliance == appliance }
+    }
+    /// How many fridges and freezers exist; families are limited to three of each,
+    /// which is already more than most kitchens have.
+    public func applianceCount(of kind: ApplianceKind) -> Int {
+        appliances.filter { name in
+            compartments(of: name).first.map { $0.zone == kind.zone } ?? false
+        }.count
+    }
+    public static let maxAppliancesPerKind = 3
+
+    /// Adds an appliance with a starting set of compartments. Returns the name used,
+    /// or nil when this family already has three of that kind.
+    @discardableResult public mutating func addAppliance(_ kind: ApplianceKind, named name: String? = nil) -> String? {
+        guard applianceCount(of: kind) < FamilyState.maxAppliancesPerKind else { return nil }
+        var candidate = name?.trimmingCharacters(in: .whitespaces) ?? ""
+        if candidate.isEmpty {
+            let number = applianceCount(of: kind) + 1
+            candidate = number == 1 ? kind.en : "\(kind.en) \(number)"
+        }
+        var unique = candidate
+        var suffix = 2
+        while appliances.contains(unique) { unique = "\(candidate) \(suffix)"; suffix += 1 }
+        for compartment in kind.defaultCompartments {
+            locations.append(Location(name: compartment, zone: kind.zone, appliance: unique))
+        }
+        return unique
+    }
+    /// Removes an appliance and its shelves, leaving anything stored there without a
+    /// confirmed place rather than silently deleting the food.
+    public mutating func removeAppliance(_ appliance: String) {
+        let removed = Set(compartments(of: appliance).map(\.id))
+        locations.removeAll { removed.contains($0.id) }
+        for index in stock.indices where removed.contains(stock[index].location ?? UUID()) {
+            stock[index].location = nil
+        }
     }
     /// Monday of the planned week, or nil when nothing is planned yet.
     public var planStart: Date? { meals.map(\.date).min() }
@@ -230,7 +452,7 @@ public struct FamilyState: Codable, Sendable {
             .max { $0.date < $1.date }
             .flatMap { Catalog.recipe($0.recipe)?.starch }
         func score(_ recipe: Recipe) -> Double {
-            let pantry = recipe.scaled(people).reduce(0.0) { total, portion in
+            let pantry = recipe.scaled(servings).reduce(0.0) { total, portion in
                 total + min(1, confirmedAmounts[portion.ingredient, default: 0] / max(1, portion.quantity))
             } / Double(max(1, recipe.ingredients.count)) * 6
             let month = Calendar.current.component(.month, from: meal.date)
@@ -288,7 +510,7 @@ public struct FamilyState: Codable, Sendable {
     public mutating func finish(_ id: UUID, consume: Bool) {
         guard let i = meals.firstIndex(where: { $0.id == id && !$0.cooked }), let recipe = Catalog.recipe(meals[i].recipe) else { return }
         if consume {
-            for portion in recipe.scaled(people) {
+            for portion in recipe.scaled(servings) {
                 var remaining = portion.quantity
                 for j in stock.indices where stock[j].ingredient == portion.ingredient && stock[j].confirmed {
                     let used = min(remaining, stock[j].quantity); stock[j].quantity -= used; remaining -= used
@@ -310,7 +532,7 @@ public struct FamilyState: Codable, Sendable {
         }
         if r.isSpicy { result.append("Spicy meal · 辣味整餐；请先确认家人接受。默认推荐不包含辣菜。") }
         if !meal.breakfast {
-            if r.minutes > 30 || people > 6 { result.append("30-minute target may not be met at this serving size.") }
+            if r.minutes > 30 || servings > 6 { result.append("30-minute target may not be met at this serving size.") }
             if !r.vegetable { result.append("Add vegetables to complete this dinner.") }
             let previous = meals.filter { !$0.breakfast && $0.date < meal.date }.max { $0.date < $1.date }
             if let p = previous, Catalog.recipe(p.recipe)?.starch == r.starch { result.append("Same starch as the previous dinner; consider a swap.") }
@@ -356,7 +578,7 @@ public struct FamilyState: Codable, Sendable {
             result[item.ingredient, default: 0] += item.quantity
         }
         let pantryScores = Dictionary(uniqueKeysWithValues: Catalog.recipes.map { recipe in
-            let score = recipe.scaled(people).reduce(0.0) { total, portion in
+            let score = recipe.scaled(servings).reduce(0.0) { total, portion in
                 total + min(1, confirmedAmounts[portion.ingredient, default: 0] / max(1, portion.quantity))
             } / Double(max(1, recipe.ingredients.count)) * 6
             return (recipe.id, score)

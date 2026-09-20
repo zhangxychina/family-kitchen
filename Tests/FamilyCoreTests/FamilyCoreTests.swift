@@ -249,7 +249,7 @@ final class FamilyCoreTests: XCTestCase {
         let day = s.nutrition(on:start)
         let mealsThatDay = s.meals.filter { Calendar.current.isDate($0.date,inSameDayAs:start) }
         XCTAssertEqual(mealsThatDay.count,2)
-        let expected = mealsThatDay.compactMap { Catalog.recipe($0.recipe) }.reduce(Nutrition.zero) { $0 + $1.nutrition(per:s.people) }
+        let expected = mealsThatDay.compactMap { Catalog.recipe($0.recipe) }.reduce(Nutrition.zero) { $0 + $1.nutrition(per:s.servings) }
         XCTAssertEqual(day.kcal,expected.kcal,accuracy:0.001)
         // Breakfast + dinner only: a day total is well under a full day of eating.
         XCTAssertTrue((500...2200).contains(day.kcal))
@@ -380,6 +380,82 @@ final class FamilyCoreTests: XCTestCase {
         XCTAssertGreaterThan(s.repeatPenalty(first.recipe,asOf:first.date),
                              s.repeatPenalty(first.recipe,asOf:first.date.addingTimeInterval(40 * 86400)))
         XCTAssertEqual(s.repeatPenalty("nothing-eaten-yet",asOf:today),0)
+    }
+    func testEveryRecipeIsFullyBilingual() {
+        for recipe in Catalog.recipes {
+            guard let english = recipe.englishSteps else {
+                XCTFail("No English steps for \(recipe.id)"); continue
+            }
+            XCTAssertEqual(english.count,recipe.steps.count,"\(recipe.id): \(english.count) English steps vs \(recipe.steps.count) Chinese")
+            XCTAssertTrue(english.allSatisfy { $0.count > 20 },"\(recipe.id) has a suspiciously short English step")
+            // Safety temperatures must survive translation.
+            for (index, chinese) in recipe.steps.enumerated() {
+                for temperature in ["74°C","63°C","71°C"] where chinese.contains(temperature) {
+                    XCTAssertTrue(english[index].contains(temperature),"\(recipe.id) step \(index + 1) lost \(temperature)")
+                }
+            }
+        }
+        XCTAssertEqual(Set(Catalog.stepsEN.keys),Set(Catalog.recipes.map(\.id)))
+    }
+    func testRecipeLanguagePreferenceSelectsText() {
+        let recipe = Catalog.recipe("sesame")!
+        XCTAssertEqual(recipe.title(in:.chinese),recipe.zh)
+        XCTAssertEqual(recipe.title(in:.english),recipe.en)
+        XCTAssertEqual(recipe.title(in:.both),recipe.name)
+        let both = recipe.steps(in:.both)
+        XCTAssertEqual(both.count,recipe.steps.count)
+        XCTAssertTrue(both.allSatisfy { $0.zh != nil && $0.en != nil })
+        XCTAssertTrue(recipe.steps(in:.chinese).allSatisfy { $0.zh != nil && $0.en == nil })
+        XCTAssertTrue(recipe.steps(in:.english).allSatisfy { $0.en != nil && $0.zh == nil })
+        // A dish with no translation still shows its method rather than nothing.
+        var untranslated = recipe
+        untranslated.id = "family-added-dish"
+        XCTAssertNil(untranslated.englishSteps)
+        XCTAssertEqual(untranslated.steps(in:.english).count,recipe.steps.count)
+        XCTAssertTrue(untranslated.steps(in:.english).allSatisfy { $0.zh != nil })
+    }
+    func testPortionsFollowAdultsChildrenAndGuests() {
+        var s = FamilyState()
+        // With no family list, the headcount is used as-is.
+        s.people = 4
+        XCTAssertEqual(s.servings,4,accuracy:0.001)
+        s.members = [
+            FamilyMember(name:"Parent A",isChild:false),
+            FamilyMember(name:"Parent B",isChild:false),
+            FamilyMember(name:"Teen",isChild:true,age:14),
+            FamilyMember(name:"Middle",isChild:true,age:9),
+            FamilyMember(name:"Little",isChild:true,age:3)
+        ]
+        // 1 + 1 + 1 + 0.85 + 0.4
+        XCTAssertEqual(s.servings,4.25,accuracy:0.001)
+        s.guests = 2
+        XCTAssertEqual(s.servings,6.25,accuracy:0.001)
+        s.guests = 0
+        // A smaller household buys less: shopping follows servings, not heads.
+        var big = s; big.members = s.members.map { var m = $0; m.isChild = false; m.age = nil; m.portionOverride = nil; return m }
+        let meal = Meal(date:Date(),recipe:"sesame",breakfast:false)
+        s.meals = [meal]; big.meals = [meal]
+        let small = s.shopping().first { $0.ingredient == "chicken" }!.required
+        let large = big.shopping().first { $0.ingredient == "chicken" }!.required
+        XCTAssertLessThan(small,large)
+        XCTAssertEqual(large / small,5 / 4.25,accuracy:0.01)
+        // A hand-set portion wins over the age rule, and a young child eats least.
+        XCTAssertEqual(FamilyMember(name:"X",isChild:true,age:3,portionOverride:1.5).portionFactor,1.5)
+        XCTAssertLessThan(FamilyMember(name:"Toddler",isChild:true,age:2).portionFactor,
+                          FamilyMember(name:"Teen",isChild:true,age:15).portionFactor)
+        XCTAssertEqual(FamilyMember(name:"Adult",isChild:false).portionFactor,1)
+        // Nutrition is per adult portion, so it barely moves with household size.
+        let recipe = Catalog.recipe("sesame")!
+        XCTAssertEqual(recipe.nutrition(per:4.25).kcal,recipe.nutrition(per:5).kcal,accuracy:recipe.nutrition(per:5).kcal * 0.25)
+    }
+    func testKitchenNameIsTheFamilysOwn() throws {
+        var s = FamilyState()
+        XCTAssertEqual(s.kitchenName,"")
+        s.kitchenName = "Zhang Kitchen"
+        let file = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString).appendingPathComponent("state.json")
+        defer { try? FileManager.default.removeItem(at:file.deletingLastPathComponent()) }
+        try StateFile.save(s,to:file)
+        XCTAssertEqual(try StateFile.load(from:file).kitchenName,"Zhang Kitchen")
     }
     func testNoConsumptionWhenPlanningOrSkippingDeduction() {
         var state = FamilyState(); state.stock = [Stock(ingredient:"rice",quantity:2000,confirmed:true)]

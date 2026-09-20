@@ -143,14 +143,13 @@ extension Catalog {
 
 extension Recipe {
     /// Estimated nutrition for one person, at the given family size.
-    /// Whole-item ingredients are rounded up per meal, so the per-person figure shifts
-    /// slightly with family size — which is what the kitchen actually does.
-    public func nutrition(per people: Int) -> Nutrition {
-        let servings = Double(max(1, people))
-        let total = scaled(people).reduce(Nutrition.zero) { running, portion in
+    /// Whole-item ingredients are rounded up per meal, so the per-portion figure
+    /// shifts slightly with family size — which is what the kitchen actually does.
+    public func nutrition(per servings: Double) -> Nutrition {
+        let total = scaled(servings).reduce(Nutrition.zero) { running, portion in
             running + (Catalog.nutrition(for: portion) ?? .zero)
         }
-        return total.scaled(by: 1 / servings)
+        return total.scaled(by: 1 / max(0.25, servings))
     }
     /// True when every ingredient in this recipe has reference values.
     public var nutritionIsComplete: Bool {
@@ -163,7 +162,7 @@ extension FamilyState {
     public func nutrition(on date: Date, calendar: Calendar = .current) -> Nutrition {
         meals.filter { calendar.isDate($0.date, inSameDayAs: date) }
             .compactMap { Catalog.recipe($0.recipe) }
-            .reduce(Nutrition.zero) { $0 + $1.nutrition(per: people) }
+            .reduce(Nutrition.zero) { $0 + $1.nutrition(per: servings) }
     }
     /// Average per-person day across the whole plan, for the week's balance view.
     public var averagePlannedDay: Nutrition {

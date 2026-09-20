@@ -58,7 +58,12 @@ import ImageIO
 }
 @main struct FamilyTableApp: App {
     @StateObject private var store = FamilyStore()
-    var body: some Scene { WindowGroup { RootView().environmentObject(store).tint(Brand.green).preferredColorScheme(.light) } }
+    var body: some Scene {
+        WindowGroup {
+            RootView().environmentObject(store).tint(Brand.green)
+                .preferredColorScheme(store.state.appearance == .system ? nil : (store.state.appearance == .night ? .dark : .light))
+        }
+    }
 }
 struct RootView: View {
     @EnvironmentObject var store: FamilyStore
@@ -69,7 +74,7 @@ struct RootView: View {
             NavigationStack { RecipesView() }.tabItem { Label("Recipes", systemImage:"book.closed") }.tag(2)
             NavigationStack { ShoppingView() }.tabItem { Label("Shopping", systemImage:"basket") }.tag(3)
             NavigationStack { PantryView() }.tabItem { Label("Pantry", systemImage:"cabinet") }.tag(4)
-        }.safeAreaInset(edge:.top) { if let error = store.error { Text(error).font(.caption).foregroundStyle(.red).padding().background(.white) } }
+        }.safeAreaInset(edge:.top) { if let error = store.error { Text(error).font(.caption).foregroundStyle(.red).padding().background(Brand.card) } }
     }
 }
 struct RecipeArtwork: View {
@@ -81,7 +86,7 @@ struct RecipeArtwork: View {
                 Image(uiImage: image).resizable().scaledToFill()
             } else {
                 ZStack {
-                    Color(red: 0.94, green: 0.92, blue: 0.87)
+                    Brand.placeholder
                     VStack(spacing: 5) {
                         Image(systemName: "fork.knife").font(.title2)
                         Text(recipe.isSpicy ? recipe.flavor : "Image pending").font(.caption)
@@ -99,8 +104,15 @@ struct RecipeCard: View {
         VStack(alignment:.leading,spacing:10) {
             RecipeArtwork(recipe: recipe)
             VStack(alignment:.leading,spacing:5) {
-                Text(recipe.en).font(.title3.bold()).foregroundStyle(.primary)
-                Text(recipe.zh).foregroundStyle(.secondary)
+                switch store.state.recipeLanguage {
+                case .both:
+                    Text(recipe.en).font(.title3.bold()).foregroundStyle(.primary)
+                    Text(recipe.zh).foregroundStyle(.secondary)
+                case .english:
+                    Text(recipe.en).font(.title3.bold()).foregroundStyle(.primary)
+                case .chinese:
+                    Text(recipe.zh).font(.title3.bold()).foregroundStyle(.primary)
+                }
                 Text(recipe.flavor).font(.caption).foregroundStyle(recipe.isSpicy ? Color.orange : Color.secondary)
                 Label("\(recipe.minutes) min · whole meal",systemImage:"clock").font(.caption).foregroundStyle(.secondary)
                 let conflicts = recipe.conflicts(with:store.state.excludedAllergens)
@@ -119,7 +131,7 @@ struct RecipeCard: View {
                     }
                 }
             }.padding([.horizontal,.bottom])
-        }.background(.white).clipShape(RoundedRectangle(cornerRadius:20)).overlay(RoundedRectangle(cornerRadius:20).stroke(.black.opacity(0.04)))
+        }.background(Brand.card).clipShape(RoundedRectangle(cornerRadius:20)).overlay(RoundedRectangle(cornerRadius:20).stroke(.primary.opacity(0.06)))
     }
 }
 struct TodayView: View {
@@ -131,7 +143,8 @@ struct TodayView: View {
     var body: some View {
         ScrollView {
             VStack(alignment:.leading,spacing:18) {
-                BrandHeader(subtitle: Date.now.formatted(.dateTime.weekday(.wide).month(.wide).day()))
+                BrandHeader(kitchenName: store.state.kitchenName,
+                            subtitle: Date.now.formatted(.dateTime.weekday(.wide).month(.wide).day()))
                 SectionHeading(en:"A little less planning.\nA little more together.",zh:"少一点操心，多一点一起吃饭")
                 if store.state.locations.isEmpty { setupCard }
                 if today.isEmpty { emptyDayCard } else { mealCards; nutritionCard }
@@ -142,7 +155,7 @@ struct TodayView: View {
                     "Nutrition figures are reference values for ingredients as bought, not measurements of the finished dish."
                 ]).kitchenCard()
             }.padding(20)
-        }.background(Brand.paper).navigationTitle(Brand.appName).navigationBarTitleDisplayMode(.inline)
+        }.background(Brand.paper).navigationTitle(store.state.kitchenName.isEmpty ? Brand.appName : store.state.kitchenName).navigationBarTitleDisplayMode(.inline)
         .confirmationDialog("Update confirmed pantry quantities? Adjust leftovers in Pantry afterward.",isPresented:Binding(get:{ finishMeal != nil },set:{ if !$0 { finishMeal = nil } }),titleVisibility:.visible) {
             Button("Complete & deduct recipe amounts") { if let m = finishMeal { store.update { $0.finish(m.id,consume:true) } }; finishMeal = nil }
             Button("Complete without deducting") { if let m = finishMeal { store.update { $0.finish(m.id,consume:false) } }; finishMeal = nil }
@@ -270,7 +283,7 @@ struct WeekView: View {
             VStack(alignment:.leading,spacing:14) {
                 Text("Plan next week's menu").font(.system(.title2, design:.serif).bold())
                 Text("一周早餐和晚餐，一次排好").foregroundStyle(.secondary)
-                Text("Pick the first day, and Zhang Family Kitchen fills seven days of breakfast and dinner for \(store.state.people) people. Nothing is ordered until you confirm each meal.").font(.footnote).foregroundStyle(.secondary)
+                Text("Pick the first day, and you get seven days of breakfast and dinner, cooked for \(store.state.servingsExplanation). Nothing is ordered until you confirm each meal.").font(.footnote).foregroundStyle(.secondary)
                 DatePicker("Week starting",selection:$start,displayedComponents:.date)
                 Button { generate() } label: { Label("Plan this week's menu · 生成一周菜单",systemImage:"wand.and.stars").frame(maxWidth:.infinity) }
                     .buttonStyle(.borderedProminent).controlSize(.large).accessibilityIdentifier("planWeek")
@@ -324,7 +337,7 @@ struct WeekView: View {
             if !store.state.awaitingApproval.isEmpty {
                 Text("\(store.state.awaitingApproval.count) meals are still unconfirmed, so the list may still change.").font(.footnote).foregroundStyle(.orange)
             }
-            Text("Amounts are combined across meals, scaled to \(store.state.people) people, and reduced by pantry items you confirmed.").font(.footnote).foregroundStyle(.secondary)
+            Text("Amounts are combined across meals, scaled to \(store.state.servingsExplanation), and reduced by pantry items you confirmed.").font(.footnote).foregroundStyle(.secondary)
         }
     }
 
@@ -355,7 +368,7 @@ struct MealReview: View {
                     } else {
                         Text("New to the family · 还没吃过").font(.footnote).foregroundStyle(.secondary)
                     }
-                    let perPerson = r.nutrition(per:store.state.people)
+                    let perPerson = r.nutrition(per:store.state.servings)
                     Text("About \(Int(perPerson.kcal.rounded())) kcal and \(Int(perPerson.protein.rounded()))g protein per person · 每人约 \(Int(perPerson.kcal.rounded())) 千卡")
                         .font(.footnote).foregroundStyle(.secondary)
                     ForEach(store.state.warnings(for:m),id:\.self) { Text($0).foregroundStyle(.orange) }
@@ -456,18 +469,19 @@ struct RecipeDetail: View {
     @EnvironmentObject var store: FamilyStore
     let recipe: Recipe
     @State private var previewPeople: Int? = nil
-    private var servings: Int { previewPeople ?? store.state.people }
+    private var servings: Double { previewPeople.map(Double.init) ?? store.state.servings }
     var body: some View {
         List {
             Section { RecipeArtwork(recipe:recipe, height:280).listRowInsets(EdgeInsets()); Text(recipe.name).font(.title2.bold()); Text(UIImage(named:recipe.id) == nil ? (recipe.isSpicy ? "Recipe illustration unavailable · 暂无菜品示意图" : "Image pending · 配图待完成") : "AI-generated serving illustration · AI 成品示意图，非实拍").font(.caption).foregroundStyle(.secondary)
                 Text(recipe.flavor).font(.headline)
-                Stepper("View portions: \(servings)", value:Binding(get:{ servings },set:{ previewPeople = $0 }), in:1...12)
+                Stepper("View portions: \(servings.formatted(.number.precision(.fractionLength(0...2))))",
+                        value:Binding(get:{ previewPeople ?? Int(servings.rounded()) },set:{ previewPeople = $0 }), in:1...12)
                 Text("Portion preview only. Weekly shopping uses the family size. · 此处可查看单人用量；周计划采购仍按家庭人数计算。").font(.caption)
-                Text("\(servings) servings · \(recipe.minutes) min including prep\n用量按上方所选人数缩放；整餐时间以五人为参考，大份量或未解冻需额外时间。")
+                Text("\(servings.formatted(.number.precision(.fractionLength(0...2)))) adult portions · \(recipe.minutes) min including prep\n用量按上方份数缩放；整餐时间以五份为参考，大份量或未解冻需额外时间。")
                 Button(store.state.preferred.contains(recipe.id) ? "♥ Family favorite" : "♡ Add to favorites") { store.update { s in if s.preferred.contains(recipe.id) { s.preferred.remove(recipe.id) } else { s.preferred.insert(recipe.id) } } }
             }
             Section {
-                NutritionCard(title:"Per person · \(servings) servings",zh:"按 \(servings) 人分，每人约",
+                NutritionCard(title:"Per adult portion",zh:"每份成人量（共 \(servings.formatted(.number.precision(.fractionLength(0...2)))) 份）",
                               nutrition:recipe.nutrition(per:servings),
                               note:"Estimated from ingredients as bought, before cooking. Oil and seasoning are counted only in the amounts this recipe lists.",
                               complete:recipe.nutritionIsComplete)
@@ -510,7 +524,20 @@ struct RecipeDetail: View {
                     }
                 }
             }
-            Section("做法 · Whole meal timing") { ForEach(Array(recipe.steps.enumerated()),id:\.offset) { i, step in Text("\(i+1). \(step)").padding(.vertical,4) } }
+            Section {
+                ForEach(Array(recipe.steps(in:store.state.recipeLanguage).enumerated()),id:\.offset) { index, step in
+                    VStack(alignment:.leading,spacing:6) {
+                        if let zh = step.zh { Text("\(index + 1). \(zh)") }
+                        if let en = step.en {
+                            Text(step.zh == nil ? "\(index + 1). \(en)" : en)
+                                .foregroundStyle(step.zh == nil ? Color.primary : Color.secondary)
+                        }
+                    }.padding(.vertical,4)
+                }
+                if recipe.englishSteps == nil {
+                    Text("This dish has no English steps yet, so its own wording is shown.").font(.caption).foregroundStyle(.secondary)
+                }
+            } header: { Text("做法 · How to cook it") }
             Section { Link("Food safety guidance · FDA",destination:URL(string:"https://www.fda.gov/food/buy-store-serve-safe-food/safe-food-handling")!) }
         }.navigationTitle(recipe.zh).navigationBarTitleDisplayMode(.inline)
     }

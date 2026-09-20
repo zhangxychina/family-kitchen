@@ -1,28 +1,59 @@
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#endif
 
-/// Shared look of Zhang Kitchen · 张家厨房.
+extension Color {
+    /// A colour that follows day and night. Dark steps are chosen for the dark
+    /// surface rather than lightened automatically, which is why they are written
+    /// out in full here.
+    static func adaptive(_ light: (Double, Double, Double), _ dark: (Double, Double, Double)) -> Color {
+        #if canImport(UIKit)
+        return Color(uiColor: UIColor { traits in
+            let c = traits.userInterfaceStyle == .dark ? dark : light
+            return UIColor(red: c.0, green: c.1, blue: c.2, alpha: 1)
+        })
+        #else
+        return Color(red: light.0, green: light.1, blue: light.2)
+        #endif
+    }
+}
+
+/// Shared look of Family Kitchen · 家庭厨房.
 ///
 /// One palette, one card, one set of status pills, so a screen the family has never
 /// opened still looks like a place they have been before.
 enum Brand {
-    static let appName = "Zhang Kitchen"
-    static let appNameZh = "张家厨房"
+    static let appName = "Family Kitchen"
+    static let appNameZh = "家庭厨房"
     /// Marketing version; keep in step with MARKETING_VERSION in the Xcode project.
     static let version = "0.2"
 
-    // Surfaces and ink
-    static let green = Color(red: 0.24, green: 0.39, blue: 0.28)
-    static let deepGreen = Color(red: 0.149, green: 0.306, blue: 0.216)
-    static let cream = Color(red: 0.965, green: 0.937, blue: 0.882)
-    static let paper = Color(red: 0.97, green: 0.95, blue: 0.91)
-    static let amber = Color(red: 0.886, green: 0.604, blue: 0.235)
-    static let clay = Color(red: 0.745, green: 0.361, blue: 0.243)
+    // Surfaces. The page is warm paper by day and a warm near-black by night;
+    // cards sit one step above the page in both.
+    static let paper = Color.adaptive((0.97, 0.95, 0.91), (0.075, 0.071, 0.063))
+    static let card = Color.adaptive((1, 1, 1), (0.125, 0.118, 0.102))
+    static let placeholder = Color.adaptive((0.94, 0.92, 0.87), (0.18, 0.17, 0.15))
 
-    // Macro colours, validated for colour-vision separation against a light surface.
-    // Every segment that uses them also carries a written label, never colour alone.
-    static let protein = Color(red: 0.180, green: 0.545, blue: 0.341)  // #2E8B57
-    static let carbs   = Color(red: 0.788, green: 0.541, blue: 0.055)  // #C98A0E
-    static let fat     = Color(red: 0.659, green: 0.271, blue: 0.184)  // #A8452F
+    // Ink and accents
+    static let green = Color.adaptive((0.24, 0.39, 0.28), (0.451, 0.729, 0.549))
+    static let deepGreen = Color.adaptive((0.149, 0.306, 0.216), (0.518, 0.780, 0.616))
+    static let clay = Color.adaptive((0.745, 0.361, 0.243), (0.867, 0.510, 0.396))
+    static let amber = Color.adaptive((0.886, 0.604, 0.235), (0.898, 0.678, 0.349))
+
+    // Fixed brand colours for the mark itself, so the logo never changes.
+    static let cream = Color(red: 0.965, green: 0.937, blue: 0.882)
+    static let markGreen = Color(red: 0.149, green: 0.306, blue: 0.216)
+    static let markAmber = Color(red: 0.886, green: 0.604, blue: 0.235)
+    static let markClay = Color(red: 0.745, green: 0.361, blue: 0.243)
+
+    // Macro colours. Both sets were validated for colour-vision separation and
+    // contrast against their own surface — light #2E8B57/#C98A0E/#A8452F, night
+    // #3C8F63/#B58F2E/#B04F3C. Every segment is also labelled in words, which is
+    // what makes the night pair's tighter separation safe.
+    static let protein = Color.adaptive((0.180, 0.545, 0.341), (0.235, 0.561, 0.388))
+    static let carbs   = Color.adaptive((0.788, 0.541, 0.055), (0.710, 0.561, 0.180))
+    static let fat     = Color.adaptive((0.659, 0.271, 0.184), (0.690, 0.310, 0.235))
 
     static let cardRadius: CGFloat = 20
 }
@@ -32,9 +63,9 @@ extension View {
     func kitchenCard(padding: CGFloat = 16) -> some View {
         self.padding(padding)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(.white)
+            .background(Brand.card)
             .clipShape(RoundedRectangle(cornerRadius: Brand.cardRadius, style: .continuous))
-            .overlay(RoundedRectangle(cornerRadius: Brand.cardRadius, style: .continuous).stroke(.black.opacity(0.05)))
+            .overlay(RoundedRectangle(cornerRadius: Brand.cardRadius, style: .continuous).stroke(.primary.opacity(0.06)))
             .shadow(color: .black.opacity(0.04), radius: 8, y: 3)
     }
 }
@@ -234,7 +265,7 @@ struct BrandMark: View {
     private func s(_ value: CGFloat) -> CGFloat { value / 1024 * size }
     var body: some View {
         ZStack {
-            LinearGradient(colors: [Color(red: 0.243, green: 0.451, blue: 0.314), Brand.deepGreen],
+            LinearGradient(colors: [Color(red: 0.243, green: 0.451, blue: 0.314), Brand.markGreen],
                            startPoint: .topLeading, endPoint: .bottomTrailing)
             Canvas { context, canvasSize in
                 let unit = canvasSize.width / 1024
@@ -259,16 +290,16 @@ struct BrandMark: View {
                                style: StrokeStyle(lineWidth: 22 * unit, lineCap: .round))
                 var second = Path()
                 second.move(to: p(726, 512)); second.addLine(to: p(952, 296))
-                context.stroke(second, with: .color(Brand.amber),
+                context.stroke(second, with: .color(Brand.markAmber),
                                style: StrokeStyle(lineWidth: 22 * unit, lineCap: .round))
 
                 var mound = Path()
                 mound.move(to: p(318, 556))
                 mound.addCurve(to: p(706, 556), control1: p(380, 424), control2: p(644, 424))
                 mound.closeSubpath()
-                context.fill(mound, with: .color(Brand.amber))
+                context.fill(mound, with: .color(Brand.markAmber))
                 context.fill(Path(ellipseIn: CGRect(x: 462 * unit, y: 436 * unit, width: 100 * unit, height: 64 * unit)),
-                             with: .color(Brand.clay))
+                             with: .color(Brand.markClay))
 
                 var bowl = Path()
                 bowl.move(to: p(244, 556))
@@ -278,7 +309,7 @@ struct BrandMark: View {
                 bowl.closeSubpath()
                 context.fill(bowl, with: .color(Brand.cream))
                 context.fill(Path(CGRect(x: 244 * unit, y: 556 * unit, width: 536 * unit, height: 30 * unit)),
-                             with: .color(Brand.deepGreen.opacity(0.16)))
+                             with: .color(Brand.markGreen.opacity(0.16)))
                 context.fill(Path(CGRect(x: 430 * unit, y: 856 * unit, width: 164 * unit, height: 34 * unit)),
                              with: .color(Brand.cream))
             }
@@ -291,12 +322,14 @@ struct BrandMark: View {
 
 /// Icon + wordmark, used at the top of Today.
 struct BrandHeader: View {
+    /// The family's own name for their kitchen; the app's name is used when empty.
+    var kitchenName: String = ""
     var subtitle: String? = nil
     var body: some View {
         HStack(spacing: 12) {
             BrandMark(size: 46)
             VStack(alignment: .leading, spacing: 1) {
-                Text(Brand.appName).font(.headline).lineLimit(1).minimumScaleFactor(0.8)
+                Text(kitchenName.isEmpty ? Brand.appName : kitchenName).font(.headline).lineLimit(1).minimumScaleFactor(0.8)
                 Text(subtitle ?? Brand.appNameZh).font(.subheadline).foregroundStyle(.secondary)
                     .lineLimit(1).minimumScaleFactor(0.8)
             }

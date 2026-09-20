@@ -11,7 +11,7 @@ func XCTAssertTrue(_ v: Bool, _ message: String = "Expected true") { check(v,mes
 func XCTAssertFalse(_ v: Bool, _ message: String = "Expected false") { check(!v,message) }
 func XCTAssertNotNil<T>(_ v: T?, _ message: String = "Expected a value") { check(v != nil,message) }
 func XCTAssertNil<T>(_ v: T?) { check(v == nil) }
-func XCTAssertEqual<T: Equatable>(_ a: T, _ b: T) { check(a == b, "\\(a) != \\(b)") }
+func XCTAssertEqual<T: Equatable>(_ a: T, _ b: T, _ message: String = "") { check(a == b, message.isEmpty ? "\\(a) != \\(b)" : message + " — \\(a) != \\(b)") }
 func XCTAssertEqual(_ a: Double, _ b: Double, accuracy: Double) { check(abs(a-b) <= accuracy) }
 func XCTAssertGreaterThan<T: Comparable>(_ a: T, _ b: T, _ message: String = "") { check(a > b, message.isEmpty ? "\(a) <= \(b)" : message) }
 func XCTAssertGreaterThanOrEqual<T: Comparable>(_ a: T, _ b: T, _ message: String = "") { check(a >= b, message.isEmpty ? "\(a) < \(b)" : message) }

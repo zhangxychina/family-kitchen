@@ -12,6 +12,7 @@
 		7CE357B40CFBFFED22C84B05 /* Sources/FamilyCore/Catalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CFE617AD669C9410A1EB473 /* Sources/FamilyCore/Catalog.swift */; };
 		CF5C11FEB8C4A365084F2BD5 /* Sources/FamilyCore/Nutrition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 752CDCCA1DDBC4BD680FC799 /* Sources/FamilyCore/Nutrition.swift */; };
 		8842038EC1462D1E547C49F6 /* Sources/FamilyCore/Seasons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4B7B006948500B0E2ADDF8 /* Sources/FamilyCore/Seasons.swift */; };
+		561BD11E6C1D4074400D1A91 /* Sources/FamilyCore/StepsEN.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB79A5637587CBF15A4F3D59 /* Sources/FamilyCore/StepsEN.swift */; };
 		052487C422265235967BFAA5 /* Sources/FamilyCore/Dietary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E604F2D0F73A34FF2ED2C6 /* Sources/FamilyCore/Dietary.swift */; };
 		868D280E3B7CB6053498465E /* Sources/FamilyCore/Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89167F08BD3A004726FF6121 /* Sources/FamilyCore/Models.swift */; };
 		CCAD47BDBC777BE320710609 /* FamilyTable/Brand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74C4A002E432DC9265031941 /* FamilyTable/Brand.swift */; };
@@ -42,6 +43,7 @@
 		9CFE617AD669C9410A1EB473 /* Sources/FamilyCore/Catalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/FamilyCore/Catalog.swift; sourceTree = "<group>"; };
 		752CDCCA1DDBC4BD680FC799 /* Sources/FamilyCore/Nutrition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/FamilyCore/Nutrition.swift; sourceTree = "<group>"; };
 		0A4B7B006948500B0E2ADDF8 /* Sources/FamilyCore/Seasons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/FamilyCore/Seasons.swift; sourceTree = "<group>"; };
+		AB79A5637587CBF15A4F3D59 /* Sources/FamilyCore/StepsEN.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/FamilyCore/StepsEN.swift; sourceTree = "<group>"; };
 		73E604F2D0F73A34FF2ED2C6 /* Sources/FamilyCore/Dietary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/FamilyCore/Dietary.swift; sourceTree = "<group>"; };
 		A7C9FD69DA095A3BF0CB4587 /* FamilyTableUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = FamilyTableUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -69,6 +71,7 @@
 				9CFE617AD669C9410A1EB473 /* Sources/FamilyCore/Catalog.swift */,
 				752CDCCA1DDBC4BD680FC799 /* Sources/FamilyCore/Nutrition.swift */,
 				0A4B7B006948500B0E2ADDF8 /* Sources/FamilyCore/Seasons.swift */,
+				AB79A5637587CBF15A4F3D59 /* Sources/FamilyCore/StepsEN.swift */,
 				73E604F2D0F73A34FF2ED2C6 /* Sources/FamilyCore/Dietary.swift */,
 				077A994FF8C9EB87EF6576BC /* FamilyTable/Assets.xcassets */,
 				FBDC4F23F93125BBEEAE800C /* Products */,
@@ -181,6 +184,7 @@
 				7CE357B40CFBFFED22C84B05 /* Sources/FamilyCore/Catalog.swift in Sources */,
 				CF5C11FEB8C4A365084F2BD5 /* Sources/FamilyCore/Nutrition.swift in Sources */,
 				8842038EC1462D1E547C49F6 /* Sources/FamilyCore/Seasons.swift in Sources */,
+				561BD11E6C1D4074400D1A91 /* Sources/FamilyCore/StepsEN.swift in Sources */,
 				052487C422265235967BFAA5 /* Sources/FamilyCore/Dietary.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -207,14 +211,14 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 2HKWUJYXM7;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Zhang Kitchen";
+				INFOPLIST_KEY_CFBundleDisplayName = "Family Kitchen";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Photograph pantry items for manual review. Photos stay on your iPhone.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 0.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.zhangkitchen.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.familykitchen.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
@@ -276,7 +280,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.zhangkitchen.app.uitests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.familykitchen.app.uitests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -293,7 +297,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.zhangkitchen.app.uitests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.familykitchen.app.uitests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -355,14 +359,14 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 2HKWUJYXM7;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Zhang Kitchen";
+				INFOPLIST_KEY_CFBundleDisplayName = "Family Kitchen";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Photograph pantry items for manual review. Photos stay on your iPhone.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 0.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.zhangkitchen.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.familykitchen.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
