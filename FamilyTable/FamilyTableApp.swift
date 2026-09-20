@@ -82,7 +82,7 @@ struct RootView: View {
             NavigationStack { WeekView() }.tabItem { Label("Week", systemImage:"calendar") }.tag(1)
             NavigationStack { RecipesView() }.tabItem { Label("Recipes", systemImage:"book.closed") }.tag(2)
             NavigationStack { ShoppingView() }.tabItem { Label("Shopping", systemImage:"basket") }.tag(3)
-            NavigationStack { PantryView() }.tabItem { Label("Pantry", systemImage:"cabinet") }.tag(4)
+            NavigationStack { KitchenView() }.tabItem { Label("Kitchen", systemImage:"refrigerator") }.tag(4)
         }.safeAreaInset(edge:.top) { if let error = store.error { Text(error).font(.caption).foregroundStyle(.red).padding().background(Brand.card) } }
     }
 }
@@ -165,7 +165,7 @@ struct TodayView: View {
                 ]).kitchenCard()
             }.padding(20)
         }.background(Brand.paper).navigationTitle(store.state.kitchenName.isEmpty ? Brand.appName : store.state.kitchenName).navigationBarTitleDisplayMode(.inline)
-        .confirmationDialog("Update confirmed pantry quantities? Adjust leftovers in Pantry afterward.",isPresented:Binding(get:{ finishMeal != nil },set:{ if !$0 { finishMeal = nil } }),titleVisibility:.visible) {
+        .confirmationDialog("Update what you have at home? Adjust leftovers in Kitchen afterward.",isPresented:Binding(get:{ finishMeal != nil },set:{ if !$0 { finishMeal = nil } }),titleVisibility:.visible) {
             Button("Complete & deduct recipe amounts") { if let m = finishMeal { store.update { $0.finish(m.id,consume:true) } }; finishMeal = nil }
             Button("Complete without deducting") { if let m = finishMeal { store.update { $0.finish(m.id,consume:false) } }; finishMeal = nil }
         }
@@ -235,7 +235,7 @@ struct TodayView: View {
                         detail: !planned ? "The children vote and swap once a menu exists." : allConfirmed ? "All \(progress.total) meals are confirmed." : "\(progress.total - progress.approved) meals still need a swap or a confirmation.",
                         symbol:"hand.thumbsup",state: !planned ? .waiting : allConfirmed ? .done : .active,tab:1),
             JourneyStep(title:"Shop once",zh:"一次买齐",
-                        detail: !planned ? "The list builds itself from the menu." : toBuy > 0 ? "\(toBuy) items are missing from the pantry." : "Nothing left to buy for this menu.",
+                        detail: !planned ? "The list builds itself from the menu." : toBuy > 0 ? "\(toBuy) items are missing from your kitchen." : "Nothing left to buy for this menu.",
                         symbol:"basket",state: !planned ? .waiting : toBuy > 0 ? .active : .done,tab:3),
             JourneyStep(title:"Put it away",zh:"收纳归位",
                         detail: waitingToStore > 0 ? "\(waitingToStore) bought items are waiting for a shelf." : "Everything bought has a confirmed place.",
@@ -283,7 +283,7 @@ struct WeekView: View {
             }
             if store.state.isPlanned { checkout }
         }.navigationTitle("Our week")
-        .confirmationDialog("Replace the current menu? Purchased groceries and pantry stock will be kept.",isPresented:$replacePlan,titleVisibility:.visible) { Button("Replace menu") { generate() } }
+        .confirmationDialog("Replace the current menu? Purchased groceries and what you have at home will be kept.",isPresented:$replacePlan,titleVisibility:.visible) { Button("Replace menu") { generate() } }
     }
 
     /// Step 1 when nothing is planned: the single obvious way into next week's menu.
@@ -305,7 +305,7 @@ struct WeekView: View {
                 "Produce at its seasonal peak is favoured, so the week follows the calendar — tomatoes and zucchini in summer, cabbage and broccoli in winter.",
                 "Anything eaten recently is pushed down the list; the last fortnight counts most.",
                 "Allergens your household excludes are never recommended or offered as a swap.",
-                "Ingredients you have confirmed in the pantry raise a meal's chances, so less is bought twice.",
+                "Ingredients you have already confirmed at home raise a meal's chances, so less is bought twice.",
                 "Dinner times assume 5–6 people, quick-cooking rice, thawed ingredients and two burners.",
                 "Breakfast preferences are not known yet — review the first week together and swap freely."
             ])
@@ -346,7 +346,7 @@ struct WeekView: View {
             if !store.state.awaitingApproval.isEmpty {
                 Text("\(store.state.awaitingApproval.count) meals are still unconfirmed, so the list may still change.").font(.footnote).foregroundStyle(.orange)
             }
-            Text("Amounts are combined across meals, scaled to \(store.state.servingsExplanation), and reduced by pantry items you confirmed.").font(.footnote).foregroundStyle(.secondary)
+            Text("Amounts are combined across meals, scaled to \(store.state.servingsExplanation), and reduced by what you have confirmed at home.").font(.footnote).foregroundStyle(.secondary)
         }
     }
 

@@ -60,6 +60,21 @@ final class FamilyTableUITests: XCTestCase {
         app.buttons["Save this dish"].tap()
         XCTAssertTrue(app.staticTexts["Grandma noodles"].waitForExistence(timeout:5))
     }
+    func testAddingAFamilyMemberActuallyAdds() {
+        // The add button used to share a row with the name field, which swallowed the
+        // tap. Each control now has its own row.
+        app.tabBars.buttons["Kitchen"].tap()
+        app.buttons["openSettings"].tap()
+        app.buttons["Family & portions"].firstMatch.tap()
+        let name = app.textFields["Their name"]
+        XCTAssertTrue(name.waitForExistence(timeout:5))
+        name.tap(); name.typeText("Mia")
+        let add = app.buttons["addFamilyMember"]
+        XCTAssertTrue(add.isEnabled)
+        add.tap()
+        XCTAssertTrue(app.staticTexts["Mia"].waitForExistence(timeout:3))
+        XCTAssertFalse(app.buttons["addFamilyMember"].isEnabled, "the field should clear after adding")
+    }
     func testRecipeScrollingPerformance() {
         app.tabBars.buttons["Recipes"].tap()
         measure(metrics:[XCTClockMetric(), XCTMemoryMetric(), XCTCPUMetric()]) {
