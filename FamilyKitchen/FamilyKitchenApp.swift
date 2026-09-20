@@ -187,7 +187,7 @@ struct TodayView: View {
                     "Nutrition figures are reference values for ingredients as bought, not measurements of the finished dish."
                 ]).kitchenCard()
             }.padding(20)
-        }.background(Brand.paper).navigationTitle(store.state.kitchenName.isEmpty ? Brand.appName : store.state.kitchenName).navigationBarTitleDisplayMode(.inline)
+        }.background(Brand.paper).navigationTitle(store.state.kitchenName.isEmpty ? Brand.appName : store.state.kitchenName).navigationBarTitleDisplayMode(.inline).kitchenChat()
         .confirmationDialog("Update what you have at home? Adjust leftovers in Kitchen afterward.",isPresented:Binding(get:{ finishMeal != nil },set:{ if !$0 { finishMeal = nil } }),titleVisibility:.visible) {
             Button("Complete & deduct recipe amounts") { if let m = finishMeal { store.update { $0.finish(m.id,consume:true) } }; finishMeal = nil }
             Button("Complete without deducting") { if let m = finishMeal { store.update { $0.finish(m.id,consume:false) } }; finishMeal = nil }
@@ -305,7 +305,7 @@ struct WeekView: View {
                 }
             }
             if store.state.isPlanned { checkout }
-        }.navigationTitle("Our week")
+        }.navigationTitle("Our week").kitchenChat()
         .confirmationDialog("Replace the current menu? Purchased groceries and what you have at home will be kept.",isPresented:$replacePlan,titleVisibility:.visible) { Button("Replace menu") { generate() } }
     }
 

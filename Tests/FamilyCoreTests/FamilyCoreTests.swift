@@ -829,4 +829,292 @@ final class FamilyCoreTests: XCTestCase {
         s.renameAppliance(UUID(), to:"ghost"); s.renameLocation(UUID(), to:"ghost")
         XCTAssertEqual(s.appliances.count,1)
     }
+
+    // MARK: - Saying it out loud, in either language
+
+    /// A week with today and tomorrow on it, and the handful of things the spoken
+    /// examples talk about.
+    private func spokenKitchen() -> FamilyState {
+        var s = FamilyState()
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        func day(_ offset: Int) -> Date { calendar.date(byAdding: .day, value: offset, to: today)! }
+        s.meals = [
+            Meal(date: day(0), recipe: "eggs", breakfast: true),
+            Meal(date: day(0), recipe: "sesame", breakfast: false),
+            Meal(date: day(1), recipe: "oats", breakfast: true),
+            Meal(date: day(1), recipe: "beefpasta", breakfast: false),
+            Meal(date: day(2), recipe: "yogurt", breakfast: true),
+            Meal(date: day(2), recipe: "chickenpeas", breakfast: false)
+        ]
+        // Milk is on the list and some of it is already at home, so both "we have it"
+        // and "we ran out" have something real to act on.
+        s.stock = [Stock(ingredient:"milk",quantity:900,confirmed:true,location:nil)]
+        return s
+    }
+
+    private func onlyStep(_ answer: KitchenAnswer, _ message: String = "expected one change") -> KitchenAction {
+        guard case .command(let command) = answer, command.steps.count == 1 else {
+            XCTFail(message + " — got \(answer)"); return .bought(ingredient:"?")
+        }
+        return command.steps[0].action
+    }
+
+    func testTheSameChangeIsHeardInEnglishAndInMandarin() {
+        let s = spokenKitchen()
+        // Each pair is the same sentence a family would say in either language.
+        let pairs = [
+            ("We already have carrots at home", "家里已经有胡萝卜了"),
+            ("We're out of milk", "牛奶没有了"),
+            ("I bought the carrots", "胡萝卜买好了")
+        ]
+        for (english, chinese) in pairs {
+            XCTAssertEqual(onlyStep(s.interpret(english), english),
+                           onlyStep(s.interpret(chinese), chinese),
+                           "“\(english)” and “\(chinese)” must reach the same change")
+        }
+    }
+
+    func testSayingYouHaveItTicksTheLineOffAndMovesItDown() {
+        var s = spokenKitchen()
+        let before = s.shopping().first { $0.ingredient == "carrot" }!
+        XCTAssertGreaterThan(before.shortage, 0, "carrots start out as something to buy")
+        guard case .command(let command) = s.interpret("家里已经有胡萝卜了") else { return XCTFail("not understood") }
+        // Reading the sentence changes nothing on its own.
+        XCTAssertEqual(s.shopping().first { $0.ingredient == "carrot" }!.shortage, before.shortage)
+        s.perform(command)
+        let after = s.shopping().first { $0.ingredient == "carrot" }!
+        XCTAssertEqual(after.shortage, 0, accuracy: 0.001, "the line is covered and drops to Nothing to buy")
+        XCTAssertEqual(after.stock, before.shortage, accuracy: 0.001, "exactly what the week was short of")
+        XCTAssertTrue(s.stock.contains { $0.ingredient == "carrot" && $0.confirmed && $0.location == nil },
+                      "recorded at home with no shelf claimed for it")
+        XCTAssertFalse(s.shoppingListIngredients.contains("carrot"))
+        // Saying it twice does not stack a second record of the same food.
+        if case .command(let again) = s.interpret("家里已经有胡萝卜了") { s.perform(again) }
+        XCTAssertEqual(s.stock.filter { $0.ingredient == "carrot" }.count, 1)
+    }
+
+    func testAmountsAreReadInBothLanguagesAndConvertedToTheKitchensUnits() {
+        let s = spokenKitchen()
+        let expected: [(String, String, Double)] = [
+            ("I have 500 g of chicken at home", "chicken", 500),
+            ("冰箱里还有500克鸡肉", "chicken", 500),
+            ("家里还有半斤猪肉", "pork", 250),          // 半斤 is 250 g
+            ("I already have 2 kg of potatoes", "potato", 2000),
+            ("I have five eggs", "egg", 5),
+            ("家里还有两个鸡蛋", "egg", 2),
+            ("we have 1.5 litres of milk", "milk", 1500)
+        ]
+        for (sentence, ingredient, quantity) in expected {
+            XCTAssertEqual(onlyStep(s.interpret(sentence), sentence),
+                           .haveAtHome(ingredient: ingredient, quantity: quantity), sentence)
+        }
+        // Carrots are kept by weight, so "two carrots" is not two grams of anything:
+        // the week's shortfall is recorded instead, and the reason is said out loud.
+        guard case .command(let command) = s.interpret("we have two carrots") else { return XCTFail("not understood") }
+        XCTAssertEqual(command.steps[0].action,
+                       .haveAtHome(ingredient: "carrot", quantity: s.shopping().first { $0.ingredient == "carrot" }!.shortage))
+        XCTAssertTrue(command.notes.contains { $0.contains("kept in g") }, "the ignored number is explained")
+    }
+
+    func testANamedDishReplacesTheMealThatWasNamedWithIt() {
+        var s = spokenKitchen()
+        let calendar = Calendar.current
+        for sentence in ["change tomorrow's dinner to sesame chicken", "把明天的晚餐换成芝麻鸡"] {
+            var kitchen = s
+            guard case .command(let command) = kitchen.interpret(sentence) else { return XCTFail(sentence) }
+            kitchen.meals[3].approved = true; kitchen.meals[3].votes["child"] = "Looks good"
+            kitchen.perform(command)
+            let tomorrow = kitchen.meals.first {
+                !$0.breakfast && calendar.isDateInTomorrow($0.date)
+            }!
+            XCTAssertEqual(tomorrow.recipe, "sesame", sentence)
+            XCTAssertFalse(tomorrow.approved, "a swapped meal needs confirming again")
+            XCTAssertTrue(tomorrow.votes.isEmpty, "and the old votes are gone")
+            XCTAssertEqual(kitchen.meals.first { !$0.breakfast && calendar.isDateInToday($0.date) }?.recipe,
+                           "sesame", "no other day was touched")
+        }
+        // Naming no dish at all asks for the app's own first suggestion.
+        guard case .command(let suggestion) = s.interpret("今晚的晚餐换一个"),
+              case .swap(_, let to) = suggestion.steps[0].action else { return XCTFail("no suggestion") }
+        XCTAssertEqual(to, s.swapOptions(for: s.meals[1], limit: 1).first?.id)
+        s.perform(suggestion)
+        XCTAssertEqual(s.meals[1].recipe, to)
+    }
+
+    func testAnUnclearDishIsAQuestionAndAnUnknownOneIsAdmitted() {
+        let s = spokenKitchen()
+        // Two curries answer to "咖喱", so the family picks rather than the app.
+        guard case .chooseDish(_, _, _, let options) = s.interpret("明天的晚餐换成咖喱") else {
+            return XCTFail("a word that fits two dishes must stay a question")
+        }
+        XCTAssertTrue(options.count >= 2 && options.allSatisfy { Catalog.recipe($0)?.breakfast == false })
+        XCTAssertTrue(options.contains("curry") && options.contains("chickpeacurry"))
+        // Picking one turns it into the ordinary confirmable change.
+        guard case .chooseDish(let meal, _, _, _) = s.interpret("明天的晚餐换成咖喱"),
+              case .command(let chosen) = s.swapCommand(meal: meal, to: "curry") else { return XCTFail("choice") }
+        XCTAssertEqual(chosen.steps[0].action, .swap(meal: meal, to: "curry"))
+        // A dish this app has never heard of is said plainly, not guessed at.
+        guard case .unsure = s.interpret("change tomorrow's dinner to lasagne") else {
+            return XCTFail("an unknown dish must not become an arbitrary swap")
+        }
+    }
+
+    func testABreakfastDishCannotTakeADinnerPlace() {
+        let s = spokenKitchen()
+        guard case .unsure(let en, _, _) = s.interpret("change tomorrow's dinner to banana and berry oats") else {
+            return XCTFail("a breakfast must be refused at dinner")
+        }
+        XCTAssertTrue(en.contains("breakfast"), en)
+        guard case .unsure = s.swapCommand(meal: s.meals[3].id, to: "oats") else {
+            return XCTFail("and refused when picked from a list too")
+        }
+        // The same slot takes a breakfast dish without complaint — and a dish that is
+        // already there is said plainly rather than swapped for itself.
+        XCTAssertEqual(onlyStep(s.interpret("把明天的早餐换成蓝莓法式吐司")),
+                       .swap(meal: s.meals[2].id, to: "berryfrenchtoast"))
+        guard case .unsure = s.interpret("把明天的早餐换成香蕉蓝莓牛奶燕麦") else {
+            return XCTFail("tomorrow's breakfast is already that dish")
+        }
+    }
+
+    func testRunningOutAndBuyingMatchTappingTheListByHand() {
+        var s = spokenKitchen()
+        let milk = { s.shopping().first { $0.ingredient == "milk" }! }
+        XCTAssertEqual(milk().stock, 900)
+        guard case .command(let gone) = s.interpret("牛奶没有了") else { return XCTFail("out of milk") }
+        s.perform(gone)
+        XCTAssertEqual(milk().stock, 0, "the record at home is cleared and milk comes back on the list")
+        XCTAssertGreaterThan(milk().shortage, 0)
+
+        var byHand = s; byHand.buy("milk")
+        guard case .command(let bought) = s.interpret("I bought the milk") else { return XCTFail("bought") }
+        s.perform(bought)
+        XCTAssertEqual(s.purchases.map(\.quantity), byHand.purchases.map(\.quantity),
+                       "saying it and ticking it record the same purchase")
+        XCTAssertEqual(milk().shortage, 0, "and it moves down to Nothing to buy")
+
+        guard case .command(let back) = s.interpret("put the milk back on the list") else { return XCTFail("put back") }
+        s.perform(back)
+        XCTAssertTrue(s.purchases.isEmpty)
+        XCTAssertGreaterThan(milk().shortage, 0)
+        // With nothing left to undo, it says so instead of doing something else.
+        guard case .unsure = s.interpret("put the milk back on the list") else { return XCTFail("nothing to undo") }
+    }
+
+    func testASentenceThatIsNotAboutThisKitchenChangesNothing() {
+        let s = spokenKitchen()
+        for sentence in ["hello how are you", "", "   ", "play some music", "今天天气不错"] {
+            guard case .unsure = s.interpret(sentence) else { return XCTFail("“\(sentence)” must not change anything") }
+        }
+        // A food with no instruction attached is a half-sentence, and says so.
+        guard case .unsure(let en, _, _) = s.interpret("carrots") else { return XCTFail("bare food") }
+        XCTAssertTrue(en.contains("food"), en)
+        // A day with nothing planned on it is named rather than silently redirected.
+        var empty = FamilyState()
+        guard case .unsure = empty.interpret("swap tonight's dinner") else { return XCTFail("no menu yet") }
+        empty.meals = [Meal(date: Calendar.current.startOfDay(for: Date()), recipe: "sesame", breakfast: false)]
+        guard case .unsure(let missing, _, _) = empty.interpret("change tomorrow's dinner") else {
+            return XCTFail("no dinner tomorrow")
+        }
+        XCTAssertTrue(missing.contains("tomorrow"), missing)
+    }
+
+    func testEverySuggestedSentenceActuallyWorks() {
+        let s = spokenKitchen()
+        for example in KitchenTalk.examples {
+            for sentence in [example.en, example.zh] {
+                switch s.interpret(sentence) {
+                case .command(let command): XCTAssertFalse(command.steps.isEmpty, sentence)
+                case .chooseDish(_, _, _, let options): XCTAssertFalse(options.isEmpty, sentence)
+                case .unsure: XCTFail("the app suggests “\(sentence)” and must understand it")
+                }
+            }
+        }
+        // Every step is written out in both languages before anything is confirmed.
+        guard case .command(let command) = s.interpret("I already have carrots and broccoli") else {
+            return XCTFail("two foods in one breath")
+        }
+        XCTAssertEqual(command.steps.count, 2)
+        XCTAssertTrue(command.steps.allSatisfy { !$0.en.isEmpty && !$0.zh.isEmpty })
+        XCTAssertEqual(command.steps.map(\.action), [
+            .haveAtHome(ingredient: "carrot", quantity: s.suggestedScanQuantity("carrot", at: nil)),
+            .haveAtHome(ingredient: "broccoli", quantity: s.suggestedScanQuantity("broccoli", at: nil))
+        ])
+    }
+
+    func testAnAmountSpokenForOneFoodDoesNotSpeakForTheOther() {
+        let s = spokenKitchen()
+        guard case .command(let command) = s.interpret("I have 500 g of chicken and carrots at home") else {
+            return XCTFail("not understood")
+        }
+        XCTAssertEqual(command.steps[0].action, .haveAtHome(ingredient: "chicken", quantity: 500))
+        XCTAssertEqual(command.steps[1].action,
+                       .haveAtHome(ingredient: "carrot", quantity: s.suggestedScanQuantity("carrot", at: nil)),
+                       "the carrots get what the week is short of, not the chicken's 500 g")
+    }
+
+    func testTheEarThatUnderstoodTheKitchenIsTheOneBelieved() {
+        let s = spokenKitchen()
+        // What really happens when a Mandarin sentence reaches an English recogniser:
+        // it returns confident nonsense. Confidence must not decide this.
+        let mandarin = [
+            SpokenReading(locale:"en-US", text:"jah lee yee jing yo who law bo luh", confidence:0.93),
+            SpokenReading(locale:"zh-CN", text:"家里已经有胡萝卜了", confidence:0.55)
+        ]
+        XCTAssertEqual(s.bestReading(among: mandarin)?.locale, "zh-CN",
+                       "the reading the kitchen can act on wins, however sure the other ear was")
+        // And the same the other way round.
+        let english = [
+            SpokenReading(locale:"en-US", text:"we already have carrots at home", confidence:0.40),
+            SpokenReading(locale:"zh-CN", text:"为奥瑞迪哈夫凯罗兹", confidence:0.88)
+        ]
+        XCTAssertEqual(s.bestReading(among: english)?.locale, "en-US")
+        // Something to do beats something to ask about.
+        let mixed = [
+            SpokenReading(locale:"en-US", text:"change tomorrow's dinner to curry", confidence:0.5),
+            SpokenReading(locale:"zh-CN", text:"把明天的晚餐换成芝麻鸡", confidence:0.5)
+        ]
+        XCTAssertEqual(mixed.map { s.usefulness(of: $0.text) }, [1, 2], "one is a question, one is an answer")
+        XCTAssertEqual(s.bestReading(among: mixed)?.locale, "zh-CN")
+        // When neither ear understood, confidence is all that is left.
+        let neither = [
+            SpokenReading(locale:"en-US", text:"good morning", confidence:0.2),
+            SpokenReading(locale:"zh-CN", text:"早上好", confidence:0.7)
+        ]
+        XCTAssertEqual(s.bestReading(among: neither)?.locale, "zh-CN")
+        // A recogniser that heard nothing is not a reading at all.
+        XCTAssertEqual(s.bestReading(among: [
+            SpokenReading(locale:"en-US", text:"   ", confidence:0.99),
+            SpokenReading(locale:"zh-CN", text:"牛奶没有了", confidence:0.1)
+        ])?.locale, "zh-CN")
+        XCTAssertNil(s.bestReading(among: []))
+        XCTAssertNil(s.bestReading(among: [SpokenReading(locale:"en-US", text:"", confidence:1)]))
+    }
+
+    func testANamedWeekdayFindsTheDayTheMenuActuallyCovers() {
+        // A menu that starts three days out. Naming a weekday must reach the day the
+        // menu actually covers, even when that weekday also falls inside this week
+        // with nothing on it.
+        var s = FamilyState()
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let begins = calendar.date(byAdding: .day, value: 3, to: today)!
+        s.plan(start: begins)
+        // Eight days out is inside the menu, and the same weekday one day out is not.
+        let far = calendar.date(byAdding: .day, value: 8, to: today)!
+        let weekday = calendar.component(.weekday, from: far)
+        let sentence = "change \(KitchenTalk.weekdayEN[weekday]) dinner to sesame chicken"
+        guard case .command(let command) = s.interpret(sentence),
+              case .swap(let meal, let to) = command.steps[0].action else { return XCTFail(sentence) }
+        XCTAssertEqual(to, "sesame")
+        XCTAssertTrue(calendar.isDate(s.meals.first { $0.id == meal }!.date, inSameDayAs: far),
+                      "the weekday on the menu, not the one this week with no menu")
+        // A day counted from today still means that exact date, and a date the menu
+        // does not reach is said plainly rather than redirected to a different day.
+        guard case .unsure(let en, _, _) = s.interpret("change tomorrow's dinner to sesame chicken") else {
+            return XCTFail("tomorrow is before this menu starts")
+        }
+        XCTAssertTrue(en.contains("tomorrow"), en)
+    }
 }

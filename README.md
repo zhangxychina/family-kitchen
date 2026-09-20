@@ -18,6 +18,21 @@ Once a week you sit down together for a few minutes. The app proposes seven days
 
 It grew out of one particular family — five people, mild Chinese and simple Western food, dinner on the table in about half an hour, noodles and rice taking turns, children who should have a say in what they eat — but the household, the allergies and the portions are all yours to set.
 
+## What it looks like
+
+<p align="center">
+  <img src="Screenshots/01-today.png" width="24%" alt="Today: the kitchen's own name, today's breakfast and dinner with pictures, and the five steps of the week" />
+  <img src="Screenshots/02-week.png" width="24%" alt="Week: seven days of breakfast and dinner, each one confirmable or swappable" />
+  <img src="Screenshots/04-shopping.png" width="24%" alt="Shopping: the list built from the menu, with what is already at home subtracted" />
+  <img src="Screenshots/06-understood.png" width="24%" alt="Say what changed: a Mandarin sentence heard, written back in both languages, waiting to be confirmed" />
+</p>
+
+<p align="center"><em>Today · Week · Shopping · Say what changed</em></p>
+
+The fourth one is the part this README spends the most words on, so it is worth reading closely: a sentence was said in Mandarin, the English recogniser produced confident nonsense (shown underneath as *Also heard*), and the app believed the ear that understood the kitchen. What it understood is written out in both languages with **Do it** and **Not that** underneath, and the shopping list has not changed yet.
+
+All seven pictures are regenerated from the running app by `python3 scripts/screenshots.py` — never touched up, and never drawn by hand. They come from an iPhone 18 Pro Max simulator at 1320 × 2868, which is the size the App Store asks for. See [Screenshots/README.md](Screenshots/README.md) for what each one shows and how the voice one was produced.
+
 ## A week in five steps
 
 The Today screen shows these five steps and where you are in them, so nobody has to remember the order.
@@ -36,6 +51,9 @@ After shopping, **Put away** suggests a shelf for each item based on how it need
 
 **5. Cook tonight · 照着做饭**
 **Today** shows the day's breakfast and dinner, the recipe steps in whichever language you chose, the amounts for your family, and — the part that saves the most time — where each ingredient is right now. After dinner, one tap records the meal as cooked.
+
+**And at any point · say it**
+The speech bubble at the top of Today, Week and Shopping takes a sentence in English or Mandarin — *"we already have carrots"*, *"change tomorrow's dinner to beef noodles"* — and turns it into a change you confirm with one tap. See [Say what changed](#say-what-changed).
 
 **And in between · Kitchen**
 The **Kitchen** tab is what you have at home, grouped by the appliance it actually sits in and the shelf inside it — one section per fridge, freezer or pantry, with anything unplaced at the end. It also holds the photos you take of a shelf, and the ⚙︎ **Settings** for everything below.
@@ -78,6 +96,33 @@ Two things it does deliberately:
 - **It never ticks anything off by itself.** A recogniser that mistakes a lemon for an orange must not be able to send you home without the eggs, so a person confirms every item before the list changes. A photo also cannot say *how much* there is: the amount offered is exactly what this week's menu is short of, and it is yours to correct.
 
 Recognition is general — good at whole foods, vague about boxes and jars, and no help at all with an unopened carton. Whatever it misses, you add by hand exactly as before.
+
+## Say what changed
+
+The week is full of small corrections. There is already ginger in the door. Nobody wants fish on Thursday. The eggs are in the trolley. Each of these is a screen, a scroll and a tap, and the person holding the bag has one hand free.
+
+So tap the speech bubble at the top of **Today**, **Week** or **Shopping**, and say it — or type it. In English or in Mandarin; you do not choose, and you can change language mid-week without telling the app.
+
+> "We already have carrots at home" · "家里已经有胡萝卜了"
+> "I have 500 g of chicken in the fridge" · "冰箱里还有500克鸡肉"
+> "We're out of milk" · "牛奶没有了"
+> "I bought the eggs" · "鸡蛋买好了"
+> "Change tomorrow's dinner to beef noodles" · "把明天的晚餐换成牛肉面"
+> "Swap tonight's dinner" · "今晚的晚餐换一个"
+
+It understands four things, which are the four things a week is actually made of: **what you already have**, **what you have run out of**, **what you have bought**, and **which dish goes on which day**. Saying you already have something records it at home, and the shopping line is ticked off and drops to **Nothing to buy** at the bottom — the same place the photo check sends it, because it is the same change.
+
+**It listens in both languages at once.** One microphone feeds an English recogniser and a Mandarin one, and the reading this kitchen can actually act on is the one that is used. The other reading is shown underneath, so a sentence heard by the wrong ear costs one tap rather than a repeat.
+
+**It runs on this iPhone.** Only recognisers that work offline are used. If your phone has not got one of the two languages yet, the app says so and points at Settings → General → Keyboard → Dictation Languages rather than quietly sending your kitchen talk to a server. Nothing is uploaded, and no recording is kept.
+
+Three things it does deliberately:
+
+- **It says back what it understood, in both languages, and waits.** "Melons" for "lemons" must not be able to change tonight's dinner, so every sentence becomes a written sentence you read before tapping *Do it*. The most recent change can be taken back on the spot.
+- **It asks rather than guesses.** "换成咖喱" fits two curries, and "beef noodles" fits three noodle dishes, so it offers them instead of choosing. A dish it has never heard of is admitted, not approximated.
+- **It never invents a number or a shelf.** With no amount said, it records exactly what the week is short of — the same figure the photo check offers. Food recorded this way has no shelf yet; confirm where it went in **Kitchen** or **Put away**, as with anything else.
+
+What it will not do: it cannot plan a week, confirm a meal for a parent, add a dish, or name a shelf. Those are still screens, on purpose.
 
 ## Dishes of your own
 
@@ -123,10 +168,11 @@ Every recipe and every planned day shows an estimate, per person: calories, a la
 Being honest about this is part of the design.
 
 - **Photo recognition proposes; it never decides.** The shop check reads photos on this iPhone and suggests what it saw, but nothing reaches the shopping list or your stock until you confirm it. A photo never decides freshness, and never decides quantity — the amount offered is what the menu needs, not what the picture shows.
+- **Speech proposes; it never decides either.** What you say is written back out and waits for a tap, for the same reason a photo does.
 - **Nothing is assumed into your pantry.** Only amounts someone confirmed are subtracted from the shopping list.
 - **Planning a meal does not consume ingredients.** Stock changes when you shop, put away, or finish cooking.
 - **Suggested shelves are suggestions**, shown separately from the place you actually confirmed.
-- **Everything stays on this iPhone.** No account, no cloud sync, no uploads, no analytics. The single exception is importing a dish from a link, which opens the page you paste — and only then. Parent and child roles are a family agreement on a shared device, not passwords.
+- **Everything stays on this iPhone.** No account, no cloud sync, no uploads, no analytics. Photos and speech are both read on the device, and a recogniser that would need a server is not used at all. The single exception is importing a dish from a link, which opens the page you paste — and only then. Parent and child roles are a family agreement on a shared device, not passwords.
 - **Recipe pictures are AI-generated illustrations** made for this app — not photographs of tested cooking.
 - **Times and nutrition are estimates**, not kitchen-tested or laboratory-measured.
 - **Allergen filtering is ingredient-level**, not label-level, and cross-contact is not modelled.
@@ -161,9 +207,12 @@ swift scripts/make_icon.swift FamilyKitchen/Assets.xcassets/AppIcon.appiconset/i
 - The icon is drawn in Core Graphics by `scripts/make_icon.swift`, and `BrandMark` in `FamilyKitchen/Brand.swift` redraws the same 1024-unit coordinates in SwiftUI, so the home-screen icon and the in-app mark stay identical.
 - Note that `swiftc -parse` only checks syntax, never call signatures. Use the `xcodebuild` command above after touching SwiftUI.
 - Saved files are versioned and migrated on load (`FamilyState.currentVersion`, `migrate()`): older files open and are upgraded, and a file written by a *newer* app is refused rather than overwritten. Add fields freely; add a conversion to `migrate()` whenever the shape of existing data changes.
-- Current scope: one active week at a time, on one device. No cloud sync, list export, store grouping, barcode scanning, custom recipes or custom ingredients. 56 dinners, 20 breakfasts, 79 bilingual ingredients with nutrition, allergen and seasonality tables.
+- Spoken and typed commands are parsed in `Sources/FamilyCore/KitchenCommands.swift` — a table of the words families use in both languages, no model and no network, so the whole of it is covered by the core checks. `FamilyKitchen/VoiceInput.swift` is the only part that needs a microphone: two `SFSpeechRecognizer`s, both `requiresOnDeviceRecognition`, fed from one `AVAudioEngine` tap. `FamilyKitchen/KitchenChatView.swift` is the sheet.
+- Current scope: one active week at a time, on one device. No cloud sync, list export, store grouping, barcode scanning, custom recipes or custom ingredients. Spoken and typed commands cover stock, purchases and meal swaps only — not planning, approving, adding dishes or naming shelves. 56 dinners, 20 breakfasts, 79 bilingual ingredients with nutrition, allergen and seasonality tables.
 - Still on the list before selling: real food photography, cooking every recipe to verify the times, CloudKit family sharing, and App Store paperwork (privacy labels, policy URL, listing).
-- **Not yet accepted on a device.** It compiles, and the core logic is covered by 34 scenarios and ~4,300 assertions, but launch, layout, camera, importing and full interaction have not been signed off on a real iPhone.
+- Core checks: **63 scenarios, ~4,700 assertions**, run without XCTest by `scripts/check_core.py`.
+- UI tests: **13 of 14 pass** on an iPhone 17 simulator (iOS 27). The failing one is `testAddingAFamilyDish` — the first recipe-step box on the add-a-dish sheet cannot be reached by the test's scrolling. The dish feature itself is covered by `testFamilyAddedDishesBehaveLikeAnyOther` in the core checks; it is the UI test that is wrong, and it is left failing rather than quietly deleted.
+- **Not yet accepted on a device.** The simulator now covers launch, layout, planning, the list, adding a fridge, and the whole of saying and typing a change. It cannot cover the camera, and it cannot cover speech: a simulator has no offline recogniser, so the UI tests hand the app a transcript instead of a spoken one. Whether Apple's recogniser actually hears "家里已经有胡萝卜了" correctly is the one thing still untested, and it needs a real iPhone.
 
 ## Food safety
 
@@ -187,6 +236,21 @@ Fridge ≤ 40°F / 4°C, freezer ≤ 0°F / −18°C. Freeze raw meat and fish m
 
 它源于一个具体的家庭：五口人、不辣的中餐和简单西餐、晚餐大约半小时上桌、面食与米饭轮换，以及应该对吃什么有发言权的孩子——但家庭成员、过敏设置和份量都可以按你自己的情况来定。
 
+## 界面预览
+
+<p align="center">
+  <img src="Screenshots/01-today.png" width="24%" alt="Today：自家厨房的名字、当天的早餐与晚餐、一周五步" />
+  <img src="Screenshots/02-week.png" width="24%" alt="Week：七天早餐与晚餐，逐餐确认或更换" />
+  <img src="Screenshots/04-shopping.png" width="24%" alt="Shopping：按菜单生成的清单，已扣除家中现有" />
+  <img src="Screenshots/06-understood.png" width="24%" alt="说一句：听懂中文后用中英文写回，等待确认" />
+</p>
+
+<p align="center"><em>Today · Week · Shopping · 说一句</em></p>
+
+第四张最值得细看：这句话是用中文说的，英文识别给出了很自信的胡话（显示在下方的“另一种听法”里），应用采信了真正听懂厨房的那一只耳朵。理解的内容用中英文写出来，下面是 **Do it · 就这么办** 和 **Not that · 不是这个**，此时采购清单还没有任何改动。
+
+七张图都由 `python3 scripts/screenshots.py` 从运行中的应用重新生成——不修图，也不手绘。分辨率为 iPhone 18 Pro Max 模拟器的 1320 × 2868，正是 App Store 要求的尺寸。每张图的说明及语音那张的产生方式见 [Screenshots/README.md](Screenshots/README.md)。
+
 ## 一周五步
 
 Today 页会显示这五步和你当前所在的位置，不需要记顺序。
@@ -205,6 +269,9 @@ Today 页会显示这五步和你当前所在的位置，不需要记顺序。
 
 **5. 照着做饭 · Cook tonight**
 **Today** 显示当天的早餐和晚餐、按所选语言显示的步骤、按家庭份数的用量，以及最省时间的那一项：每样食材现在放在哪里。吃完后一点即可记录为已完成。
+
+**随时都可以 · 说一句**
+Today、Week、Shopping 顶部的对话气泡，可以直接听中文或英文的一句话——“家里已经有胡萝卜了”“把明天的晚餐换成牛肉面”——理解后由你点一下确认。详见[说一句就改](#说一句就改)。
 
 **贯穿其中 · Kitchen**
 **Kitchen** 标签页显示家里现有的食材，并按实际存放的设备与隔层分组——每台冰箱、冷冻柜或储藏柜一组，内部按隔层排列，位置待确认的排在最后。拍下的货架照片也在这里，右上角的 ⚙︎ **Settings** 通向下面所有设置。
@@ -247,6 +314,33 @@ Today 页会显示这五步和你当前所在的位置，不需要记顺序。
 - **它绝不自作主张地打勾。** 把柠檬看成橙子的识别，不能害你空手而归，因此清单改变之前必须由人确认每一项。照片也无法判断**有多少**：给出的数量正是本周菜单还缺的量，需要你自己核对修改。
 
 识别能力是通用的——对完整食材还行，对盒装、瓶装含糊，对没开封的纸盒完全无能为力。它没认出来的，照旧由你手动添加。
+
+## 说一句就改
+
+一周里最多的是零碎的修正：门格里其实还有姜；周四不想吃鱼；鸡蛋已经放进购物车了。每一件都要翻页面、滑列表、点一下，而拎着袋子的人只腾得出一只手。
+
+所以在 **Today**、**Week** 或 **Shopping** 顶部点那个对话气泡，直接说——或者打字。中文英文都行：不需要先选语言，这周说中文下周说英文也不用告诉它。
+
+> “家里已经有胡萝卜了” · "We already have carrots at home"
+> “冰箱里还有500克鸡肉” · "I have 500 g of chicken in the fridge"
+> “牛奶没有了” · "We're out of milk"
+> “鸡蛋买好了” · "I bought the eggs"
+> “把明天的晚餐换成牛肉面” · "Change tomorrow's dinner to beef noodles"
+> “今晚的晚餐换一个” · "Swap tonight's dinner"
+
+它只听懂四件事，而一周本来也就是由这四件事构成的：**家里已经有什么**、**什么用完了**、**什么已经买了**、**哪天吃哪道菜**。说“家里已经有”会把它记进库存，采购清单上对应的那一项随即打勾，并落到底部的 **Nothing to buy · 已有，无需购买**——和拍照核对送它去的是同一个地方，因为本来就是同一件事。
+
+**它同时用两种语言听。** 一个麦克风同时喂给英文和中文两套识别，最后采用这台厨房真正能执行的那一种读法；另一种读法列在下面，万一被听成了另一种语言，点一下就能换过来，不必重说。
+
+**全部在这台 iPhone 上完成。** 只使用可以离线工作的识别引擎。如果手机上还没装某一种语言，应用会直说，并指向 设置 → 通用 → 键盘 → 听写语言，而不是悄悄把家里的对话发到服务器。不上传，也不保留任何录音。
+
+有三件事是刻意这样做的：
+
+- **它会把听懂的内容用中英文写回来，然后等着。** 把 lemons 听成 melons，绝不能因此换掉今晚的晚餐，所以每一句话都会先变成一段你读得到的文字，再由你点 *Do it · 就这么办*。最近一次改动可以当场撤销。
+- **它宁可发问，也不乱猜。** “咖喱”同时符合两道咖喱，“beef noodles”同时符合三道面，它会把候选列出来让你选，而不是替你挑一个。完全没听过的菜名会如实说不认识，不做近似匹配。
+- **它不编造数量，也不编造位置。** 没说数量时，记录的正是本周菜单所缺的量——和拍照核对给出的是同一个数字。这样记录的食材还没有归位；实际放在哪里，仍在 **Kitchen** 或 **Put away** 里确认，和其他食材一样。
+
+它不做的事：不能排一周的菜单、不能替家长确认某一餐、不能添加菜品、不能给隔层命名。这些仍然留在各自的页面里，这是有意的。
 
 ## 自己添加菜品
 
@@ -292,10 +386,11 @@ Today 页会显示这五步和你当前所在的位置，不需要记顺序。
 把这些说清楚，本身就是设计的一部分。
 
 - **照片识别只负责提议，不负责决定。** 出门前核对会在这台 iPhone 上读取照片并给出建议，但在你确认之前，采购清单和库存都不会改变。照片不判断新鲜度，也不判断数量——给出的数量来自菜单的缺口，而不是照片本身。
+- **语音同样只提议，不决定。** 说出来的话会被写回屏幕上等你点一下，理由和照片一样。
 - **不替你假设库存。** 只有确认过的数量才会从采购清单中扣除。
 - **只是排进菜单不会消耗食材。** 库存只在采购、收纳、做完饭时变化。
 - **建议位置只是建议**，与你实际确认的位置分开显示。
-- **数据全部留在这台 iPhone 上。** 没有账号、云同步、上传或统计分析。唯一的例外是从链接导入菜品时会打开你粘贴的网页，且仅在那一刻联网。家长与孩子的角色是共用设备上的家庭约定，不是密码账户。
+- **数据全部留在这台 iPhone 上。** 没有账号、云同步、上传或统计分析。照片与语音都在本机识别，需要联网才能工作的识别引擎一概不用。唯一的例外是从链接导入菜品时会打开你粘贴的网页，且仅在那一刻联网。家长与孩子的角色是共用设备上的家庭约定，不是密码账户。
 - **菜品图片是为本应用生成的 AI 示意图**，不是实拍。
 - **时间与营养都是估算**，没有经过厨房实测或实验室测定。
 - **过敏原按食材判断**，不是按包装标签，也不考虑交叉污染。
@@ -330,9 +425,12 @@ swift scripts/make_icon.swift FamilyKitchen/Assets.xcassets/AppIcon.appiconset/i
 - 图标由 `scripts/make_icon.swift` 用 Core Graphics 绘制，`FamilyKitchen/Brand.swift` 中的 `BrandMark` 用同一套 1024 坐标在 SwiftUI 里重绘，因此主屏图标与应用内标识完全一致。
 - 注意 `swiftc -parse` 只检查语法，不检查调用签名。改动 SwiftUI 后请用上面的 `xcodebuild` 验证。
 - 存档带版本号并在读取时迁移（`FamilyState.currentVersion`、`migrate()`）：旧文件会被打开并升级；由**更新版本**写入的文件会被拒绝而不是覆盖。新增字段可以随意添加；既有数据的结构发生变化时，请在 `migrate()` 中补上转换逻辑。
-- 当前范围：单设备、单个进行中的周计划。没有云同步、清单导出、按商店分组、条码扫描、自建菜谱与自建食材。共 56 套晚餐、20 套早餐、79 种双语食材，并配有营养、过敏原与时令数据。
+- 语音与文字指令的解析在 `Sources/FamilyCore/KitchenCommands.swift`：一张中英文说法对照表，不含模型也不联网，因此可以被核心检查完整覆盖。只有 `FamilyKitchen/VoiceInput.swift` 需要麦克风——两个 `SFSpeechRecognizer`（均设 `requiresOnDeviceRecognition`）共用一个 `AVAudioEngine` 音频分流。`FamilyKitchen/KitchenChatView.swift` 是对应的页面。
+- 当前范围：单设备、单个进行中的周计划。没有云同步、清单导出、按商店分组、条码扫描、自建菜谱与自建食材。语音与文字指令只涉及库存、采购与换菜，不涉及排菜单、确认餐次、添加菜品与命名隔层。共 56 套晚餐、20 套早餐、79 种双语食材，并配有营养、过敏原与时令数据。
 - 上架前仍待完成：真实菜品摄影、逐道实测烹饪时间、CloudKit 家庭共享，以及 App Store 材料（隐私标签、隐私政策链接、商店页面）。
-- **尚未在设备上完成验收。** 可以编译，核心逻辑有 34 个场景约 4300 条断言覆盖，但启动、布局、相机、网页导入与完整交互还没有在真机上逐项确认。
+- 核心检查：**63 个场景、约 4700 条断言**，由 `scripts/check_core.py` 在不依赖 XCTest 的情况下运行。
+- 界面测试：在 iPhone 17 模拟器（iOS 27）上**14 个通过 13 个**。未通过的是 `testAddingAFamilyDish`——测试的滚动够不到"添加菜品"页上的第一个步骤输入框。该功能本身由核心检查中的 `testFamilyAddedDishesBehaveLikeAnyOther` 覆盖；错的是这条界面测试，因此保留其失败状态，而不是悄悄删掉。
+- **尚未在设备上完成验收。** 模拟器现已覆盖启动、布局、排菜单、采购清单、添加冰箱，以及"说一句/输入一句"的全过程；但覆盖不到相机，也覆盖不到语音识别本身：模拟器没有离线识别语言包，因此界面测试是把转写文本直接交给应用，而不是真的说出来。Apple 的识别能否把"家里已经有胡萝卜了"听对，是唯一仍未验证的一环，需要真机。
 
 ## 食品安全
 
