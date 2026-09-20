@@ -16,35 +16,88 @@ final class FamilyKitchenUITests: XCTestCase {
     /// helper here scrolls first and asks afterwards.
     @discardableResult
     private func reveal(_ element: XCUIElement, swipes: Int = 8) -> Bool {
-        if element.exists && element.isHittable { return true }
+        if onScreen(element) { return true }
         dismissKeyboard()
+        let scroller = frontScroller
         for _ in 0..<swipes {
-            if element.exists && element.isHittable { return true }
-            app.swipeUp()
+            if onScreen(element) { return true }
+            scroller.swipeUp()
         }
-        return element.exists && element.isHittable
+        return onScreen(element)
+    }
+
+    /// Whether the element has been scrolled into the window. Deliberately not
+    /// `isHittable`, which is also false for something visible but disabled — and
+    /// "the button is greyed out" is worth saying out loud rather than waiting out.
+    private func onScreen(_ element: XCUIElement) -> Bool {
+        guard element.exists else { return false }
+        let frame = element.frame
+        guard frame.height > 0, frame.width > 0 else { return false }
+        return app.frame.contains(CGPoint(x: frame.midX, y: frame.midY))
+    }
+
+    /// The scrollable thing on the screen the family is actually looking at.
+    ///
+    /// A sheet does not replace what is behind it, so while "Add a dish" is open the
+    /// Recipes list underneath still answers `app.collectionViews`. Swiping that one
+    /// scrolls the wrong screen and the sheet never moves. A sheet also starts lower
+    /// down the window than the screen it covers, so the candidate whose top edge is
+    /// furthest down is the front one.
+    private var frontScroller: XCUIElement {
+        let candidates = [app.collectionViews, app.tables, app.scrollViews]
+            .flatMap { $0.allElementsBoundByIndex }
+            .filter { $0.exists && $0.frame.height > 100 }
+        return candidates.max { $0.frame.minY < $1.frame.minY } ?? app
+    }
+
+    /// What the scroll helper had to choose between, for when it chose wrong.
+    private func scrollerDiagnosis() -> String {
+        let rows = [app.collectionViews, app.tables, app.scrollViews]
+            .flatMap { $0.allElementsBoundByIndex }
+            .map { "\($0.elementType.rawValue) \($0.frame)" }
+        return "containers: \(rows)\nchosen: \(frontScroller.frame)"
     }
 
     /// The keyboard covers the bottom third of the screen, which is where the button
     /// you were about to press usually is. Tapping the navigation bar puts it away
     /// without scrolling anything.
-    /// A text box found by the words printed in it. A multi-line `TextField` is read
+    /// A text box, of whichever kind SwiftUI made it: a multi-line `TextField` is read
     /// out as a text view rather than a text field, so asking for one kind only is
     /// asking about SwiftUI's internals instead of about the screen.
-    private func writingBox(placeholder: String) -> XCUIElement {
-        app.descendants(matching: .any).matching(
-            NSPredicate(format: "placeholderValue == %@ OR identifier == %@ OR label == %@",
-                        placeholder, placeholder, placeholder)).firstMatch
+    private func writingBox(identifier: String) -> XCUIElement {
+        app.descendants(matching: .any).matching(identifier: identifier).firstMatch
     }
 
     private func dismissKeyboard() {
         let keyboard = app.keyboards.element
         guard keyboard.exists else { return }
-        for key in ["Return", "return", "Done", "done", "go"] {
+        // A screen that offers its own way out of the keyboard is the reliable one.
+        let done = app.buttons["dismissKeyboard"]
+        if done.exists && done.isHittable {
+            done.tap()
+            if keyboard.waitForNonExistence(timeout: 2) { return }
+        }
+        // Otherwise tap the title of the screen in front. It is a label rather than a
+        // control, so nothing is triggered — and unlike Return it also works in a
+        // multi-line box, where Return only adds a line. Never the bar behind a sheet:
+        // a tap out there closes the sheet.
+        if let title = frontNavigationBar?.staticTexts.firstMatch, title.exists, title.isHittable {
+            title.tap()
+            if keyboard.waitForNonExistence(timeout: 2) { return }
+        }
+        for key in ["Return", "return", "Done", "done", "go", "换行"] {
             let button = keyboard.buttons[key]
             if button.exists && button.isHittable { button.tap(); break }
         }
-        _ = keyboard.waitForNonExistence(timeout: 3)
+        _ = keyboard.waitForNonExistence(timeout: 2)
+    }
+
+    /// The navigation bar belonging to the screen in front, chosen the same way as
+    /// `frontScroller`: a sheet's bar sits lower down the window than the one it covers.
+    private var frontNavigationBar: XCUIElement? {
+        app.navigationBars.allElementsBoundByIndex
+            .filter(\.exists)
+            .max { $0.frame.minY < $1.frame.minY }
     }
 
     /// A row whose words the family would recognise. Rows built from several `Text`
@@ -145,14 +198,25 @@ final class FamilyKitchenUITests: XCTestCase {
         XCTAssertTrue(name.waitForExistence(timeout: 15))
         name.tap(); name.typeText("Grandma noodles")
         dismissKeyboard()
-        // The sheet is long: two names, a link, the ingredient rows, then the steps.
-        let step = writingBox(placeholder: "中文步骤 1")
-        XCTAssertTrue(reveal(step, swipes: 20), "could not reach the first recipe step.\n\(app.debugDescription)")
+        // The sheet is long: a link, two names, the ingredient rows, then the steps.
+        let step = writingBox(identifier: "stepZh-1")
+        XCTAssertTrue(reveal(step, swipes: 20), "could not reach the first recipe step.\n\(scrollerDiagnosis())")
         step.tap(); step.typeText("把面煮熟")
         dismissKeyboard()
         let save = app.buttons["Save this dish"]
-        XCTAssertTrue(reveal(save)); save.tap()
-        XCTAssertTrue(app.staticTexts["Grandma noodles"].waitForExistence(timeout: 10))
+        XCTAssertTrue(reveal(save, swipes: 12), "could not reach Save.\n\(scrollerDiagnosis())")
+        XCTAssertTrue(save.isEnabled, "a dish with a name and a step should be saveable")
+        save.tap()
+        // Back on the catalogue. Seventy-seven dishes is too many to scroll through,
+        // and searching for it proves the better thing anyway: the dish is in the
+        // catalogue like any other, and can be found by name.
+        XCTAssertTrue(app.buttons["addDish"].waitForExistence(timeout: 10), "the sheet should close on save")
+        let search = app.searchFields.firstMatch
+        if !search.exists { app.swipeDown() }
+        XCTAssertTrue(search.waitForExistence(timeout: 5))
+        search.tap(); search.typeText("Grandma")
+        XCTAssertTrue(app.staticTexts["Grandma noodles"].waitForExistence(timeout: 10),
+                      "a saved dish joins the catalogue and is findable by name")
     }
 
     func testAddingAFamilyMemberActuallyAdds() {
