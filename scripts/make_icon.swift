@@ -1,6 +1,6 @@
 // Renders the Family Kitchen app icon (家庭厨房) without external assets.
 // Usage: swift scripts/make_icon.swift <output.png> [size]
-// The same shapes are drawn in SwiftUI by BrandMark in FamilyTable/Brand.swift.
+// The same shapes are drawn in SwiftUI by BrandMark in FamilyKitchen/Brand.swift.
 import AppKit
 import CoreGraphics
 import Foundation

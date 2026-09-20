@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		63780F1B40A6228DB481D1F5 /* FamilyTable/PantryViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 809F742EEC0D5D364D26CCC7 /* FamilyTable/PantryViews.swift */; };
-		7C1C564A9CB654A7D287F6AD /* Tests/FamilyTableUITests/FamilyTableUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A73201C599290F9EBF17338 /* Tests/FamilyTableUITests/FamilyTableUITests.swift */; };
+		63780F1B40A6228DB481D1F5 /* FamilyKitchen/KitchenViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 809F742EEC0D5D364D26CCC7 /* FamilyKitchen/KitchenViews.swift */; };
+		7C1C564A9CB654A7D287F6AD /* Tests/FamilyKitchenUITests/FamilyKitchenUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A73201C599290F9EBF17338 /* Tests/FamilyKitchenUITests/FamilyKitchenUITests.swift */; };
 		7CE357B40CFBFFED22C84B05 /* Sources/FamilyCore/Catalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CFE617AD669C9410A1EB473 /* Sources/FamilyCore/Catalog.swift */; };
 		CF5C11FEB8C4A365084F2BD5 /* Sources/FamilyCore/Nutrition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 752CDCCA1DDBC4BD680FC799 /* Sources/FamilyCore/Nutrition.swift */; };
 		8842038EC1462D1E547C49F6 /* Sources/FamilyCore/Seasons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4B7B006948500B0E2ADDF8 /* Sources/FamilyCore/Seasons.swift */; };
@@ -16,11 +16,11 @@
 		63674C850309D112930CE1D9 /* Sources/FamilyCore/RecipeImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81DD13EA7C2EA6D83604C8E9 /* Sources/FamilyCore/RecipeImport.swift */; };
 		052487C422265235967BFAA5 /* Sources/FamilyCore/Dietary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E604F2D0F73A34FF2ED2C6 /* Sources/FamilyCore/Dietary.swift */; };
 		868D280E3B7CB6053498465E /* Sources/FamilyCore/Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89167F08BD3A004726FF6121 /* Sources/FamilyCore/Models.swift */; };
-		CCAD47BDBC777BE320710609 /* FamilyTable/Brand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74C4A002E432DC9265031941 /* FamilyTable/Brand.swift */; };
-		48F01FEAE77CDDEE4FA9DA52 /* FamilyTable/HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7001ED6B44FBB175A570B398 /* FamilyTable/HistoryView.swift */; };
-		85DB1C2F32CB0498F1047C0B /* FamilyTable/AddDishView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61856E52627F58E4E0973ADB /* FamilyTable/AddDishView.swift */; };
-		CF8A4D27E1C506A7C75A76BE /* FamilyTable/Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 077A994FF8C9EB87EF6576BC /* FamilyTable/Assets.xcassets */; };
-		F6950ACC5CA72B82AA35EB96 /* FamilyTable/FamilyTableApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 116E1F1D546D8101B1BCAED9 /* FamilyTable/FamilyTableApp.swift */; };
+		CCAD47BDBC777BE320710609 /* FamilyKitchen/Brand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74C4A002E432DC9265031941 /* FamilyKitchen/Brand.swift */; };
+		48F01FEAE77CDDEE4FA9DA52 /* FamilyKitchen/HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7001ED6B44FBB175A570B398 /* FamilyKitchen/HistoryView.swift */; };
+		85DB1C2F32CB0498F1047C0B /* FamilyKitchen/AddDishView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61856E52627F58E4E0973ADB /* FamilyKitchen/AddDishView.swift */; };
+		CF8A4D27E1C506A7C75A76BE /* FamilyKitchen/Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 077A994FF8C9EB87EF6576BC /* FamilyKitchen/Assets.xcassets */; };
+		F6950ACC5CA72B82AA35EB96 /* FamilyKitchen/FamilyKitchenApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 116E1F1D546D8101B1BCAED9 /* FamilyKitchen/FamilyKitchenApp.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,19 +29,19 @@
 			containerPortal = 98F54143AB4E86B28C3AFEE0 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 0E8A3AD980EC179856012B7E;
-			remoteInfo = FamilyTable;
+			remoteInfo = FamilyKitchen;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		077A994FF8C9EB87EF6576BC /* FamilyTable/Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = FamilyTable/Assets.xcassets; sourceTree = "<group>"; };
-		116E1F1D546D8101B1BCAED9 /* FamilyTable/FamilyTableApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyTable/FamilyTableApp.swift; sourceTree = "<group>"; };
-		1A73201C599290F9EBF17338 /* Tests/FamilyTableUITests/FamilyTableUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests/FamilyTableUITests/FamilyTableUITests.swift; sourceTree = "<group>"; };
-		38A007151ABE87CC01A5B6E9 /* FamilyTable.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = FamilyTable.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		74C4A002E432DC9265031941 /* FamilyTable/Brand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyTable/Brand.swift; sourceTree = "<group>"; };
-		7001ED6B44FBB175A570B398 /* FamilyTable/HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyTable/HistoryView.swift; sourceTree = "<group>"; };
-		61856E52627F58E4E0973ADB /* FamilyTable/AddDishView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyTable/AddDishView.swift; sourceTree = "<group>"; };
-		809F742EEC0D5D364D26CCC7 /* FamilyTable/PantryViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyTable/PantryViews.swift; sourceTree = "<group>"; };
+		077A994FF8C9EB87EF6576BC /* FamilyKitchen/Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = FamilyKitchen/Assets.xcassets; sourceTree = "<group>"; };
+		116E1F1D546D8101B1BCAED9 /* FamilyKitchen/FamilyKitchenApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyKitchen/FamilyKitchenApp.swift; sourceTree = "<group>"; };
+		1A73201C599290F9EBF17338 /* Tests/FamilyKitchenUITests/FamilyKitchenUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests/FamilyKitchenUITests/FamilyKitchenUITests.swift; sourceTree = "<group>"; };
+		38A007151ABE87CC01A5B6E9 /* FamilyKitchen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = FamilyKitchen.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		74C4A002E432DC9265031941 /* FamilyKitchen/Brand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyKitchen/Brand.swift; sourceTree = "<group>"; };
+		7001ED6B44FBB175A570B398 /* FamilyKitchen/HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyKitchen/HistoryView.swift; sourceTree = "<group>"; };
+		61856E52627F58E4E0973ADB /* FamilyKitchen/AddDishView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyKitchen/AddDishView.swift; sourceTree = "<group>"; };
+		809F742EEC0D5D364D26CCC7 /* FamilyKitchen/KitchenViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyKitchen/KitchenViews.swift; sourceTree = "<group>"; };
 		89167F08BD3A004726FF6121 /* Sources/FamilyCore/Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/FamilyCore/Models.swift; sourceTree = "<group>"; };
 		9CFE617AD669C9410A1EB473 /* Sources/FamilyCore/Catalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/FamilyCore/Catalog.swift; sourceTree = "<group>"; };
 		752CDCCA1DDBC4BD680FC799 /* Sources/FamilyCore/Nutrition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/FamilyCore/Nutrition.swift; sourceTree = "<group>"; };
@@ -49,7 +49,7 @@
 		AB79A5637587CBF15A4F3D59 /* Sources/FamilyCore/StepsEN.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/FamilyCore/StepsEN.swift; sourceTree = "<group>"; };
 		81DD13EA7C2EA6D83604C8E9 /* Sources/FamilyCore/RecipeImport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/FamilyCore/RecipeImport.swift; sourceTree = "<group>"; };
 		73E604F2D0F73A34FF2ED2C6 /* Sources/FamilyCore/Dietary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/FamilyCore/Dietary.swift; sourceTree = "<group>"; };
-		A7C9FD69DA095A3BF0CB4587 /* FamilyTableUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = FamilyTableUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A7C9FD69DA095A3BF0CB4587 /* FamilyKitchenUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = FamilyKitchenUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,12 +66,12 @@
 		B28B7AF69320201D1CF206EB = {
 			isa = PBXGroup;
 			children = (
-				1A73201C599290F9EBF17338 /* Tests/FamilyTableUITests/FamilyTableUITests.swift */,
-				116E1F1D546D8101B1BCAED9 /* FamilyTable/FamilyTableApp.swift */,
-				809F742EEC0D5D364D26CCC7 /* FamilyTable/PantryViews.swift */,
-				74C4A002E432DC9265031941 /* FamilyTable/Brand.swift */,
-				7001ED6B44FBB175A570B398 /* FamilyTable/HistoryView.swift */,
-				61856E52627F58E4E0973ADB /* FamilyTable/AddDishView.swift */,
+				1A73201C599290F9EBF17338 /* Tests/FamilyKitchenUITests/FamilyKitchenUITests.swift */,
+				116E1F1D546D8101B1BCAED9 /* FamilyKitchen/FamilyKitchenApp.swift */,
+				809F742EEC0D5D364D26CCC7 /* FamilyKitchen/KitchenViews.swift */,
+				74C4A002E432DC9265031941 /* FamilyKitchen/Brand.swift */,
+				7001ED6B44FBB175A570B398 /* FamilyKitchen/HistoryView.swift */,
+				61856E52627F58E4E0973ADB /* FamilyKitchen/AddDishView.swift */,
 				89167F08BD3A004726FF6121 /* Sources/FamilyCore/Models.swift */,
 				9CFE617AD669C9410A1EB473 /* Sources/FamilyCore/Catalog.swift */,
 				752CDCCA1DDBC4BD680FC799 /* Sources/FamilyCore/Nutrition.swift */,
@@ -79,7 +79,7 @@
 				AB79A5637587CBF15A4F3D59 /* Sources/FamilyCore/StepsEN.swift */,
 				81DD13EA7C2EA6D83604C8E9 /* Sources/FamilyCore/RecipeImport.swift */,
 				73E604F2D0F73A34FF2ED2C6 /* Sources/FamilyCore/Dietary.swift */,
-				077A994FF8C9EB87EF6576BC /* FamilyTable/Assets.xcassets */,
+				077A994FF8C9EB87EF6576BC /* FamilyKitchen/Assets.xcassets */,
 				FBDC4F23F93125BBEEAE800C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -87,8 +87,8 @@
 		FBDC4F23F93125BBEEAE800C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A7C9FD69DA095A3BF0CB4587 /* FamilyTableUITests.xctest */,
-				38A007151ABE87CC01A5B6E9 /* FamilyTable.app */,
+				A7C9FD69DA095A3BF0CB4587 /* FamilyKitchenUITests.xctest */,
+				38A007151ABE87CC01A5B6E9 /* FamilyKitchen.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -96,9 +96,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		0E8A3AD980EC179856012B7E /* FamilyTable */ = {
+		0E8A3AD980EC179856012B7E /* FamilyKitchen */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F37922C48DA5978D02C9E50E /* Build configuration list for PBXNativeTarget "FamilyTable" */;
+			buildConfigurationList = F37922C48DA5978D02C9E50E /* Build configuration list for PBXNativeTarget "FamilyKitchen" */;
 			buildPhases = (
 				BCE16DD0260827ECF338C787 /* Sources */,
 				7561BFB015D8F536760CB671 /* Frameworks */,
@@ -108,14 +108,14 @@
 			);
 			dependencies = (
 			);
-			name = FamilyTable;
-			productName = FamilyTable;
-			productReference = 38A007151ABE87CC01A5B6E9 /* FamilyTable.app */;
+			name = FamilyKitchen;
+			productName = FamilyKitchen;
+			productReference = 38A007151ABE87CC01A5B6E9 /* FamilyKitchen.app */;
 			productType = "com.apple.product-type.application";
 		};
-		5A84779F73F7B6419BDB1882 /* FamilyTableUITests */ = {
+		5A84779F73F7B6419BDB1882 /* FamilyKitchenUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = AED4B730112F3401C4D7AC6B /* Build configuration list for PBXNativeTarget "FamilyTableUITests" */;
+			buildConfigurationList = AED4B730112F3401C4D7AC6B /* Build configuration list for PBXNativeTarget "FamilyKitchenUITests" */;
 			buildPhases = (
 				9B65503EE939B7F8DAEDF693 /* Sources */,
 			);
@@ -124,9 +124,9 @@
 			dependencies = (
 				46098F1CD6D7EADDB246BA75 /* PBXTargetDependency */,
 			);
-			name = FamilyTableUITests;
-			productName = FamilyTableUITests;
-			productReference = A7C9FD69DA095A3BF0CB4587 /* FamilyTableUITests.xctest */;
+			name = FamilyKitchenUITests;
+			productName = FamilyKitchenUITests;
+			productReference = A7C9FD69DA095A3BF0CB4587 /* FamilyKitchenUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -138,7 +138,7 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 2700;
 			};
-			buildConfigurationList = 862894B703A6DEDF96A9DD6C /* Build configuration list for PBXProject "FamilyTable" */;
+			buildConfigurationList = 862894B703A6DEDF96A9DD6C /* Build configuration list for PBXProject "FamilyKitchen" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -152,8 +152,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				0E8A3AD980EC179856012B7E /* FamilyTable */,
-				5A84779F73F7B6419BDB1882 /* FamilyTableUITests */,
+				0E8A3AD980EC179856012B7E /* FamilyKitchen */,
+				5A84779F73F7B6419BDB1882 /* FamilyKitchenUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -163,7 +163,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF8A4D27E1C506A7C75A76BE /* FamilyTable/Assets.xcassets in Resources */,
+				CF8A4D27E1C506A7C75A76BE /* FamilyKitchen/Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -174,7 +174,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7C1C564A9CB654A7D287F6AD /* Tests/FamilyTableUITests/FamilyTableUITests.swift in Sources */,
+				7C1C564A9CB654A7D287F6AD /* Tests/FamilyKitchenUITests/FamilyKitchenUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -182,11 +182,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F6950ACC5CA72B82AA35EB96 /* FamilyTable/FamilyTableApp.swift in Sources */,
-				63780F1B40A6228DB481D1F5 /* FamilyTable/PantryViews.swift in Sources */,
-				CCAD47BDBC777BE320710609 /* FamilyTable/Brand.swift in Sources */,
-				48F01FEAE77CDDEE4FA9DA52 /* FamilyTable/HistoryView.swift in Sources */,
-				85DB1C2F32CB0498F1047C0B /* FamilyTable/AddDishView.swift in Sources */,
+				F6950ACC5CA72B82AA35EB96 /* FamilyKitchen/FamilyKitchenApp.swift in Sources */,
+				63780F1B40A6228DB481D1F5 /* FamilyKitchen/KitchenViews.swift in Sources */,
+				CCAD47BDBC777BE320710609 /* FamilyKitchen/Brand.swift in Sources */,
+				48F01FEAE77CDDEE4FA9DA52 /* FamilyKitchen/HistoryView.swift in Sources */,
+				85DB1C2F32CB0498F1047C0B /* FamilyKitchen/AddDishView.swift in Sources */,
 				868D280E3B7CB6053498465E /* Sources/FamilyCore/Models.swift in Sources */,
 				7CE357B40CFBFFED22C84B05 /* Sources/FamilyCore/Catalog.swift in Sources */,
 				CF5C11FEB8C4A365084F2BD5 /* Sources/FamilyCore/Nutrition.swift in Sources */,
@@ -202,7 +202,7 @@
 /* Begin PBXTargetDependency section */
 		46098F1CD6D7EADDB246BA75 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0E8A3AD980EC179856012B7E /* FamilyTable */;
+			target = 0E8A3AD980EC179856012B7E /* FamilyKitchen */;
 			targetProxy = 7C3F7C2476CF2BD9AE55EACD /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -293,7 +293,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
-				TEST_TARGET_NAME = FamilyTable;
+				TEST_TARGET_NAME = FamilyKitchen;
 			};
 			name = Debug;
 		};
@@ -310,7 +310,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
-				TEST_TARGET_NAME = FamilyTable;
+				TEST_TARGET_NAME = FamilyKitchen;
 			};
 			name = Release;
 		};
@@ -388,7 +388,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		862894B703A6DEDF96A9DD6C /* Build configuration list for PBXProject "FamilyTable" */ = {
+		862894B703A6DEDF96A9DD6C /* Build configuration list for PBXProject "FamilyKitchen" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				89E1FD6268CC0F221A2BE178 /* Debug */,
@@ -397,7 +397,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		AED4B730112F3401C4D7AC6B /* Build configuration list for PBXNativeTarget "FamilyTableUITests" */ = {
+		AED4B730112F3401C4D7AC6B /* Build configuration list for PBXNativeTarget "FamilyKitchenUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				94C1D7A82E2F92E70C5BA5D8 /* Debug */,
@@ -406,7 +406,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F37922C48DA5978D02C9E50E /* Build configuration list for PBXNativeTarget "FamilyTable" */ = {
+		F37922C48DA5978D02C9E50E /* Build configuration list for PBXNativeTarget "FamilyKitchen" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E9B2E96ABC5F6856F2BE79CF /* Debug */,

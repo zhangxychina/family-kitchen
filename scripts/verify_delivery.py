@@ -4,18 +4,18 @@ root=Path(__file__).resolve().parents[1]
 source=(root/'Sources/FamilyCore/Catalog.swift').read_text()
 rows=re.findall(r'\.init\(id:\s*"([^"]+)",en:\s*"([^"]+)",zh:\s*"([^"]+)",breakfast:\s*(true|false),minutes:\s*(\d+)',source)
 assert len(rows)==76 and sum(r[3]=='false' for r in rows)==56 and sum(r[3]=='true' for r in rows)==20
-assets={p.parent.stem for p in (root/'FamilyTable/Assets.xcassets').glob('*.imageset/photo.png')}
+assets={p.parent.stem for p in (root/'FamilyKitchen/Assets.xcassets').glob('*.imageset/photo.png')}
 missing=[r[0] for r in rows if r[0] not in assets]
 print(f'Catalog: 56 dinners + 20 breakfasts; artwork: {76-len(missing)}/76')
 print('Pending artwork: '+', '.join(missing))
-for manifest in (root/'FamilyTable/Assets.xcassets').glob('*.imageset/Contents.json'):
+for manifest in (root/'FamilyKitchen/Assets.xcassets').glob('*.imageset/Contents.json'):
     data=json.loads(manifest.read_text())
     for image in data['images']: assert (manifest.parent/image['filename']).is_file()
 result=subprocess.run(['python3','scripts/check_core.py'],cwd=root,text=True,capture_output=True)
 (root/'CATALOG_VALIDATION.txt').write_text(result.stdout+result.stderr)
 print(result.stdout);print(result.stderr)
-subprocess.run(['swiftc','-frontend','-parse','FamilyTable/FamilyTableApp.swift','FamilyTable/PantryViews.swift','Tests/FamilyTableUITests/FamilyTableUITests.swift'],cwd=root,check=True)
-subprocess.run(['plutil','-lint','FamilyTable.xcodeproj/project.pbxproj'],cwd=root,check=True)
+subprocess.run(['swiftc','-frontend','-parse','FamilyKitchen/FamilyKitchenApp.swift','FamilyKitchen/PantryViews.swift','Tests/FamilyKitchenUITests/FamilyKitchenUITests.swift'],cwd=root,check=True)
+subprocess.run(['plutil','-lint','FamilyKitchen.xcodeproj/project.pbxproj'],cwd=root,check=True)
 text='# 菜单总览 · 56 套晚餐 / 20 套早餐\n\n每套为完整餐食；用量以五人为基准、App 内按人数缩放。时间含准备，为估计值。\n'
 for label,kind in [('晚餐','false'),('早餐','true')]:
     text+=f'\n## {label}\n\n| # | 菜单 | English | 总时间 | 配图 |\n|---|---|---|---|---|\n'

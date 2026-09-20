@@ -12,9 +12,18 @@ import ImageIO
     let directory: URL
     let file: URL
     init() {
-        directory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent(ProcessInfo.processInfo.arguments.contains("--ui-testing") ? "FamilyTableUITests" : "FamilyTable")
+        let uiTesting = ProcessInfo.processInfo.arguments.contains("--ui-testing")
+        let support = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+        directory = support.appendingPathComponent(uiTesting ? "FamilyKitchenUITests" : "FamilyKitchen")
         file = directory.appendingPathComponent("family.json")
-        if ProcessInfo.processInfo.arguments.contains("--ui-testing") && ProcessInfo.processInfo.arguments.contains("--reset-ui-tests") {
+        // Up to 0.3 the app stored everything under its old internal name. Move that
+        // folder across once, so renaming the project never loses someone's kitchen.
+        let legacy = support.appendingPathComponent(uiTesting ? "FamilyTableUITests" : "FamilyTable")
+        if !FileManager.default.fileExists(atPath: directory.path),
+           FileManager.default.fileExists(atPath: legacy.path) {
+            try? FileManager.default.moveItem(at: legacy, to: directory)
+        }
+        if uiTesting && ProcessInfo.processInfo.arguments.contains("--reset-ui-tests") {
             try? FileManager.default.removeItem(at: directory)
         }
         defer { Catalog.setCustomRecipes(state.customRecipes) }
@@ -65,7 +74,7 @@ import ImageIO
     enum PhotoError: Error { case unreadable }
 
 }
-@main struct FamilyTableApp: App {
+@main struct FamilyKitchenApp: App {
     @StateObject private var store = FamilyStore()
     var body: some Scene {
         WindowGroup {

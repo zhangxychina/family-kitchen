@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "0E8A3AD980EC179856012B7E"
-               BuildableName = "FamilyTable.app"
-               BlueprintName = "FamilyTable"
-               ReferencedContainer = "container:FamilyTable.xcodeproj">
+               BuildableName = "FamilyKitchen.app"
+               BlueprintName = "FamilyKitchen"
+               ReferencedContainer = "container:FamilyKitchen.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5A84779F73F7B6419BDB1882"
-               BuildableName = "FamilyTableUITests.xctest"
-               BlueprintName = "FamilyTableUITests"
-               ReferencedContainer = "container:FamilyTable.xcodeproj">
+               BuildableName = "FamilyKitchenUITests.xctest"
+               BlueprintName = "FamilyKitchenUITests"
+               ReferencedContainer = "container:FamilyKitchen.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0E8A3AD980EC179856012B7E"
-            BuildableName = "FamilyTable.app"
-            BlueprintName = "FamilyTable"
-            ReferencedContainer = "container:FamilyTable.xcodeproj">
+            BuildableName = "FamilyKitchen.app"
+            BlueprintName = "FamilyKitchen"
+            ReferencedContainer = "container:FamilyKitchen.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>

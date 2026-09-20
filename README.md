@@ -116,7 +116,7 @@ Being honest about this is part of the design.
 ## Running it on your iPhone
 
 1. Install the full Xcode (16 or newer) on a Mac.
-2. Open `FamilyTable.xcodeproj` and choose the **FamilyTable** scheme.
+2. Open `FamilyKitchen.xcodeproj` and choose the **FamilyKitchen** scheme.
 3. To use a simulator, pick one and press **⌘R**. No account or API key is ever required.
 4. To use a real iPhone: connect it, enable Developer Mode, then under **Signing & Capabilities** choose your own Apple team and, if needed, a unique bundle identifier. Then run.
 5. The camera needs a real iPhone; the simulator can still import from Photos. Photo access uses the system picker, so only the pictures you choose ever reach the app.
@@ -126,20 +126,20 @@ Being honest about this is part of the design.
 ```sh
 # Build
 DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild \
-  -project FamilyTable.xcodeproj -scheme FamilyTable -sdk iphonesimulator \
+  -project FamilyKitchen.xcodeproj -scheme FamilyKitchen -sdk iphonesimulator \
   -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
 
 # Core logic checks (no XCTest runtime needed)
 python3 scripts/check_core.py
 
 # Regenerate the app icon
-swift scripts/make_icon.swift FamilyTable/Assets.xcassets/AppIcon.appiconset/icon-1024.png 1024
+swift scripts/make_icon.swift FamilyKitchen/Assets.xcassets/AppIcon.appiconset/icon-1024.png 1024
 ```
 
-- `FamilyTable/` — SwiftUI screens, the `Brand` design system, and recipe images.
+- `FamilyKitchen/` — SwiftUI screens, the `Brand` design system, and recipe images.
 - `Sources/FamilyCore/` — recipes, ingredients, nutrition tables and all planning logic, free of UI.
 - `Tests/` — core scenarios and UI tests. `scripts/check_core.py` runs the core scenarios without XCTest, which this machine's default toolchain cannot import; it compiles every file in `Sources/FamilyCore` automatically.
-- The icon is drawn in Core Graphics by `scripts/make_icon.swift`, and `BrandMark` in `FamilyTable/Brand.swift` redraws the same 1024-unit coordinates in SwiftUI, so the home-screen icon and the in-app mark stay identical.
+- The icon is drawn in Core Graphics by `scripts/make_icon.swift`, and `BrandMark` in `FamilyKitchen/Brand.swift` redraws the same 1024-unit coordinates in SwiftUI, so the home-screen icon and the in-app mark stay identical.
 - Note that `swiftc -parse` only checks syntax, never call signatures. Use the `xcodebuild` command above after touching SwiftUI.
 - Saved files are versioned and migrated on load (`FamilyState.currentVersion`, `migrate()`): older files open and are upgraded, and a file written by a *newer* app is refused rather than overwritten. Add fields freely; add a conversion to `migrate()` whenever the shape of existing data changes.
 - Current scope: one active week at a time, on one device. No cloud sync, list export, store grouping, barcode scanning, custom recipes or custom ingredients. 56 dinners, 20 breakfasts, 79 bilingual ingredients with nutrition, allergen and seasonality tables.
@@ -266,7 +266,7 @@ Today 页会显示这五步和你当前所在的位置，不需要记顺序。
 ## 在 iPhone 上运行
 
 1. 在 Mac 上安装完整版 Xcode（建议 16 或更新）。
-2. 打开 `FamilyTable.xcodeproj`，选择 **FamilyTable** scheme。
+2. 打开 `FamilyKitchen.xcodeproj`，选择 **FamilyKitchen** scheme。
 3. 用模拟器：选好设备后按 **⌘R**。全程不需要注册账号或填写 API key。
 4. 用真机：连接 iPhone 并开启开发者模式，在 **Signing & Capabilities** 中选择自己的 Apple Team，必要时改一个唯一的 Bundle Identifier，然后运行。
 5. 相机功能需要真机；模拟器可以测试从"照片"导入。照片使用系统选择器，只有你选中的图片会进入应用。
@@ -276,20 +276,20 @@ Today 页会显示这五步和你当前所在的位置，不需要记顺序。
 ```sh
 # 编译
 DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild \
-  -project FamilyTable.xcodeproj -scheme FamilyTable -sdk iphonesimulator \
+  -project FamilyKitchen.xcodeproj -scheme FamilyKitchen -sdk iphonesimulator \
   -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
 
 # 核心逻辑检查（不需要 XCTest 运行环境）
 python3 scripts/check_core.py
 
 # 重新生成应用图标
-swift scripts/make_icon.swift FamilyTable/Assets.xcassets/AppIcon.appiconset/icon-1024.png 1024
+swift scripts/make_icon.swift FamilyKitchen/Assets.xcassets/AppIcon.appiconset/icon-1024.png 1024
 ```
 
-- `FamilyTable/`：SwiftUI 页面、`Brand` 设计系统与菜品图片。
+- `FamilyKitchen/`：SwiftUI 页面、`Brand` 设计系统与菜品图片。
 - `Sources/FamilyCore/`：菜谱、食材、营养表与全部排菜逻辑，不含 UI。
 - `Tests/`：核心场景与 UI 测试。`scripts/check_core.py` 在不依赖 XCTest 的情况下运行核心场景（本机默认工具链无法导入 XCTest），并自动编译 `Sources/FamilyCore` 下的所有文件。
-- 图标由 `scripts/make_icon.swift` 用 Core Graphics 绘制，`FamilyTable/Brand.swift` 中的 `BrandMark` 用同一套 1024 坐标在 SwiftUI 里重绘，因此主屏图标与应用内标识完全一致。
+- 图标由 `scripts/make_icon.swift` 用 Core Graphics 绘制，`FamilyKitchen/Brand.swift` 中的 `BrandMark` 用同一套 1024 坐标在 SwiftUI 里重绘，因此主屏图标与应用内标识完全一致。
 - 注意 `swiftc -parse` 只检查语法，不检查调用签名。改动 SwiftUI 后请用上面的 `xcodebuild` 验证。
 - 存档带版本号并在读取时迁移（`FamilyState.currentVersion`、`migrate()`）：旧文件会被打开并升级；由**更新版本**写入的文件会被拒绝而不是覆盖。新增字段可以随意添加；既有数据的结构发生变化时，请在 `migrate()` 中补上转换逻辑。
 - 当前范围：单设备、单个进行中的周计划。没有云同步、清单导出、按商店分组、条码扫描、自建菜谱与自建食材。共 56 套晚餐、20 套早餐、79 种双语食材，并配有营养、过敏原与时令数据。

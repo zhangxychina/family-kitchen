@@ -8,13 +8,13 @@ Family Kitchen 0.3。
 
 ## 自动化验收
 
-工程已包含 `FamilyTableUITests`，从 FamilyTable scheme 运行 ⌘U，或使用实际设备 ID：
+工程已包含 `FamilyKitchenUITests`，从 FamilyKitchen scheme 运行 ⌘U，或使用实际设备 ID：
 
 ```sh
-DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -project FamilyTable.xcodeproj -scheme FamilyTable -destination 'platform=iOS,id=YOUR_DEVICE_ID' test
+DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -project FamilyKitchen.xcodeproj -scheme FamilyKitchen -destination 'platform=iOS,id=YOUR_DEVICE_ID' test
 ```
 
-界面测试包括早餐/晚餐数量与中文搜索、生成菜单/购买/重启持久化/未选位置不能收纳、菜谱列表滚动 CPU/内存/耗时采样。UI 测试存档使用独立 `FamilyTableUITests` 文件夹，不清空家庭真实数据。尚未执行，可能需要按真实系统 UI 行为调整查询。
+界面测试包括早餐/晚餐数量与中文搜索、生成菜单/购买/重启持久化/未选位置不能收纳、菜谱列表滚动 CPU/内存/耗时采样。UI 测试存档使用独立 `FamilyKitchenUITests` 文件夹，不清空家庭真实数据。尚未执行，可能需要按真实系统 UI 行为调整查询。
 
 ## 必须在真机手动完成
 

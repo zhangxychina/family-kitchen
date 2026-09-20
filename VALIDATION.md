@@ -50,7 +50,7 @@ PASS testNoConsumptionWhenPlanningOrSkippingDeduction
 
 ```sh
 DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild \
-  -project FamilyTable.xcodeproj -scheme FamilyTable -sdk iphonesimulator \
+  -project FamilyKitchen.xcodeproj -scheme FamilyKitchen -sdk iphonesimulator \
   -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
 ```
 

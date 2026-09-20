@@ -1,6 +1,6 @@
 import XCTest
 
-final class FamilyTableUITests: XCTestCase {
+final class FamilyKitchenUITests: XCTestCase {
     var app: XCUIApplication!
     override func setUpWithError() throws {
         continueAfterFailure = false

@@ -4,320 +4,320 @@
   "disclosure": "AI-generated serving illustrations, not photographs of tested recipes. No third-party photo downloads. Garnish and presentation may differ from cooking results.",
   "assets": [
     {
-      "path": "FamilyTable/Assets.xcassets/sesame.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/sesame.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. Create one square editorial food photograph for a family recipe app: Non-spicy sesame chicken bites with broccoli and white rice, light soy glaze, sesame seeds. One serving in simple cream ceramic bowl/plate on warm pale beige table, overhead three-quarter view, soft daylight, appetizing realistic home cooking, no text, no labels, no props obscuring food. Show only specified food. Save asset for recipe sesame."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/curry.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/curry.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. Create one square editorial food photograph for a family recipe app: Mild yellow curry chicken cubes with carrots and potatoes alongside white rice, no chili. One serving in simple cream ceramic bowl/plate on warm pale beige table, overhead three-quarter view, soft daylight, appetizing realistic home cooking, no text, no labels, no props obscuring food. Show only specified food. Save asset for recipe curry."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/beefpasta.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/beefpasta.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. Create one square editorial food photograph for a family recipe app: Small beef cubes and tomato sauce spaghetti with spinach. One serving in simple cream ceramic bowl/plate on warm pale beige table, overhead three-quarter view, soft daylight, appetizing realistic home cooking, no text, no labels, no props obscuring food. Show only specified food. Save asset for recipe beefpasta."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/noodles.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/noodles.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. Create one square editorial food photograph for a family recipe app: Chinese thin wheat noodle soup with bok choy, carrot strips and cooked egg halves. One serving in simple cream ceramic bowl/plate on warm pale beige table, overhead three-quarter view, soft daylight, appetizing realistic home cooking, no text, no labels, no props obscuring food. Show only specified food. Save asset for recipe noodles."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/salmon.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/salmon.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. Create one square editorial food photograph for a family recipe app: Pan cooked salmon with broccoli and white rice, lemon. One serving in simple cream ceramic bowl/plate on warm pale beige table, overhead three-quarter view, soft daylight, appetizing realistic home cooking, no text, no labels, no props obscuring food. Show only specified food. Save asset for recipe salmon."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/tofurice.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/tofurice.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. Create one square editorial food photograph for a family recipe app: Tofu cubes scrambled eggs and peas fried rice, carrot, no chili. One serving in simple cream ceramic bowl/plate on warm pale beige table, overhead three-quarter view, soft daylight, appetizing realistic home cooking, no text, no labels, no props obscuring food. Show only specified food. Save asset for recipe tofurice."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/chickenpasta.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/chickenpasta.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. Create one square editorial food photograph for a family recipe app: Chicken strips broccoli and short penne pasta with light olive oil. One serving in simple cream ceramic bowl/plate on warm pale beige table, overhead three-quarter view, soft daylight, appetizing realistic home cooking, no text, no labels, no props obscuring food. Show only specified food. Save asset for recipe chickenpasta."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/oats.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/oats.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. Create one square editorial food photograph for a family recipe app: Rolled oatmeal with milk, banana slices and blueberries. One serving in simple cream ceramic bowl/plate on warm pale beige table, overhead three-quarter view, soft daylight, appetizing realistic home cooking, no text, no labels, no props obscuring food. Show only specified food. Save asset for recipe oats."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/eggs.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/eggs.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. Create one square editorial food photograph for a family recipe app: Scrambled eggs with whole wheat toast and orange wedges. One serving in simple cream ceramic bowl/plate on warm pale beige table, overhead three-quarter view, soft daylight, appetizing realistic home cooking, no text, no labels, no props obscuring food. Show only specified food. Save asset for recipe eggs."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/yogurt.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/yogurt.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. Create one square editorial food photograph for a family recipe app: Plain yogurt bowl with rolled oats, banana and blueberries. One serving in simple cream ceramic bowl/plate on warm pale beige table, overhead three-quarter view, soft daylight, appetizing realistic home cooking, no text, no labels, no props obscuring food. Show only specified food. Save asset for recipe yogurt."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/gingerchicken.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/gingerchicken.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"gingerchicken\": Ginger chicken strips, bok choy and white rice. Show the complete specified meal only, all main ingredients recognizable, cooked mild home food, no chili, no added garnish. Cream ceramic bowl or plate on warm beige table, soft daylight, three-quarter overhead composition, coordinated editorial food photography style. No text, no logos, no watermark."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/mushroomchicken.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/mushroomchicken.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"mushroomchicken\": Chicken and sliced mushrooms in light soy sauce with broccoli and white rice. Show the complete specified meal only, all main ingredients recognizable, cooked mild home food, no chili, no added garnish. Cream ceramic bowl or plate on warm beige table, soft daylight, three-quarter overhead composition, coordinated editorial food photography style. No text, no logos, no watermark."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/pineapplechicken.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/pineapplechicken.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"pineapplechicken\": Chicken pieces, pineapple chunks and red bell pepper in a light soy glaze with white rice. Show the complete specified meal only, all main ingredients recognizable, cooked mild home food, no chili, no added garnish. Cream ceramic bowl or plate on warm beige table, soft daylight, three-quarter overhead composition, coordinated editorial food photography style. No text, no logos, no watermark."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/teriyakichicken.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/teriyakichicken.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"teriyakichicken\": Chicken strips in a light soy maple glaze with steamed carrots and white rice. Show the complete specified meal only, all main ingredients recognizable, cooked mild home food, no chili, no added garnish. Cream ceramic bowl or plate on warm beige table, soft daylight, three-quarter overhead composition, coordinated editorial food photography style. No text, no logos, no watermark."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/chickenpeas.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/chickenpeas.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"chickenpeas\": Chicken cubes, green peas and diced carrots with white rice. Show the complete specified meal only, all main ingredients recognizable, cooked mild home food, no chili, no added garnish. Cream ceramic bowl or plate on warm beige table, soft daylight, three-quarter overhead composition, coordinated editorial food photography style. No text, no logos, no watermark."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/beefbroccoli.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/beefbroccoli.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"beefbroccoli\": Beef strips and broccoli stir-fry with white rice. Show the complete specified meal only, all main ingredients recognizable, cooked mild home food, no chili, no added garnish. Cream ceramic bowl or plate on warm beige table, soft daylight, three-quarter overhead composition, coordinated editorial food photography style. No text, no logos, no watermark."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/beefmushroom.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/beefmushroom.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"beefmushroom\": Beef strips, mushrooms and spinach with white rice. Show the complete specified meal only, all main ingredients recognizable, cooked mild home food, no chili, no added garnish. Cream ceramic bowl or plate on warm beige table, soft daylight, three-quarter overhead composition, coordinated editorial food photography style. No text, no logos, no watermark."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/beefcelery.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/beefcelery.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"beefcelery\": Beef and celery strips with carrots and white rice. Show the complete specified meal only, all main ingredients recognizable, cooked mild home food, no chili, no added garnish. Cream ceramic bowl or plate on warm beige table, soft daylight, three-quarter overhead composition, coordinated editorial food photography style. No text, no logos, no watermark."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/beefpepper.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/beefpepper.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"beefpepper\": Beef strips and red bell pepper with white rice. Show the complete specified meal only, all main ingredients recognizable, cooked mild home food, no chili, no added garnish. Cream ceramic bowl or plate on warm beige table, soft daylight, three-quarter overhead composition, coordinated editorial food photography style. No text, no logos, no watermark."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/porkcabbage.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/porkcabbage.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"porkcabbage\": Pork tenderloin strips and cabbage stir-fry with white rice. Show the complete specified meal only, all main ingredients recognizable, cooked mild home food, no chili, no added garnish. Cream ceramic bowl or plate on warm beige table, soft daylight, three-quarter overhead composition, coordinated editorial food photography style. No text, no logos, no watermark."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/porkmushroom.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/porkmushroom.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"porkmushroom\": Pork tenderloin strips, mushrooms and bok choy with white rice. Show the complete specified meal only, all main ingredients recognizable, cooked mild home food, no chili, no added garnish. Cream ceramic bowl or plate on warm beige table, soft daylight, three-quarter overhead composition, coordinated editorial food photography style. No text, no logos, no watermark."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/porkzucchini.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/porkzucchini.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"porkzucchini\": Pork tenderloin strips, zucchini and carrots with white rice. Show the complete specified meal only, all main ingredients recognizable, cooked mild home food, no chili, no added garnish. Cream ceramic bowl or plate on warm beige table, soft daylight, three-quarter overhead composition, coordinated editorial food photography style. No text, no logos, no watermark."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/shrimpegg.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/shrimpegg.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"shrimpegg\": Peeled shrimp, fully cooked scrambled eggs and broccoli alongside white rice. Show the complete specified meal only, all main ingredients recognizable, cooked mild home food, no chili, no added garnish. Cream ceramic bowl or plate on warm beige table, soft daylight, three-quarter overhead composition, coordinated editorial food photography style. No text, no logos, no watermark."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/shrimppeas.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/shrimppeas.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"shrimppeas\": Peeled shrimp, peas and diced carrot fried rice. Show the complete specified meal only, all main ingredients recognizable, cooked mild home food, no chili, no added garnish. Cream ceramic bowl or plate on warm beige table, soft daylight, three-quarter overhead composition, coordinated editorial food photography style. No text, no logos, no watermark."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/shrimpcorn.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/shrimpcorn.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"shrimpcorn\": Peeled shrimp, yellow corn and zucchini alongside white rice. Show the complete specified meal only, all main ingredients recognizable, cooked mild home food, no chili, no added garnish. Cream ceramic bowl or plate on warm beige table, soft daylight, three-quarter overhead composition, coordinated editorial food photography style. No text, no logos, no watermark."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/codtomato.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/codtomato.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"codtomato\": Cod chunks in tomato spinach sauce over white rice. Show the complete specified meal only, all main ingredients recognizable, cooked mild home food, no chili, no added garnish. Cream ceramic bowl or plate on warm beige table, soft daylight, three-quarter overhead composition, coordinated editorial food photography style. No text, no logos, no watermark."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/codginger.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/codginger.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"codginger\": Steamed cod fillet with ginger, bok choy and white rice. Show the complete specified meal only, all main ingredients recognizable, cooked mild home food, no chili, no added garnish. Cream ceramic bowl or plate on warm beige table, soft daylight, three-quarter overhead composition, coordinated editorial food photography style. No text, no logos, no watermark."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/tofutomato.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/tofutomato.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"tofutomato\": Firm tofu cubes with fully cooked scrambled eggs and tomato sauce over white rice. Show the complete specified meal only, all main ingredients recognizable, cooked mild home food, no chili, no added garnish. Cream ceramic bowl or plate on warm beige table, soft daylight, three-quarter overhead composition, coordinated editorial food photography style. No text, no logos, no watermark."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/tofumushroom.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/tofumushroom.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"tofumushroom\": Firm tofu cubes, mushrooms and bok choy in light soy sauce over white rice. Show the complete specified meal only, all main ingredients recognizable, cooked mild home food, no chili, no added garnish. Cream ceramic bowl or plate on warm beige table, soft daylight, three-quarter overhead composition, coordinated editorial food photography style. No text, no logos, no watermark."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/chickpeacurry.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/chickpeacurry.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"chickpeacurry\": Mild chickpea spinach carrot curry with white rice, no chili. Show the complete specified meal only, all main ingredients recognizable, cooked mild home food, no chili, no added garnish. Cream ceramic bowl or plate on warm beige table, soft daylight, three-quarter overhead composition, coordinated editorial food photography style. No text, no logos, no watermark."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/chickenudon.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/chickenudon.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"chickenudon\": Chicken strips, cabbage and carrot udon stir-fry. Show the complete specified meal only, all main ingredients recognizable, cooked mild home food, no chili, no added garnish. Cream ceramic bowl or plate on warm beige table, soft daylight, three-quarter overhead composition, coordinated editorial food photography style. No text, no logos, no watermark."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/chickenvermicelli.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/chickenvermicelli.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"chickenvermicelli\": Chicken strips, bok choy and carrot rice vermicelli soup. Show the complete specified meal only, all main ingredients recognizable, cooked mild home food, no chili, no added garnish. Cream ceramic bowl or plate on warm beige table, soft daylight, three-quarter overhead composition, coordinated editorial food photography style. No text, no logos, no watermark."
     },
     {
-      "path": "FamilyTable/Assets.xcassets/beefudon.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/beefudon.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"beefudon\": Beef & mushroom udon soup / 牛肉蘑菇乌冬汤面. Ingredients: Beef sirloin, White mushrooms, Bok choy, Reduced-sodium soy sauce, Olive oil, Plain precooked udon noodles. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-f8672fb3-1136-414a-97c6-8054d56282bd.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/chickenorzo.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/chickenorzo.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"chickenorzo\": Chicken & zucchini orzo / 鸡肉西葫芦米粒意面. Ingredients: Boneless chicken breast, Zucchini, Canned crushed tomatoes, Olive oil, Salt, Dry orzo pasta. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-755368c1-f054-43bb-a97f-0df7f7427604.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/chickensoba.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/chickensoba.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"chickensoba\": Chicken & broccoli soba / 鸡肉西兰花荞麦面. Ingredients: Boneless chicken breast, Broccoli, Reduced-sodium soy sauce, Sesame chicken & rice, Olive oil, Dry buckwheat soba noodles. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-cca44a89-8abb-4bf1-b8f9-7c13dd0f7c5e.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/beefcabbagenoodles.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/beefcabbagenoodles.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"beefcabbagenoodles\": Beef & cabbage stir-fried noodles / 牛肉圆白菜炒面. Ingredients: Beef sirloin, Green cabbage, Reduced-sodium soy sauce, Olive oil, Vegetable & egg noodles. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-80938208-69b1-43fa-ab04-889293fd1791.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/porknoodles.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/porknoodles.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"porknoodles\": Pork & spinach noodle soup / 里脊菠菜汤面. Ingredients: Pork tenderloin, Spinach, Carrots, Reduced-sodium soy sauce, Olive oil, Vegetable & egg noodles. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-9006d15e-ea21-4ec0-9795-f3ae90c47c4e.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/porktomatopasta.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/porktomatopasta.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"porktomatopasta\": Pork & zucchini tomato penne / 里脊西葫芦番茄通心粉. Ingredients: Pork tenderloin, Zucchini, Canned crushed tomatoes, Olive oil, Salt, Penne pasta. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-db068de1-653b-4766-be1a-82bec6e2efd3.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/shrimpudon.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/shrimpudon.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"shrimpudon\": Shrimp & broccoli udon / 虾仁西兰花炒乌冬. Ingredients: Raw peeled deveined shrimp, thawed, Broccoli, Carrots, Reduced-sodium soy sauce, Olive oil, Plain precooked udon noodles. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-2252c8b7-fbab-46b8-b38b-6ad4efe93b6b.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/shrimpspaghetti.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/shrimpspaghetti.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"shrimpspaghetti\": Lemon shrimp & spinach spaghetti / 柠檬虾仁菠菜意面. Ingredients: Raw peeled deveined shrimp, thawed, Spinach, Lemon, Garlic, Olive oil, Salt, Spaghetti. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-ceda8b7e-239f-4420-a968-e62009ad09c6.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/tunapasta.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/tunapasta.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"tunapasta\": Tuna & pea tomato pasta / 金枪鱼豌豆番茄意面. Ingredients: Canned light tuna in water, drained, Frozen peas, Canned crushed tomatoes, Olive oil, Salt, Penne pasta. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-625f9503-7fff-474b-8939-3e4bf12e4b8a.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/shrimpvermicelli.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/shrimpvermicelli.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"shrimpvermicelli\": Shrimp & egg rice noodle soup / 虾仁鸡蛋青菜汤米粉. Ingredients: Raw peeled deveined shrimp, thawed, Eggs, Bok choy, Reduced-sodium soy sauce, Olive oil, Dry rice vermicelli. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-155990ae-e047-4031-834a-ba15d51860e3.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/salmonpasta.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/salmonpasta.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"salmonpasta\": Salmon & broccoli milk-sauce penne / 三文鱼西兰花奶香通心粉. Ingredients: Salmon, broccoli & rice, Broccoli, Milk, Olive oil, Salt, Penne pasta. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-eea31e82-1c2c-4afa-931e-c2a0eb97bc59.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/tofusoba.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/tofusoba.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"tofusoba\": Tofu & spinach soba / 豆腐菠菜荞麦面. Ingredients: Firm tofu, Spinach, Carrots, Reduced-sodium soy sauce, Sesame chicken & rice, Olive oil, Dry buckwheat soba noodles. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-b0511268-0ae8-4dd0-84e5-fb21ff697753.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/mushroomtofunoodles.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/mushroomtofunoodles.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"mushroomtofunoodles\": Mushroom & tofu noodle soup / 蘑菇豆腐青菜汤面. Ingredients: Firm tofu, White mushrooms, Bok choy, Reduced-sodium soy sauce, Olive oil, Vegetable & egg noodles. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-a3d9dfbb-0d1f-41e1-b480-5ce455589e9e.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/eggtomatonoodles.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/eggtomatonoodles.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"eggtomatonoodles\": Tomato & egg spinach noodles / 番茄鸡蛋菠菜面. Ingredients: Eggs, Canned crushed tomatoes, Spinach, Olive oil, Salt, Vegetable & egg noodles. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-2a15850a-36cc-4cd7-8024-3bdb7797f385.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/chickpeapasta.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/chickpeapasta.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"chickpeapasta\": Chickpea & zucchini penne / 鹰嘴豆西葫芦通心粉. Ingredients: Canned chickpeas, drained, Zucchini, Canned crushed tomatoes, Olive oil, Salt, Penne pasta. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-5e291e68-5847-477f-a0f7-44e077679881.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/turkeytacos.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/turkeytacos.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"turkeytacos\": Mild turkey & bean tacos / 不辣火鸡黑豆软饼. Ingredients: Ground turkey, Canned black beans, drained, 8-inch whole wheat tortillas, Fresh tomatoes, Romaine lettuce, Olive oil, Salt. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-6af44047-2127-47e9-97e8-ddd4706a14cd.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/chickenwraps.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/chickenwraps.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"chickenwraps\": Chicken & yogurt salad wraps / 鸡肉酸奶蔬菜卷. Ingredients: Boneless chicken breast, 8-inch whole wheat tortillas, Cucumber, Romaine lettuce, Fruit & yogurt bowls, Olive oil, Salt. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-dbbdb5b4-d54c-405c-9a01-ffdf1cf54f14.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/chickpeapita.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/chickpeapita.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"chickpeapita\": Chickpea & cucumber pita pockets / 鹰嘴豆黄瓜酸奶口袋饼. Ingredients: Canned chickpeas, drained, Whole wheat pita bread, Cucumber, Fresh tomatoes, Fruit & yogurt bowls, Lemon, Salt. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-43bcb127-83fb-4861-a458-5ec4bba4fcf4.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/chickencouscous.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/chickencouscous.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"chickencouscous\": Chicken & vegetable couscous / 鸡肉豌豆胡萝卜库斯库斯. Ingredients: Boneless chicken breast, Quick-cooking couscous, Frozen peas, Carrots, Olive oil, Salt. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-3b0d2ce0-501a-45e3-bbda-a9df905a89d0.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/beanquesadillas.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/beanquesadillas.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"beanquesadillas\": Black bean & corn quesadillas / 黑豆玉米芝士夹饼. Ingredients: Canned black beans, drained, Frozen sweet corn, Red bell pepper, Shredded cheddar cheese, 8-inch whole wheat tortillas, Olive oil. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-bfbdced5-18f6-481a-9e40-3f2b714b72bf.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/lentilcouscous.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/lentilcouscous.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"lentilcouscous\": Lentil & spinach couscous / 扁豆菠菜番茄库斯库斯. Ingredients: Canned lentils, drained, Quick-cooking couscous, Spinach, Canned crushed tomatoes, Olive oil, Salt. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-18c4b8f1-0ad1-451d-b44a-c5085f36b1a6.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/appleoats.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/appleoats.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"appleoats\": Apple cinnamon oats / 苹果肉桂牛奶燕麦. Ingredients: Banana & berry oats, Milk, Apples, Ground cinnamon. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-b9d8547e-b3a9-40a7-8e1a-e6ff329b63c2.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/pearyogurt.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/pearyogurt.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"pearyogurt\": Pear yogurt oat bowls / 香梨燕麦酸奶碗. Ingredients: Fruit & yogurt bowls, Banana & berry oats, Pears. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-5b792932-0d21-4753-a413-a32cdc03e3ff.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/pumpkinoats.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/pumpkinoats.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"pumpkinoats\": Pumpkin banana oats / 南瓜香蕉牛奶燕麦. Ingredients: Banana & berry oats, Milk, Plain canned pumpkin puree, Bananas. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-a9fa120f-4005-4453-a11b-57b16b43c9d7.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/peachyogurt.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/peachyogurt.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"peachyogurt\": Peach yogurt oat bowls / 鲜桃燕麦酸奶碗. Ingredients: Fruit & yogurt bowls, Banana & berry oats, Peaches. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-f14ea603-d8a9-4a74-9e4e-0d598831f11c.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/strawberryoats.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/strawberryoats.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"strawberryoats\": Strawberry yogurt oats / 草莓酸奶热燕麦. Ingredients: Banana & berry oats, Milk, Fruit & yogurt bowls, Strawberries. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-a817c780-48bd-47d6-9e96-f4eec3b0316f.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/berryfrenchtoast.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/berryfrenchtoast.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"berryfrenchtoast\": Blueberry French toast / 蓝莓法式吐司. Ingredients: Whole wheat bread, Eggs, Milk, Blueberries, Olive oil. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-f61daf22-8bb0-4a14-a56b-6f6a602b1a29.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/bananapancakes.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/bananapancakes.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"bananapancakes\": Banana oat pancakes & yogurt / 香蕉燕麦小饼配酸奶. Ingredients: Banana & berry oats, Bananas, Eggs, Milk, Fruit & yogurt bowls, Strawberries, Olive oil. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-8ecf99de-ea37-4ca3-9b9e-a609e01afee7.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/spinachomelet.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/spinachomelet.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"spinachomelet\": Spinach omelet, toast & orange / 菠菜蛋饼吐司配橙子. Ingredients: Eggs, Spinach, Whole wheat bread, Oranges, Olive oil. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-036f2bf6-19ab-4b21-8ec4-873a0bf8acc5.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/avocadoeggtoast.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/avocadoeggtoast.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"avocadoeggtoast\": Avocado egg toast & tomato / 牛油果炒蛋吐司配番茄. Ingredients: Whole wheat bread, Eggs, Avocados, Fresh tomatoes, Olive oil. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-d0ce77a2-927a-4b1e-ba5d-3171ba5d0121.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/cottagefruittoast.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/cottagefruittoast.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"cottagefruittoast\": Cottage cheese toast & berries / 茅屋奶酪吐司配草莓. Ingredients: Whole wheat bread, Cottage cheese, Strawberries. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-95df46f5-778d-4b17-9592-97afd17741a7.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/breakfastburrito.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/breakfastburrito.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"breakfastburrito\": Egg, bean & spinach burritos / 鸡蛋黑豆菠菜早餐卷. Ingredients: 8-inch whole wheat tortillas, Eggs, Canned black beans, drained, Spinach, Olive oil. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-cb22d849-b035-4b38-abdd-10fdae554e66.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/peanutbananatoast.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/peanutbananatoast.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"peanutbananatoast\": Peanut banana toast & milk / 花生香蕉吐司配牛奶. Ingredients: Whole wheat bread, Smooth peanut butter, Bananas, Milk. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-c17ec8a6-f648-4899-b732-132b259770dc.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/breakfastquesadilla.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/breakfastquesadilla.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"breakfastquesadilla\": Egg & tomato cheese quesadillas / 鸡蛋番茄芝士早餐夹饼. Ingredients: 8-inch whole wheat tortillas, Eggs, Fresh tomatoes, Shredded cheddar cheese, Olive oil. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-98551065-fafc-4d26-a8bd-d94e2a5c1278.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/savorytofuoats.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/savorytofuoats.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"savorytofuoats\": Savory tofu & egg oats / 豆腐菠菜鸡蛋咸燕麦. Ingredients: Banana & berry oats, Firm tofu, Eggs, Spinach, Reduced-sodium soy sauce, Olive oil. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-6603ef83-05c5-41b1-9d95-ba8c09e86706.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/breakfasttomatonoodles.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/breakfasttomatonoodles.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"breakfasttomatonoodles\": Breakfast tomato & egg noodles / 早餐番茄鸡蛋小碗面. Ingredients: Vegetable & egg noodles, Eggs, Canned crushed tomatoes, Spinach, Olive oil, Salt. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-d4bedcef-26fb-433f-b5b6-e1aa124e922b.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/corneggporridge.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/corneggporridge.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"corneggporridge\": Corn & egg quick rice porridge / 玉米鸡蛋快手粥. Ingredients: Quick-cooking dry rice, Eggs, Frozen sweet corn, Milk, Salt. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-d2e92a44-cbf9-4cea-8f17-19a0814e6dd9.png"
     },
     {
-      "path": "FamilyTable/Assets.xcassets/eggmuffin.imageset/photo.png",
+      "path": "FamilyKitchen/Assets.xcassets/eggmuffin.imageset/photo.png",
       "prompt": "Use case: photorealistic-natural. One square realistic serving illustration for family recipe \"eggmuffin\": Egg & spinach English muffins / 鸡蛋菠菜芝士英式松饼. Ingredients: Whole wheat English muffins, Eggs, Spinach, Shredded cheddar cheese, Olive oil. Include all meal components, only these ingredients (no extra eggs or garnish). Fish and meat fully cooked, egg fully set. Serve toast/sandwich breakfast fruit or milk visibly alongside when listed. Mild family food, no chili. Cream ceramic plate/bowl on warm beige table, soft daylight, three-quarter overhead view. Coordinated realistic home food photography style, no text or logos.",
       "source": "/Users/frank/.codex/generated_images/01a0bafd-fe25-75e0-81de-f22834f37138/exec-de445101-1cb1-4d2a-9ce0-2af59559179c.png"
     }
