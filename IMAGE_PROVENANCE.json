@@ -323,11 +323,36 @@
     }
   ],
   "pending": [
-    "hunanpork",
-    "hunanbeef",
-    "hunanchilifish",
-    "sichuanmapo",
-    "sichuankungpao",
-    "sichuanyuxiang"
-  ]
+    {
+      "id": "hunanpork",
+      "path": "FamilyKitchen/Assets.xcassets/hunanpork.imageset/photo.png",
+      "prompt": "Use case: photorealistic-natural. Create one square editorial food photograph for a family recipe app: Hunan stir-fried sliced pork loin with green hot pepper strips and red bell pepper, garlic and soy, beside white rice and simply stir-fried bok choy. One serving in simple cream ceramic bowl/plate on warm pale beige table, overhead three-quarter view, soft daylight, appetizing realistic home cooking, no text, no labels, no props obscuring food. Show only specified food. Save asset for recipe hunanpork."
+    },
+    {
+      "id": "hunanbeef",
+      "path": "FamilyKitchen/Assets.xcassets/hunanbeef.imageset/photo.png",
+      "prompt": "Use case: photorealistic-natural. Create one square editorial food photograph for a family recipe app: Hunan stir-fried sliced beef with celery batons, green chili rings and thin carrot slices, beside white rice. One serving in simple cream ceramic bowl/plate on warm pale beige table, overhead three-quarter view, soft daylight, appetizing realistic home cooking, no text, no labels, no props obscuring food. Show only specified food. Save asset for recipe hunanbeef."
+    },
+    {
+      "id": "hunanchilifish",
+      "path": "FamilyKitchen/Assets.xcassets/hunanchilifish.imageset/photo.png",
+      "prompt": "Use case: photorealistic-natural. Create one square editorial food photograph for a family recipe app: Steamed white cod fillet pieces topped with red chopped salted chili, ginger, garlic and scallion, beside white rice and stir-fried bok choy. One serving in simple cream ceramic bowl/plate on warm pale beige table, overhead three-quarter view, soft daylight, appetizing realistic home cooking, no text, no labels, no props obscuring food. Show only specified food. Save asset for recipe hunanchilifish."
+    },
+    {
+      "id": "sichuanmapo",
+      "path": "FamilyKitchen/Assets.xcassets/sichuanmapo.imageset/photo.png",
+      "prompt": "Use case: photorealistic-natural. Create one square editorial food photograph for a family recipe app: Mapo tofu — soft white tofu cubes in a glossy red-brown chili bean sauce with ground pork, scattered scallion and a dusting of ground Sichuan pepper — beside white rice and stir-fried bok choy. One serving in simple cream ceramic bowl/plate on warm pale beige table, overhead three-quarter view, soft daylight, appetizing realistic home cooking, no text, no labels, no props obscuring food. Show only specified food. Save asset for recipe sichuanmapo."
+    },
+    {
+      "id": "sichuankungpao",
+      "path": "FamilyKitchen/Assets.xcassets/sichuankungpao.imageset/photo.png",
+      "prompt": "Use case: photorealistic-natural. Create one square editorial food photograph for a family recipe app: Kung pao chicken — diced chicken with roasted peanuts, cucumber and carrot cubes, scallion and a few whole dried red chilies in a glossy dark sauce — beside white rice. One serving in simple cream ceramic bowl/plate on warm pale beige table, overhead three-quarter view, soft daylight, appetizing realistic home cooking, no text, no labels, no props obscuring food. Show only specified food. Save asset for recipe sichuankungpao."
+    },
+    {
+      "id": "sichuanyuxiang",
+      "path": "FamilyKitchen/Assets.xcassets/sichuanyuxiang.imageset/photo.png",
+      "prompt": "Use case: photorealistic-natural. Create one square editorial food photograph for a family recipe app: Yu-xiang shredded pork with carrot, red bell pepper and mushroom strips in a glossy reddish sweet-sour-savoury sauce, beside white rice. One serving in simple cream ceramic bowl/plate on warm pale beige table, overhead three-quarter view, soft daylight, appetizing realistic home cooking, no text, no labels, no props obscuring food. Show only specified food. Save asset for recipe sichuanyuxiang."
+    }
+  ],
+  "pending_note": "Six spicy dishes are still without artwork. The prompts above are written in the same house style as the finished 70 and are ready to run, one image call each, in a session that has an image tool available. Drop each PNG at the path given, add a Contents.json matching a neighbouring imageset, then run scripts/verify_delivery.py, which recounts the artwork and rewrites MENU_CATALOG.md and VALIDATION.md. Until then the app shows the cuisine badge rather than a placeholder photograph, which is deliberate: an illustration of a dish nobody generated would be a claim the app cannot back."
 }

@@ -6,7 +6,12 @@ import AVFoundation
 struct ShoppingView: View {
     @EnvironmentObject var store: FamilyStore
     var lines: [ShoppingLine] { store.state.shopping() }
-    var categories: [String] { Array(Set(lines.map { Catalog.ingredient($0.ingredient).category })).sorted() }
+    /// What still has to be bought, and what the kitchen already covers. The list is
+    /// read on the way round a shop, so everything still needed stays at the top and
+    /// everything settled drops to the bottom.
+    var stillToBuy: [ShoppingLine] { lines.filter { $0.shortage > 0 } }
+    var alreadyCovered: [ShoppingLine] { lines.filter { $0.shortage <= 0 } }
+    var categories: [String] { Array(Set(stillToBuy.map { Catalog.ingredient($0.ingredient).category })).sorted() }
     var body: some View {
         List {
             Section {
@@ -21,6 +26,9 @@ struct ShoppingView: View {
                     if let first = store.state.planStart, let last = store.state.planEnd {
                         Text("For the menu of \(first.formatted(.dateTime.month(.abbreviated).day())) – \(last.formatted(.dateTime.month(.abbreviated).day())) · \(store.state.itemsToBuy) items to buy").font(.headline)
                     }
+                    NavigationLink { ShopCheckView() } label: {
+                        Label("Check before you shop · 出门前核对", systemImage: "camera.viewfinder")
+                    }.accessibilityIdentifier("openShopCheck")
                     NavigationLink { PutAwayView() } label: { Label("Put away · \(store.state.purchases.filter{!$0.stored}.count) waiting",systemImage:"shippingbox") }
                     InfoNote(title:"How these amounts are worked out · 数量怎么来的",lines:[
                         "Every meal on the menu is scaled to \(store.state.servings.formatted(.number.precision(.fractionLength(0...2)))) adult portions (\(store.state.servingsExplanation)), then the same ingredient is added up across the week.",
@@ -35,7 +43,7 @@ struct ShoppingView: View {
             }
             ForEach(categories,id:\.self) { category in
                 Section(category) {
-                    ForEach(lines.filter{ Catalog.ingredient($0.ingredient).category == category }) { line in
+                    ForEach(stillToBuy.filter{ Catalog.ingredient($0.ingredient).category == category }) { line in
                         ShoppingRow(line: line)
                     }
                 }
@@ -45,6 +53,15 @@ struct ShoppingView: View {
                     ForEach(store.state.purchases.filter{!$0.stored}) { p in
                         HStack { Text(Catalog.ingredient(p.ingredient).name); Spacer(); Button("Undo") { store.update { $0.purchases.removeAll { $0.id == p.id } } }.buttonStyle(.borderless) }
                     }
+                }
+            }
+            if !alreadyCovered.isEmpty {
+                Section {
+                    ForEach(alreadyCovered) { line in ShoppingRow(line: line) }
+                } header: {
+                    Text("Nothing to buy · 已有，无需购买 (\(alreadyCovered.count))")
+                } footer: {
+                    Text("Already in your kitchen or already in the basket. Kept here so you can check the reasoning, and put anything back on the list by tapping it.")
                 }
             }
         }.navigationTitle("Shopping")
@@ -97,7 +114,7 @@ struct PutAwayView: View {
                     "It counts only after someone confirms the amount and the place, so the shopping list cannot quietly under-buy.",
                     "Children can do this step; changing a location later is always allowed."
                 ])
-                NavigationLink("Edit storage locations",destination:StorageSettingsView())
+                NavigationLink("Edit fridges, pantries and shelves",destination:StorageSettingsView())
             }
             ForEach(store.state.purchases.filter{!$0.stored}) { p in PutAwayRow(purchase:p) }
             if store.state.purchases.allSatisfy(\.stored) { Text("All put away. Nice teamwork!") }
@@ -115,10 +132,10 @@ struct PutAwayRow: View {
     var body: some View {
         Section(item.name) {
             Text("Suggested storage: \(item.storage) · confirm package instructions").font(.caption).foregroundStyle(.secondary)
-            if let suggestion = compatible.first { Text("Suggested place: \(suggestion.name) — choose below to confirm.").font(.caption) }
+            if let suggestion = compatible.first { Text("Suggested place: \(store.state.describe(suggestion)) — choose below to confirm.").font(.caption) }
             if item.category == "Protein" { Text("Keep raw meat/fish sealed to prevent drips. Freeze portions for later days promptly; thaw in the fridge in advance.").font(.caption) }
             TextField("Actual amount (\(item.unit))",text:$amount).keyboardType(.decimalPad)
-            Picker("Actual location",selection:$location) { Text("Choose…").tag(""); ForEach(compatible) { l in Text(l.name).tag(l.id.uuidString) } }
+            Picker("Actual location",selection:$location) { Text("Choose…").tag(""); ForEach(compatible) { l in Text(store.state.describe(l)).tag(l.id.uuidString) } }
             if compatible.isEmpty { Text("Add a \(item.storage) location in Settings first.").foregroundStyle(.orange) }
             Button("Placed here — confirm") { if let id = UUID(uuidString:location), let qty = validAmount { store.update { $0.storePurchase(purchase.id,location:id,actualQuantity:qty) } } }.disabled(validAmount == nil || UUID(uuidString:location) == nil)
         }.onAppear { if amount.isEmpty { amount = String(purchase.quantity) } }
@@ -143,6 +160,18 @@ struct KitchenView: View {
     private var unconfirmed: [Stock] { store.state.stock.filter { !$0.confirmed } }
     private var placesWithFood: [Location] {
         store.state.locations.filter { location in store.state.stock.contains { $0.location == location.id } }
+    }
+    /// The appliances that actually hold something, in the order they were set up,
+    /// so the kitchen reads the way it is walked: this fridge, then that one.
+    private var appliancesWithFood: [Appliance] {
+        store.state.appliances.filter { appliance in
+            store.state.compartments(of: appliance.id).contains { location in
+                store.state.stock.contains { $0.location == location.id }
+            }
+        }
+    }
+    private var looseWithFood: [Location] {
+        placesWithFood.filter { $0.applianceID == nil }
     }
     private var unplaced: [Stock] {
         store.state.stock.filter { stock in
@@ -184,7 +213,7 @@ struct KitchenView: View {
         Section {
             HStack(spacing: 18) {
                 KitchenStat(number: "\(confirmed.count)", label: "confirmed\n已确认")
-                KitchenStat(number: "\(store.state.locations.count)", label: "places\n位置")
+                KitchenStat(number: "\(store.state.appliances.count)", label: "places\n位置")
                 if !unconfirmed.isEmpty {
                     KitchenStat(number: "\(unconfirmed.count)", label: "to check\n待确认", tint: Brand.clay)
                 }
@@ -194,7 +223,7 @@ struct KitchenView: View {
             }.buttonStyle(.borderedProminent).accessibilityIdentifier("addStock")
             if store.state.locations.isEmpty {
                 NavigationLink { StorageSettingsView() } label: {
-                    Label("Set up your fridge and cupboards first", systemImage: "refrigerator").foregroundStyle(Brand.clay)
+                    Label("Set up your fridges and pantries first", systemImage: "refrigerator").foregroundStyle(Brand.clay)
                 }
             }
         }
@@ -212,14 +241,35 @@ struct KitchenView: View {
 
     /// One section per real place, then anything without a confirmed home.
     @ViewBuilder private var inventorySections: some View {
-        ForEach(placesWithFood) { place in
+        ForEach(appliancesWithFood) { appliance in
+            Section {
+                ForEach(store.state.compartments(of: appliance.id).filter { place in
+                    store.state.stock.contains { $0.location == place.id }
+                }) { place in
+                    // One appliance, its shelves in order, each shelf named once above
+                    // the things on it.
+                    Text(place.name).font(.caption.weight(.medium)).foregroundStyle(.secondary)
+                    ForEach(store.state.stock.filter { $0.location == place.id }) { stock in
+                        StockRow(stock: stock) { editing = stock }
+                    }
+                }
+            } header: {
+                HStack {
+                    Label(appliance.name, systemImage: appliance.kind.symbol)
+                    Spacer()
+                    Text(appliance.place.isEmpty ? appliance.kind.en : appliance.place)
+                        .font(.caption2).foregroundStyle(.secondary)
+                }
+            }
+        }
+        ForEach(looseWithFood) { place in
             Section {
                 ForEach(store.state.stock.filter { $0.location == place.id }) { stock in
                     StockRow(stock: stock) { editing = stock }
                 }
             } header: {
                 HStack {
-                    Text(place.fullName)
+                    Text(place.name)
                     Spacer()
                     Text(place.zone).font(.caption2).foregroundStyle(.secondary)
                 }
@@ -325,7 +375,7 @@ struct StockEditor: View {
             Section("Identify & measure") {
                 Picker("Ingredient",selection:$ingredient) { ForEach(Catalog.ingredients) { i in Text(i.name).tag(i.id) } }.disabled(existing != nil)
                 TextField("Amount (\(Catalog.ingredient(ingredient).unit))",text:$amount).keyboardType(.decimalPad)
-                Picker("Actual location",selection:$location) { Text("Unconfirmed").tag(""); ForEach(store.state.locations) { l in Text("\(l.name) · \(l.zone)").tag(l.id.uuidString) } }
+                Picker("Actual location",selection:$location) { Text("Unconfirmed").tag(""); ForEach(store.state.locations) { l in Text(store.state.describe(l)).tag(l.id.uuidString) } }
                 Toggle("Parent confirmed this quantity",isOn:$confirmed)
                 Text("Enter the total currently present at this location, not an amount to add. Matching ingredient + location is updated to prevent duplicates. No freshness is inferred.").font(.caption)
             }
@@ -369,7 +419,7 @@ struct SettingsView: View {
                     settingRow("Where food lives", "食物放在哪里", "refrigerator",
                                detail: store.state.locations.isEmpty
                                ? "Not set up yet"
-                               : "\(store.state.appliances.count) appliances · \(store.state.locations.count) places")
+                               : "\(store.state.appliances.count) appliance\(store.state.appliances.count == 1 ? "" : "s") · \(store.state.locations.count) places")
                 }
                 NavigationLink { DisplaySettingsView() } label: {
                     settingRow("Language & appearance", "语言与显示", "textformat",
@@ -574,58 +624,200 @@ struct AllergySettingsView: View {
     }
 }
 
+/// Where this family keeps food: which fridges and pantries they have, which room
+/// each one stands in, and — for anyone who wants that much detail — which shelf.
+///
+/// The appliance and its room are the part that matters, so they come first and are
+/// always filled in. The shelves inside are offered ready-made and can be cut down to
+/// a single "Fridge" by anyone who would rather not think about drawers.
 struct StorageSettingsView: View {
     @EnvironmentObject var store: FamilyStore
+    @State private var adding: ApplianceKind?
     @State private var name = ""
-    @State private var zone = "Refrigerated"
+    @State private var zone = "Pantry"
+
     private let zones = ["Refrigerated", "Frozen", "Pantry"]
 
     var body: some View {
         List {
-            Section("Add · 添加") {
-                ForEach(ApplianceKind.allCases, id: \.self) { kind in
-                    Button { store.update { $0.addAppliance(kind) } } label: {
-                        HStack {
-                            Label("Add a \(kind.en.lowercased()) · \(kind.zh)", systemImage: kind.symbol)
-                            Spacer()
-                            Text("\(store.state.applianceCount(of: kind))/\(FamilyState.maxAppliancesPerKind)")
-                                .font(.caption).foregroundStyle(.secondary)
-                        }
-                    }.disabled(store.state.applianceCount(of: kind) >= FamilyState.maxAppliancesPerKind)
+            addSection
+            ForEach(store.state.appliancesByPlace, id: \.place) { group in
+                ForEach(group.appliances) { appliance in
+                    ApplianceSection(appliance: appliance)
                 }
-                Text("Each one arrives with the usual shelves. Rename them to match your kitchen, or remove the ones you do not have.")
-                    .font(.caption).foregroundStyle(.secondary)
-            }
-            ForEach(store.state.appliances, id: \.self) { appliance in
-                Section {
-                    ForEach(store.state.compartments(of: appliance)) { location in
-                        LocationRow(location: location)
-                    }
-                    Button(role: .destructive) { store.update { $0.removeAppliance(appliance) } } label: {
-                        Label("Remove \(appliance)", systemImage: "trash")
-                    }.buttonStyle(.borderless).font(.footnote)
-                } header: { Text(appliance) }
             }
             if !store.state.looseLocations.isEmpty {
                 Section("Other places · 其他位置") {
                     ForEach(store.state.looseLocations) { location in LocationRow(location: location) }
                 }
             }
-            Section("Add one place by hand · 手动添加") {
-                TextField("Place name", text: $name)
-                Picker("Temperature zone", selection: $zone) { ForEach(zones, id: \.self) { Text($0).tag($0) } }
-                Button {
-                    store.update { $0.locations.append(Location(name: name.trimmingCharacters(in: .whitespaces), zone: zone)) }
-                    name = ""
-                } label: { Label("Add place", systemImage: "plus").frame(maxWidth: .infinity) }
-                .buttonStyle(.bordered)
-                .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
-            }
+            byHandSection
             Section {
                 Text("Removing a place never deletes the food in it — whatever was stored there simply goes back to having no confirmed place.")
                     .font(.caption).foregroundStyle(.secondary)
             }
-        }.navigationTitle("Where food lives").navigationBarTitleDisplayMode(.inline)
+        }
+        .navigationTitle("Where food lives").navigationBarTitleDisplayMode(.inline)
+        .sheet(item: $adding) { kind in NavigationStack { NewApplianceSheet(kind: kind) } }
+    }
+
+    @ViewBuilder private var addSection: some View {
+        Section("Add · 添加") {
+            ForEach(ApplianceKind.allCases, id: \.self) { kind in
+                Button { adding = kind } label: {
+                    HStack {
+                        Label("Add a \(kind.en.lowercased()) · \(kind.zh)", systemImage: kind.symbol)
+                        Spacer()
+                        Text("\(store.state.applianceCount(of: kind))/\(FamilyState.maxAppliancesPerKind)")
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
+                }
+                .disabled(store.state.applianceCount(of: kind) >= FamilyState.maxAppliancesPerKind)
+                .accessibilityIdentifier("addAppliance-\(kind.rawValue)")
+            }
+            Text("Name each one and say which room it is in — “Garage fridge” is how a family with two of them actually talks. The shelves inside are yours to rename, remove or add to.")
+                .font(.caption).foregroundStyle(.secondary)
+        }
+    }
+
+    @ViewBuilder private var byHandSection: some View {
+        Section("A place that is not in an appliance · 单独的位置") {
+            TextField("Place name, e.g. Fruit bowl", text: $name)
+            Picker("Temperature zone", selection: $zone) { ForEach(zones, id: \.self) { Text($0).tag($0) } }
+            Button {
+                store.update { $0.locations.append(Location(name: name.trimmingCharacters(in: .whitespaces), zone: zone)) }
+                name = ""
+            } label: { Label("Add place", systemImage: "plus").frame(maxWidth: .infinity) }
+            .buttonStyle(.bordered)
+            .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
+        }
+    }
+}
+
+extension ApplianceKind: Identifiable { public var id: String { rawValue } }
+
+/// One appliance: what it is called, where it stands, and what is inside it.
+struct ApplianceSection: View {
+    @EnvironmentObject var store: FamilyStore
+    let appliance: Appliance
+    @State private var newCompartment = ""
+    @State private var confirmRemoval = false
+
+    private var compartments: [Location] { store.state.compartments(of: appliance.id) }
+
+    var body: some View {
+        Section {
+            TextField("Name", text: Binding(
+                get: { store.state.appliance(appliance.id)?.name ?? "" },
+                set: { value in store.update { $0.renameAppliance(appliance.id, to: value) } }))
+                .font(.headline)
+            HStack {
+                Text("Room").foregroundStyle(.secondary)
+                Spacer()
+                TextField("Kitchen, garage…", text: Binding(
+                    get: { store.state.appliance(appliance.id)?.place ?? "" },
+                    set: { value in store.update { $0.setPlace(value, forAppliance: appliance.id) } }))
+                    .multilineTextAlignment(.trailing)
+            }
+            if (store.state.appliance(appliance.id)?.place ?? "").isEmpty {
+                // Suggestions, not a fixed list: plenty of homes keep a fridge
+                // somewhere none of these words describe.
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(Appliance.suggestedPlaces, id: \.self) { place in
+                            Button(place) { store.update { $0.setPlace(place, forAppliance: appliance.id) } }
+                                .buttonStyle(.bordered).controlSize(.small)
+                        }
+                    }.padding(.vertical, 2)
+                }
+            }
+            ForEach(compartments) { location in LocationRow(location: location) }
+            HStack {
+                TextField("Add a shelf or drawer", text: $newCompartment)
+                Button {
+                    store.update { $0.addCompartment(to: appliance.id, named: newCompartment) }
+                    newCompartment = ""
+                } label: { Image(systemName: "plus.circle.fill") }
+                .buttonStyle(.borderless)
+                .disabled(newCompartment.trimmingCharacters(in: .whitespaces).isEmpty)
+            }
+            if compartments.isEmpty {
+                Text("Nothing inside yet. Add at least one place, or food here cannot be given a home.")
+                    .font(.caption).foregroundStyle(Brand.clay)
+            }
+            Button(role: .destructive) { confirmRemoval = true } label: {
+                Label("Remove this \(appliance.kind.en.lowercased())", systemImage: "trash")
+            }.buttonStyle(.borderless).font(.footnote)
+        } header: {
+            HStack {
+                Label(appliance.name, systemImage: appliance.kind.symbol)
+                Spacer()
+                Text(appliance.place.isEmpty ? appliance.kind.en : appliance.place)
+                    .font(.caption2).foregroundStyle(.secondary)
+            }
+        }
+        .alert("Remove \(appliance.name)?", isPresented: $confirmRemoval) {
+            Button("Remove", role: .destructive) { store.update { $0.removeAppliance(appliance.id) } }
+            Button("Keep it", role: .cancel) {}
+        } message: {
+            Text("Its shelves go too. Anything stored there stays in your kitchen list, marked as having no confirmed place.")
+        }
+    }
+}
+
+/// Naming a new appliance before it exists, so a second fridge is never just
+/// "Fridge 2" unless that is what the family wanted.
+struct NewApplianceSheet: View {
+    @EnvironmentObject var store: FamilyStore
+    @Environment(\.dismiss) private var dismiss
+    let kind: ApplianceKind
+    @State private var name = ""
+    @State private var place = ""
+    @State private var detailed = true
+
+    var body: some View {
+        Form {
+            Section("What to call it · 名称") {
+                TextField(kind.defaultName, text: $name).accessibilityIdentifier("newApplianceName")
+                Text("Leave it empty to just call it “\(kind.defaultName)”.")
+                    .font(.caption).foregroundStyle(.secondary)
+            }
+            Section("Which room · 在哪个房间") {
+                TextField("Kitchen, garage…", text: $place).accessibilityIdentifier("newAppliancePlace")
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(Appliance.suggestedPlaces, id: \.self) { suggestion in
+                            Button(suggestion) { place = suggestion }
+                                .buttonStyle(.bordered).controlSize(.small)
+                        }
+                    }.padding(.vertical, 2)
+                }
+            }
+            Section("How much detail · 分多细") {
+                Picker("Inside", selection: $detailed) {
+                    Text("Shelf by shelf").tag(true)
+                    Text("Keep it simple").tag(false)
+                }.pickerStyle(.segmented)
+                VStack(alignment: .leading, spacing: 4) {
+                    ForEach(kind.startingCompartments(detailed: detailed), id: \.name) { compartment in
+                        Text("· \(compartment.name)").font(.caption).foregroundStyle(.secondary)
+                    }
+                }
+                Text("Either way you can rename these, delete the ones you do not have, and add your own later.")
+                    .font(.caption).foregroundStyle(.secondary)
+            }
+            Button {
+                store.update { $0.addAppliance(kind, named: name, place: place, detailed: detailed) }
+                dismiss()
+            } label: {
+                Label("Add this \(kind.en.lowercased())", systemImage: "plus").frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .accessibilityIdentifier("confirmAddAppliance")
+        }
+        .navigationTitle("Add a \(kind.en.lowercased())")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar { Button("Cancel") { dismiss() } }
     }
 }
 
@@ -718,22 +910,41 @@ struct AboutSettingsView: View {
 }
 
 /// One shelf, drawer or cupboard space.
+/// One shelf, drawer or door. Renaming it, changing how cold it is, and removing it
+/// are all one tap away, because no two kitchens are laid out the same.
 struct LocationRow: View {
     @EnvironmentObject var store: FamilyStore
     let location: Location
+    private let zones = ["Refrigerated", "Frozen", "Pantry"]
+    private var zoneLabel: String {
+        switch store.state.locations.first(where: { $0.id == location.id })?.zone {
+        case "Frozen": return "Frozen · 冷冻"
+        case "Refrigerated": return "Fridge · 冷藏"
+        default: return "Room · 常温"
+        }
+    }
     var body: some View {
         HStack {
-            TextField("Place name",text:Binding(
-                get:{ store.state.locations.first{ $0.id == location.id }?.name ?? "" },
-                set:{ v in store.update { s in if let i = s.locations.firstIndex(where:{$0.id == location.id}) { s.locations[i].name = v } } }))
+            TextField("Place name", text: Binding(
+                get: { store.state.locations.first { $0.id == location.id }?.name ?? "" },
+                set: { value in store.update { state in
+                    if let index = state.locations.firstIndex(where: { $0.id == location.id }) {
+                        state.locations[index].name = String(value.prefix(40))
+                    }
+                } }))
             Spacer()
-            Text(location.zone).font(.caption).foregroundStyle(.secondary)
-            Button(role:.destructive) {
-                store.update { s in
-                    s.locations.removeAll { $0.id == location.id }
-                    for i in s.stock.indices where s.stock[i].location == location.id { s.stock[i].location = nil }
+            Menu(zoneLabel) {
+                ForEach(zones, id: \.self) { zone in
+                    Button(zone) { store.update { state in
+                        if let index = state.locations.firstIndex(where: { $0.id == location.id }) {
+                            state.locations[index].zone = zone
+                        }
+                    } }
                 }
-            } label: { Image(systemName:"minus.circle") }.buttonStyle(.borderless)
+            }.font(.caption).foregroundStyle(.secondary)
+            Button(role: .destructive) {
+                store.update { $0.removeLocation(location.id) }
+            } label: { Image(systemName: "minus.circle") }.buttonStyle(.borderless)
         }
     }
 }

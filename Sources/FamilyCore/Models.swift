@@ -85,63 +85,39 @@ public struct Recipe: Codable, Identifiable, Sendable {
         }
     }
 }
-/// A kitchen appliance or cupboard that holds food. Optional so that files written
-/// before appliances existed still load.
-public enum ApplianceKind: String, Codable, CaseIterable, Sendable {
-    case fridge, freezer, cupboard
-    public var en: String {
-        switch self {
-        case .fridge: return "Fridge"
-        case .freezer: return "Freezer"
-        case .cupboard: return "Cupboard"
-        }
-    }
-    public var zh: String {
-        switch self {
-        case .fridge: return "冷藏"
-        case .freezer: return "冷冻"
-        case .cupboard: return "储物柜"
-        }
-    }
-    public var zone: String {
-        switch self {
-        case .fridge: return "Refrigerated"
-        case .freezer: return "Frozen"
-        case .cupboard: return "Pantry"
-        }
-    }
-    public var symbol: String {
-        switch self {
-        case .fridge: return "refrigerator"
-        case .freezer: return "snowflake"
-        case .cupboard: return "cabinet"
-        }
-    }
-    /// A sensible starting layout. Every family renames these to match the room
-    /// they actually stand in.
-    public var defaultCompartments: [String] {
-        switch self {
-        case .fridge: return ["Top shelf", "Middle shelf", "Bottom shelf", "Produce drawer", "Door"]
-        case .freezer: return ["Top basket", "Bottom basket"]
-        case .cupboard: return ["Shelf 1", "Shelf 2"]
-        }
-    }
-}
-
 public struct Location: Codable, Identifiable, Sendable {
     public var id: UUID = UUID()
     public var name: String
     public var zone: String
-    /// Which appliance or cupboard this shelf belongs to. Nil for locations created
-    /// before appliances existed, which keep working exactly as they did.
-    public var appliance: String?
-    public init(name: String, zone: String, appliance: String? = nil) {
-        self.name = name; self.zone = zone; self.appliance = appliance
+    /// Which fridge, freezer or pantry this shelf belongs to. Nil for a place that
+    /// stands on its own, such as a fruit bowl on the counter.
+    public var applianceID: UUID?
+    /// Only set while reading a file written before appliances had records of their
+    /// own, where the appliance was just a name repeated on every shelf. `migrate()`
+    /// turns it into a real appliance and then clears this.
+    public var legacyApplianceName: String?
+
+    public init(name: String, zone: String, applianceID: UUID? = nil) {
+        self.name = name; self.zone = zone; self.applianceID = applianceID
     }
-    /// How this place reads on its own, away from its group.
-    public var fullName: String {
-        guard let appliance, !appliance.isEmpty else { return name }
-        return "\(appliance) · \(name)"
+
+    private enum CodingKeys: String, CodingKey { case id, name, zone, applianceID, appliance }
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
+        name = try c.decode(String.self, forKey: .name)
+        zone = try c.decodeIfPresent(String.self, forKey: .zone) ?? "Pantry"
+        applianceID = try c.decodeIfPresent(UUID.self, forKey: .applianceID)
+        legacyApplianceName = try c.decodeIfPresent(String.self, forKey: .appliance)
+    }
+    /// The legacy name is deliberately never written back out: once migrated, the
+    /// appliance is a record of its own and two copies of the truth would drift.
+    public func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(id, forKey: .id)
+        try c.encode(name, forKey: .name)
+        try c.encode(zone, forKey: .zone)
+        try c.encodeIfPresent(applianceID, forKey: .applianceID)
     }
 }
 public struct Stock: Codable, Identifiable, Sendable {
@@ -292,7 +268,7 @@ public enum Appearance: String, Codable, CaseIterable, Sendable {
 public struct FamilyState: Codable, Sendable {
     /// Bump this when the stored shape changes, and teach `migrate()` how to get here
     /// from the version before. Saved files are never rejected for being older.
-    public static let currentVersion = 2
+    public static let currentVersion = 3
     public var version = FamilyState.currentVersion
     /// What this family calls their kitchen, shown in place of the app's own name.
     public var kitchenName: String = ""
@@ -300,6 +276,9 @@ public struct FamilyState: Codable, Sendable {
     public var people = 5
     /// Extra mouths this week — visiting grandparents, a friend staying for dinner.
     public var guests: Int = 0
+    /// The fridges, freezers and pantries this family keeps food in.
+    public var appliances: [Appliance] = []
+    /// Every shelf, drawer and door inside them, plus any place standing alone.
     public var locations: [Location] = []
     public var stock: [Stock] = []
     public var meals: [Meal] = []
@@ -325,7 +304,7 @@ public struct FamilyState: Codable, Sendable {
     public init() {}
 
     private enum CodingKeys: String, CodingKey {
-        case version, people, locations, stock, meals, purchases, photoFiles, preferred
+        case version, people, appliances, locations, stock, meals, purchases, photoFiles, preferred
         case members, history, excludedAllergens, appearance, recipeLanguage
         case kitchenName, guests, customRecipes, nightStartHour, nightEndHour
     }
@@ -341,6 +320,7 @@ public struct FamilyState: Codable, Sendable {
         guard stored <= FamilyState.currentVersion else { throw StateError.newerVersion }
         version = stored
         people = try container.decodeIfPresent(Int.self, forKey: .people) ?? 5
+        appliances = try container.decodeIfPresent([Appliance].self, forKey: .appliances) ?? []
         locations = try container.decodeIfPresent([Location].self, forKey: .locations) ?? []
         stock = try container.decodeIfPresent([Stock].self, forKey: .stock) ?? []
         meals = try container.decodeIfPresent([Meal].self, forKey: .meals) ?? []
@@ -395,6 +375,24 @@ public struct FamilyState: Codable, Sendable {
                     (mapping[key] ?? key, value)
                 })
             }
+        }
+        if version < 3 {
+            // Version 2 knew an appliance only as a name repeated on each of its
+            // shelves. Turn each distinct name into a real appliance, and work out
+            // what kind it was from the temperatures its shelves were kept at.
+            var byName: [String: UUID] = [:]
+            for index in locations.indices {
+                let legacy = (locations[index].legacyApplianceName ?? "").trimmingCharacters(in: .whitespaces)
+                guard !legacy.isEmpty else { continue }
+                if let existing = byName[legacy] { locations[index].applianceID = existing; continue }
+                let zones = Set(locations.filter { ($0.legacyApplianceName ?? "") == legacy }.map(\.zone))
+                let kind: ApplianceKind = zones == ["Frozen"] ? .freezer : (zones == ["Pantry"] ? .pantry : .fridge)
+                let appliance = Appliance(kind: kind, name: legacy)
+                appliances.append(appliance)
+                byName[legacy] = appliance.id
+                locations[index].applianceID = appliance.id
+            }
+            for index in locations.indices { locations[index].legacyApplianceName = nil }
         }
         version = FamilyState.currentVersion
     }
@@ -454,55 +452,6 @@ public struct FamilyState: Codable, Sendable {
         if children > 0 { parts.append("\(children) child\(children == 1 ? "" : "ren") by age") }
         if guests > 0 { parts.append("\(guests) guest\(guests == 1 ? "" : "s")") }
         return parts.joined(separator: " + ")
-    }
-    /// Appliances and cupboards in the order they were added.
-    public var appliances: [String] {
-        var seen: [String] = []
-        for location in locations {
-            guard let appliance = location.appliance, !appliance.isEmpty, !seen.contains(appliance) else { continue }
-            seen.append(appliance)
-        }
-        return seen
-    }
-    /// Locations that were created before appliances, or added by hand.
-    public var looseLocations: [Location] { locations.filter { ($0.appliance ?? "").isEmpty } }
-    public func compartments(of appliance: String) -> [Location] {
-        locations.filter { $0.appliance == appliance }
-    }
-    /// How many fridges and freezers exist; families are limited to three of each,
-    /// which is already more than most kitchens have.
-    public func applianceCount(of kind: ApplianceKind) -> Int {
-        appliances.filter { name in
-            compartments(of: name).first.map { $0.zone == kind.zone } ?? false
-        }.count
-    }
-    public static let maxAppliancesPerKind = 3
-
-    /// Adds an appliance with a starting set of compartments. Returns the name used,
-    /// or nil when this family already has three of that kind.
-    @discardableResult public mutating func addAppliance(_ kind: ApplianceKind, named name: String? = nil) -> String? {
-        guard applianceCount(of: kind) < FamilyState.maxAppliancesPerKind else { return nil }
-        var candidate = name?.trimmingCharacters(in: .whitespaces) ?? ""
-        if candidate.isEmpty {
-            let number = applianceCount(of: kind) + 1
-            candidate = number == 1 ? kind.en : "\(kind.en) \(number)"
-        }
-        var unique = candidate
-        var suffix = 2
-        while appliances.contains(unique) { unique = "\(candidate) \(suffix)"; suffix += 1 }
-        for compartment in kind.defaultCompartments {
-            locations.append(Location(name: compartment, zone: kind.zone, appliance: unique))
-        }
-        return unique
-    }
-    /// Removes an appliance and its shelves, leaving anything stored there without a
-    /// confirmed place rather than silently deleting the food.
-    public mutating func removeAppliance(_ appliance: String) {
-        let removed = Set(compartments(of: appliance).map(\.id))
-        locations.removeAll { removed.contains($0.id) }
-        for index in stock.indices where removed.contains(stock[index].location ?? UUID()) {
-            stock[index].location = nil
-        }
     }
     /// Whether the night hours cover this moment. The window usually crosses
     /// midnight — 19:00 to 07:00 — which is why this is not a simple comparison.
@@ -753,15 +702,26 @@ public enum StateFile {
               state.photoFiles.allSatisfy({ !$0.contains("/") && !$0.contains("..") }),
               Set(state.stock.map(\.id)).count == state.stock.count,
               Set(state.locations.map(\.id)).count == state.locations.count,
+              Set(state.appliances.map(\.id)).count == state.appliances.count,
+              state.locations.allSatisfy({ location in
+                  location.applianceID == nil || state.appliances.contains { $0.id == location.applianceID }
+              }),
               Set(state.meals.map(\.id)).count == state.meals.count,
               Set(state.purchases.map(\.id)).count == state.purchases.count else { throw StateError.invalidData }
         return state
     }
 }
-public protocol PantryRecognizing { func candidates(from image: Data) async throws -> [String] }
+/// Something that can say what a photo appears to show. The app's own version runs
+/// on the phone; this stays a protocol so the kitchen logic never depends on it.
+public protocol PantryRecognizing {
+    func labels(from image: Data) async throws -> [(label: String, confidence: Double)]
+}
+/// For anywhere recognition is unavailable — the family types what they see instead.
 public struct ManualOnlyRecognizer: PantryRecognizing {
     public init() {}
-    public func candidates(from image: Data) async throws -> [String] { throw RecognitionError.notConfigured }
+    public func labels(from image: Data) async throws -> [(label: String, confidence: Double)] {
+        throw RecognitionError.notConfigured
+    }
 }
 public enum StateError: Error, Equatable {
     case invalidData

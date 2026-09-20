@@ -14,7 +14,8 @@ for manifest in (root/'FamilyKitchen/Assets.xcassets').glob('*.imageset/Contents
 result=subprocess.run(['python3','scripts/check_core.py'],cwd=root,text=True,capture_output=True)
 (root/'CATALOG_VALIDATION.txt').write_text(result.stdout+result.stderr)
 print(result.stdout);print(result.stderr)
-subprocess.run(['swiftc','-frontend','-parse','FamilyKitchen/FamilyKitchenApp.swift','FamilyKitchen/PantryViews.swift','Tests/FamilyKitchenUITests/FamilyKitchenUITests.swift'],cwd=root,check=True)
+app=sorted(str(f.relative_to(root)) for f in (root/'FamilyKitchen').glob('*.swift'))
+subprocess.run(['swiftc','-frontend','-parse',*app,'Tests/FamilyKitchenUITests/FamilyKitchenUITests.swift'],cwd=root,check=True)
 subprocess.run(['plutil','-lint','FamilyKitchen.xcodeproj/project.pbxproj'],cwd=root,check=True)
 text='# 菜单总览 · 56 套晚餐 / 20 套早餐\n\n每套为完整餐食；用量以五人为基准、App 内按人数缩放。时间含准备，为估计值。\n'
 for label,kind in [('晚餐','false'),('早餐','true')]:
@@ -23,6 +24,6 @@ for label,kind in [('晚餐','false'),('早餐','true')]:
         status='AI 示意图' if ident in assets else '菜系标识，无配图'
         text+=f'| {i} | {zh} | {en} | {minutes} 分钟 | {status} |\n'
 (root/'MENU_CATALOG.md').write_text(text)
-report=f'# 扩充验证记录\n\n菜单：56 套晚餐 + 20 套早餐。配图 {76-len(missing)}/76。\n\n核心回归：{("PASS" if result.returncode==0 else "FAIL")}\n\n```text\n{result.stdout}{result.stderr}\n```\n\nSwiftUI/UI 测试源码语法解析及工程 plist 检查通过；这不等于 iOS 编译通过。Xcode 27 已安装，许可尚未接受，模拟器/真机构建及 UI 测试仍未执行。详见 DEVICE_ACCEPTANCE.md。\n\n扩充辣菜前的 Mac Release 核心性能（历史记录）：100 次，70 菜谱、68 库存条目、6 人，计划+采购中位 1.92 ms，p95 2.46 ms，最大 7.12 ms。不是 iPhone 设备测量。\n'
+report=f'# 扩充验证记录\n\nFamily Kitchen 0.4。菜单：56 套晚餐 + 20 套早餐。配图 {76-len(missing)}/76（待补：{", ".join(missing) or "无"}，提示词见 IMAGE_PROVENANCE.json 的 pending）。\n\n核心回归：{("PASS" if result.returncode==0 else "FAIL")}\n\n```text\n{result.stdout}{result.stderr}\n```\n\nSwiftUI/UI 测试源码语法解析及工程 plist 检查通过。iOS 端 `xcodebuild -destination generic/platform=iOS build-for-testing` 亦通过（App 与 UI 测试两个 target 均编译）；但本机没有安装模拟器 runtime，UI 测试与真机验收仍未执行。详见 DEVICE_ACCEPTANCE.md。\n\n扩充辣菜前的 Mac Release 核心性能（历史记录）：100 次，70 菜谱、68 库存条目、6 人，计划+采购中位 1.92 ms，p95 2.46 ms，最大 7.12 ms。不是 iPhone 设备测量。\n'
 (root/'VALIDATION.md').write_text(report)
 sys.exit(result.returncode)

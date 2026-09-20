@@ -1,6 +1,6 @@
 # Family Kitchen · 家庭厨房
 
-**Version 0.3 · by Frank Zhang**
+**Version 0.4 · by Frank Zhang**
 
 An iPhone app that turns "what's for dinner?" into a question the whole family answers once a week — and then does the shopping list, the fridge map and the recipe for you.
 
@@ -38,7 +38,7 @@ After shopping, **Put away** suggests a shelf for each item based on how it need
 **Today** shows the day's breakfast and dinner, the recipe steps in whichever language you chose, the amounts for your family, and — the part that saves the most time — where each ingredient is right now. After dinner, one tap records the meal as cooked.
 
 **And in between · Kitchen**
-The **Kitchen** tab is what you have at home, grouped by the shelf it actually sits on — one section per fridge shelf, drawer or cupboard, with anything unplaced at the end. It also holds the photos you take of a shelf, and the ⚙︎ **Settings** for everything below.
+The **Kitchen** tab is what you have at home, grouped by the appliance it actually sits in and the shelf inside it — one section per fridge, freezer or pantry, with anything unplaced at the end. It also holds the photos you take of a shelf, and the ⚙︎ **Settings** for everything below.
 
 ## Make it your kitchen
 
@@ -58,9 +58,26 @@ The shopping list follows that number directly, so two adults and three small ch
 
 ## Where food lives
 
-Add up to three fridges, three freezers and three cupboards. Each one arrives with the usual shelves — top, middle, bottom, produce drawer, door — which you rename to match your kitchen or delete if you do not have them. Put-away suggestions and "where is the ginger?" both use this layout.
+Add the fridges, freezers and pantries you actually own — up to four of each — and say **which room each one is in**. That part matters most: a house with a fridge in the kitchen and another in the garage needs to tell them apart before anything else, and "Garage fridge" is how a family really talks about it. The Kitchen tab, the put-away step and "where is the ginger?" all name the appliance and the room.
 
-Removing an appliance never deletes the food in it: whatever was stored there simply goes back to having no confirmed place.
+A new fridge arrives laid out like an ordinary one — **freezer on top, three shelves, a fruit & veg drawer, a dairy drawer, and the door** — and every one of those can be renamed, deleted, moved between fridge and freezer temperatures, or added to. Each shelf carries its own temperature, which is why a fridge can hold a frozen compartment and why the app never suggests putting ice cream in the door.
+
+**As much or as little detail as you want.** When you add an appliance, choose *Shelf by shelf* for the full layout or *Keep it simple* for one place — and even then a fridge keeps its freezer separate, because which of the two something is in decides how long it keeps. You can start simple and add drawers later, or start detailed and delete what you do not have.
+
+Removing an appliance or a shelf never deletes the food in it: whatever was stored there simply goes back to having no confirmed place.
+
+## Check the shelf before you shop
+
+The shopping list already subtracts what you have confirmed at home. The problem is the half-bag of carrots nobody got round to recording.
+
+So before you set off, open **Shopping → Check before you shop**, pick the shelf you are standing in front of, and take a few photos. The app reads them **on this iPhone** — nothing is uploaded, and the photos taken here are not kept once they have been read — and comes back with what it saw, each item labelled with the words the recogniser used and how sure it was. Tick what is right, correct any amount, and confirm. Everything you confirmed is recorded on that shelf, drops off the list, and moves to a **Nothing to buy** section at the bottom, so what is left at the top is only what you still need to put in the trolley.
+
+Two things it does deliberately:
+
+- **It asks a narrow question.** Not "what is in this fridge" but "of the things on my list, which are already at home" — a much smaller question, and the reason a general-purpose recogniser is useful here at all. Anything it spots that is not on the list is offered separately, unticked.
+- **It never ticks anything off by itself.** A recogniser that mistakes a lemon for an orange must not be able to send you home without the eggs, so a person confirms every item before the list changes. A photo also cannot say *how much* there is: the amount offered is exactly what this week's menu is short of, and it is yours to correct.
+
+Recognition is general — good at whole foods, vague about boxes and jars, and no help at all with an unopened carton. Whatever it misses, you add by hand exactly as before.
 
 ## Dishes of your own
 
@@ -105,7 +122,7 @@ Every recipe and every planned day shows an estimate, per person: calories, a la
 
 Being honest about this is part of the design.
 
-- **No automatic photo recognition.** You can photograph a shelf to jog your memory, but you confirm each ingredient yourself. A photo never decides freshness or quantity.
+- **Photo recognition proposes; it never decides.** The shop check reads photos on this iPhone and suggests what it saw, but nothing reaches the shopping list or your stock until you confirm it. A photo never decides freshness, and never decides quantity — the amount offered is what the menu needs, not what the picture shows.
 - **Nothing is assumed into your pantry.** Only amounts someone confirmed are subtracted from the shopping list.
 - **Planning a meal does not consume ingredients.** Stock changes when you shop, put away, or finish cooking.
 - **Suggested shelves are suggestions**, shown separately from the place you actually confirmed.
@@ -190,7 +207,7 @@ Today 页会显示这五步和你当前所在的位置，不需要记顺序。
 **Today** 显示当天的早餐和晚餐、按所选语言显示的步骤、按家庭份数的用量，以及最省时间的那一项：每样食材现在放在哪里。吃完后一点即可记录为已完成。
 
 **贯穿其中 · Kitchen**
-**Kitchen** 标签页显示家里现有的食材，并按实际存放的位置分组——每个冰箱隔层、抽屉或储物柜一组，位置待确认的排在最后。拍下的货架照片也在这里，右上角的 ⚙︎ **Settings** 通向下面所有设置。
+**Kitchen** 标签页显示家里现有的食材，并按实际存放的设备与隔层分组——每台冰箱、冷冻柜或储藏柜一组，内部按隔层排列，位置待确认的排在最后。拍下的货架照片也在这里，右上角的 ⚙︎ **Settings** 通向下面所有设置。
 
 ## 让它成为你家的厨房
 
@@ -210,9 +227,26 @@ Today 页会显示这五步和你当前所在的位置，不需要记顺序。
 
 ## 食物放在哪里
 
-最多可以添加三台冷藏、三台冷冻和三个储物柜。每台新添加的设备都会带上常见的隔层——上层、中层、下层、果蔬抽屉、门格——你可以改名以符合自家布局，或删掉没有的部分。收纳建议和"姜放在哪儿"都基于这份布局。
+按你家的实际情况添加冰箱、冷冻柜和储藏柜（每类最多四台），并写明**每台在哪个房间**。这一点最重要：厨房一台、车库一台的家庭，首先要能把两台分开，"车库那台冰箱"才是家里真正的说法。Kitchen 标签页、收纳步骤和"姜放在哪儿"都会同时显示设备名和所在房间。
 
-删除设备不会删掉里面的食物：原本存放在那里的库存只是回到"位置待确认"。
+新添加的冰箱按常见布局展开——**上方冷冻室、三层隔板、果蔬抽屉、乳制品抽屉、门格**——每一项都可以改名、删除、在冷藏与冷冻之间切换温度，或另外添加。每个隔层都有自己的温度，因此一台冰箱里可以有冷冻格，应用也不会建议把冰淇淋放在门格里。
+
+**要多细由你决定。** 添加设备时可以选择*逐层设置*，也可以选择*简单一点*只留一个位置——即便如此，冰箱的冷藏与冷冻仍会分开，因为东西放在哪一格直接决定能放多久。可以先简单，以后再加抽屉；也可以先详细，再删掉没有的部分。
+
+删除设备或隔层都不会删掉里面的食物：原本存放在那里的库存只是回到"位置待确认"。
+
+## 出门前先核对一遍
+
+采购清单已经会扣掉你在家确认过的数量。真正的问题是那半袋没人来得及登记的胡萝卜。
+
+所以出门前，打开 **Shopping → Check before you shop（出门前核对）**，选中你正站在前面的那一格，拍几张照片。应用**在这台 iPhone 上**读取照片——不上传，拍下的照片读完即弃——然后列出看到的东西，并标明识别用的词和把握程度。确认无误就勾选，数量不对就改，然后确认。确认过的会记到那一格上，从清单中移除，并落到底部的 **Nothing to buy（已有，无需购买）**；留在上面的，就只剩真正还要买的。
+
+有两件事是刻意这样做的：
+
+- **它问的是一个很窄的问题。** 不是"这台冰箱里有什么"，而是"清单上的东西，哪些家里已经有了"——问题小得多，这也是通用识别在这里仍然有用的原因。不在清单上却被认出的东西会单独列出，默认不勾选。
+- **它绝不自作主张地打勾。** 把柠檬看成橙子的识别，不能害你空手而归，因此清单改变之前必须由人确认每一项。照片也无法判断**有多少**：给出的数量正是本周菜单还缺的量，需要你自己核对修改。
+
+识别能力是通用的——对完整食材还行，对盒装、瓶装含糊，对没开封的纸盒完全无能为力。它没认出来的，照旧由你手动添加。
 
 ## 自己添加菜品
 
@@ -257,7 +291,7 @@ Today 页会显示这五步和你当前所在的位置，不需要记顺序。
 
 把这些说清楚，本身就是设计的一部分。
 
-- **不做照片自动识别。** 可以拍下冰箱帮助回忆，但每样食材由你自己确认。照片不判断新鲜度和数量。
+- **照片识别只负责提议，不负责决定。** 出门前核对会在这台 iPhone 上读取照片并给出建议，但在你确认之前，采购清单和库存都不会改变。照片不判断新鲜度，也不判断数量——给出的数量来自菜单的缺口，而不是照片本身。
 - **不替你假设库存。** 只有确认过的数量才会从采购清单中扣除。
 - **只是排进菜单不会消耗食材。** 库存只在采购、收纳、做完饭时变化。
 - **建议位置只是建议**，与你实际确认的位置分开显示。

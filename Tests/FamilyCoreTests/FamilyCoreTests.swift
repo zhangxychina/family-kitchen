@@ -73,7 +73,7 @@ final class FamilyCoreTests: XCTestCase {
         var s = FamilyState(); s.meals = [Meal(date:Date(),recipe:"sesame",breakfast:false)]; s.buy("chicken"); s.plan(start:Date()); XCTAssertEqual(s.purchases.count,1)
     }
     func testRecognitionDoesNotInventResults() async {
-        do { _ = try await ManualOnlyRecognizer().candidates(from:Data()); XCTFail("Must fail honestly") } catch { XCTAssertTrue(error is RecognitionError) }
+        do { _ = try await ManualOnlyRecognizer().labels(from:Data()); XCTFail("Must fail honestly") } catch { XCTAssertTrue(error is RecognitionError) }
     }
     func testExpandedCatalogCountsAndIdentifiers() {
         XCTAssertEqual(Catalog.recipes.filter { !$0.breakfast }.count, 56)
@@ -573,4 +573,167 @@ final class FamilyCoreTests: XCTestCase {
         state.finish(state.meals[0].id,consume:false); XCTAssertEqual(state.stock[0].quantity,2000)
     }
 
+
+    // MARK: - Where food lives
+
+    func testApplianceStartsWithARealFridgeLayout() {
+        var s = FamilyState()
+        let fridge = s.addAppliance(.fridge, named:"Kitchen fridge", place:"Kitchen")!
+        XCTAssertEqual(fridge.place,"Kitchen")
+        let inside = s.compartments(of:fridge.id)
+        XCTAssertEqual(inside.count,7)
+        // The freezer on top is frozen; everything else is not.
+        XCTAssertEqual(inside.filter{ $0.zone == "Frozen" }.count,1)
+        XCTAssertEqual(inside.first?.zone,"Frozen")
+        XCTAssertTrue(inside.contains{ $0.name.contains("Fruit") })
+        XCTAssertTrue(inside.contains{ $0.name == "Door" })
+        // A family that wants less detail still gets fridge and freezer kept apart.
+        let garage = s.addAppliance(.fridge, named:"Garage fridge", place:"Garage", detailed:false)!
+        XCTAssertEqual(s.compartments(of:garage.id).count,2)
+        XCTAssertEqual(Set(s.compartments(of:garage.id).map(\.zone)),["Refrigerated","Frozen"])
+        // Two fridges are told apart by name, not by guesswork.
+        XCTAssertEqual(s.applianceCount(of:.fridge),2)
+        XCTAssertEqual(s.describe(s.compartments(of:garage.id)[0]),"Garage fridge · Fridge")
+    }
+
+    func testAppliancesAreCappedAndNamesStayUnique() {
+        var s = FamilyState()
+        for _ in 0..<FamilyState.maxAppliancesPerKind { XCTAssertNotNil(s.addAppliance(.pantry)) }
+        XCTAssertNil(s.addAppliance(.pantry),"one more than the cap must be refused")
+        XCTAssertEqual(Set(s.appliances.map(\.name)).count,s.appliances.count)
+        // A different kind is unaffected by another kind's cap.
+        XCTAssertNotNil(s.addAppliance(.freezer))
+    }
+
+    func testRemovingAPlaceKeepsTheFoodItHeld() {
+        var s = FamilyState()
+        let fridge = s.addAppliance(.fridge)!
+        let shelf = s.compartments(of:fridge.id)[1]
+        s.confirmStock(Stock(ingredient:"milk",quantity:1000,confirmed:true,location:shelf.id))
+        s.removeAppliance(fridge.id)
+        XCTAssertTrue(s.appliances.isEmpty)
+        XCTAssertTrue(s.locations.isEmpty)
+        XCTAssertEqual(s.stock.count,1,"the milk is still in someone's kitchen")
+        XCTAssertNil(s.stock[0].location)
+        XCTAssertEqual(s.locationLabel(s.stock[0].location),"Location unconfirmed · 位置待确认")
+    }
+
+    func testCompartmentsCanBeAddedToAnAppliance() {
+        var s = FamilyState()
+        let pantry = s.addAppliance(.pantry, detailed:false)!
+        XCTAssertEqual(s.compartments(of:pantry.id).count,1)
+        XCTAssertNotNil(s.addCompartment(to:pantry.id,named:"Spice rack"))
+        XCTAssertNil(s.addCompartment(to:pantry.id,named:"   "),"a blank name is not a place")
+        XCTAssertNil(s.addCompartment(to:UUID(),named:"Nowhere"))
+        XCTAssertEqual(s.compartments(of:pantry.id).map(\.name),["Shelves","Spice rack"])
+        XCTAssertEqual(s.compartments(of:pantry.id)[1].zone,"Pantry")
+    }
+
+    func testVersionTwoAppliancesBecomeRecordsOfTheirOwn() throws {
+        // Version 2 knew an appliance only as a name repeated on each shelf.
+        let legacy = """
+        {"version":2,"people":4,"stock":[],"purchases":[],"photoFiles":[],"meals":[],
+         "locations":[{"id":"\(UUID().uuidString)","name":"Top shelf","zone":"Refrigerated","appliance":"Fridge"},
+                      {"id":"\(UUID().uuidString)","name":"Door","zone":"Refrigerated","appliance":"Fridge"},
+                      {"id":"\(UUID().uuidString)","name":"Basket","zone":"Frozen","appliance":"Garage freezer"},
+                      {"id":"\(UUID().uuidString)","name":"Fruit bowl","zone":"Pantry"}]}
+        """
+        let file = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString).appendingPathComponent("state.json")
+        try FileManager.default.createDirectory(at:file.deletingLastPathComponent(),withIntermediateDirectories:true)
+        defer { try? FileManager.default.removeItem(at:file.deletingLastPathComponent()) }
+        try Data(legacy.utf8).write(to:file)
+        let restored = try StateFile.load(from:file)
+        XCTAssertEqual(restored.version,FamilyState.currentVersion)
+        XCTAssertEqual(restored.appliances.count,2)
+        // The kind is read back from the temperatures the shelves were kept at.
+        XCTAssertEqual(restored.appliances.first{ $0.name == "Fridge" }?.kind,.fridge)
+        XCTAssertEqual(restored.appliances.first{ $0.name == "Garage freezer" }?.kind,.freezer)
+        let fridgeID = restored.appliances.first{ $0.name == "Fridge" }!.id
+        XCTAssertEqual(restored.compartments(of:fridgeID).count,2)
+        // A shelf that belonged to nothing still belongs to nothing.
+        XCTAssertEqual(restored.looseLocations.map(\.name),["Fruit bowl"])
+        // And nothing carries the old name around any more.
+        XCTAssertTrue(restored.locations.allSatisfy{ $0.legacyApplianceName == nil })
+    }
+
+    func testPantryRawValueSurvivesTheRename() throws {
+        // The cupboard was renamed to pantry in the app's words only; a saved file
+        // must still read and write the same value.
+        XCTAssertEqual(ApplianceKind.pantry.rawValue,"cupboard")
+        let encoded = try JSONEncoder().encode(Appliance(kind:.pantry,name:"Larder",place:"Basement"))
+        XCTAssertTrue(String(decoding:encoded,as:UTF8.self).contains("cupboard"))
+        let decoded = try JSONDecoder().decode(Appliance.self,from:encoded)
+        XCTAssertEqual(decoded.kind,.pantry)
+        XCTAssertEqual(decoded.fullName,"Larder · Basement")
+    }
+
+    // MARK: - Checking the shelf before shopping
+
+    func testPhotoLabelsMapToIngredientsOrToNothing() {
+        XCTAssertEqual(PantryMatcher.ingredient(forLabel:"Broccoli"),"broccoli")
+        XCTAssertEqual(PantryMatcher.ingredient(forLabel:"bell_pepper"),"pepper")
+        XCTAssertEqual(PantryMatcher.ingredient(forLabel:"green onions"),"scallion")
+        XCTAssertEqual(PantryMatcher.ingredient(forLabel:"鸡蛋"),"egg")
+        // The longest phrase wins, so these never collapse into each other.
+        XCTAssertEqual(PantryMatcher.ingredient(forLabel:"peanut butter"),"peanutbutter")
+        XCTAssertEqual(PantryMatcher.ingredient(forLabel:"peanuts"),"peanut")
+        XCTAssertEqual(PantryMatcher.ingredient(forLabel:"chili pepper"),"freshchili")
+        XCTAssertEqual(PantryMatcher.ingredient(forLabel:"cottage cheese"),"cottage")
+        XCTAssertEqual(PantryMatcher.ingredient(forLabel:"crushed tomatoes"),"tomato")
+        XCTAssertEqual(PantryMatcher.ingredient(forLabel:"tomatoes"),"freshtomato")
+        // Words too general to mean anything in a kitchen match nothing at all.
+        for vague in ["food","vegetable","refrigerator","bottle","black pepper",""] {
+            XCTAssertNil(PantryMatcher.ingredient(forLabel:vague),"\(vague) must not match")
+        }
+        // "wheat" must not reach the noodles by way of "whole wheat bread".
+        XCTAssertNil(PantryMatcher.ingredient(forLabel:"wheat"))
+    }
+
+    func testFindingsPutTheShoppingListFirstAndKeepTheBestSighting() {
+        let labels = [(label:"carrot",confidence:0.2),(label:"carrot",confidence:0.8),
+                      (label:"banana",confidence:0.9),(label:"sofa",confidence:0.95),
+                      (label:"broccoli",confidence:0.01)]
+        let findings = PantryMatcher.findings(from:labels,shoppingList:["carrot"])
+        XCTAssertEqual(findings.map(\.ingredient),["carrot","banana"],"nothing recognised is invented, and the list comes first")
+        XCTAssertEqual(findings[0].confidence,0.8,accuracy:0.001,"the clearest sighting of a thing is the one kept")
+        XCTAssertTrue(findings[0].onList)
+        XCTAssertFalse(findings[1].onList)
+    }
+
+    func testAPhotoCheckTicksOffOnlyWhatIsConfirmed() {
+        var s = FamilyState(); s.people = 5
+        s.meals = [Meal(date:Date(),recipe:"sesame",breakfast:false)]
+        let fridge = s.addAppliance(.fridge)!
+        let shelf = s.compartments(of:fridge.id)[1]
+        let before = s.shopping().first{ $0.ingredient == "broccoli" }!
+        XCTAssertGreaterThan(before.shortage,0)
+        // The amount offered is exactly what the week is short of — no more.
+        let suggested = s.suggestedScanQuantity("broccoli",at:shelf.id)
+        XCTAssertEqual(suggested,before.shortage,accuracy:0.001)
+        // Findings on their own change nothing at all.
+        XCTAssertEqual(s.shopping().first{ $0.ingredient == "broccoli" }!.shortage,before.shortage)
+        s.applyScan([ScanConfirmation(ingredient:"broccoli",quantity:suggested,location:shelf.id),
+                     ScanConfirmation(ingredient:"chicken",quantity:0,location:shelf.id)])
+        XCTAssertEqual(s.shopping().first{ $0.ingredient == "broccoli" }!.shortage,0,"confirmed food leaves the list")
+        XCTAssertGreaterThan(s.shopping().first{ $0.ingredient == "chicken" }!.shortage,0,"an amount of nothing is not a confirmation")
+        XCTAssertEqual(s.stock.first{ $0.ingredient == "broccoli" }?.location,shelf.id)
+        XCTAssertTrue(s.stock.first{ $0.ingredient == "broccoli" }!.confirmed)
+        XCTAssertFalse(s.shoppingListIngredients.contains("broccoli"))
+    }
+
+    func testASecondCheckOfTheSameShelfDoesNotStack() {
+        var s = FamilyState()
+        s.meals = [Meal(date:Date(),recipe:"sesame",breakfast:false)]
+        let fridge = s.addAppliance(.fridge)!
+        let shelf = s.compartments(of:fridge.id)[1]
+        s.applyScan([ScanConfirmation(ingredient:"rice",quantity:200,location:shelf.id)])
+        // The suggestion accounts for what is already recorded here, so confirming
+        // twice records a total rather than adding a second helping.
+        let again = s.suggestedScanQuantity("rice",at:shelf.id)
+        s.applyScan([ScanConfirmation(ingredient:"rice",quantity:again,location:shelf.id)])
+        XCTAssertEqual(s.stock.filter{ $0.ingredient == "rice" }.count,1)
+        XCTAssertEqual(s.shopping().first{ $0.ingredient == "rice" }!.shortage,0)
+        XCTAssertEqual(s.stock.first{ $0.ingredient == "rice" }!.quantity,
+                       s.shopping().first{ $0.ingredient == "rice" }!.required,accuracy:0.001)
+    }
 }

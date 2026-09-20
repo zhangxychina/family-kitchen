@@ -27,7 +27,7 @@ enum Brand {
     static let appName = "Family Kitchen"
     static let appNameZh = "家庭厨房"
     /// Marketing version; keep in step with MARKETING_VERSION in the Xcode project.
-    static let version = "0.3"
+    static let version = "0.4"
 
     // Surfaces. The page is warm paper by day and a warm near-black by night;
     // cards sit one step above the page in both.

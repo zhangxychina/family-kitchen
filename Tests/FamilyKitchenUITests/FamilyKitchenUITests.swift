@@ -75,6 +75,33 @@ final class FamilyKitchenUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Mia"].waitForExistence(timeout:3))
         XCTAssertFalse(app.buttons["addFamilyMember"].isEnabled, "the field should clear after adding")
     }
+    func testAddingAFridgeAndSayingWhichRoomItIsIn() {
+        // Two fridges in one house is ordinary, and which room each stands in is the
+        // part the family actually uses to tell them apart.
+        app.tabBars.buttons["Kitchen"].tap()
+        app.buttons["openSettings"].tap()
+        app.buttons["Where food lives"].firstMatch.tap()
+        XCTAssertTrue(app.buttons["addAppliance-fridge"].waitForExistence(timeout:5))
+        app.buttons["addAppliance-fridge"].tap()
+        let name = app.textFields["newApplianceName"]
+        XCTAssertTrue(name.waitForExistence(timeout:5))
+        name.tap(); name.typeText("Garage fridge")
+        app.buttons["Garage"].firstMatch.tap()
+        app.buttons["confirmAddAppliance"].tap()
+        XCTAssertTrue(app.staticTexts["Garage fridge"].waitForExistence(timeout:5))
+        XCTAssertTrue(app.staticTexts["Garage"].exists, "the room is shown beside the appliance")
+    }
+    func testShopCheckIsReachableFromTheList() {
+        app.tabBars.buttons["Week"].tap()
+        app.buttons["planWeek"].tap()
+        XCTAssertTrue(app.buttons["goShopping"].waitForExistence(timeout:5))
+        app.tabBars.buttons["Shopping"].tap()
+        XCTAssertTrue(app.buttons["openShopCheck"].waitForExistence(timeout:5))
+        app.buttons["openShopCheck"].tap()
+        XCTAssertTrue(app.navigationBars["Check before you shop"].waitForExistence(timeout:5))
+        // Nothing has been photographed, so nothing can be confirmed yet.
+        XCTAssertFalse(app.buttons["shopCheckConfirm"].exists)
+    }
     func testRecipeScrollingPerformance() {
         app.tabBars.buttons["Recipes"].tap()
         measure(metrics:[XCTClockMetric(), XCTMemoryMetric(), XCTCPUMetric()]) {

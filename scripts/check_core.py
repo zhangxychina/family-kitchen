@@ -10,13 +10,13 @@ func check(_ condition: Bool, _ message: String = "Assertion failed", file: Stat
 func XCTAssertTrue(_ v: Bool, _ message: String = "Expected true") { check(v,message) }
 func XCTAssertFalse(_ v: Bool, _ message: String = "Expected false") { check(!v,message) }
 func XCTAssertNotNil<T>(_ v: T?, _ message: String = "Expected a value") { check(v != nil,message) }
-func XCTAssertNil<T>(_ v: T?) { check(v == nil) }
+func XCTAssertNil<T>(_ v: T?, _ message: String = "Expected nothing") { check(v == nil,message) }
 func XCTAssertEqual<T: Equatable>(_ a: T, _ b: T, _ message: String = "") { check(a == b, message.isEmpty ? "\\(a) != \\(b)" : message + " — \\(a) != \\(b)") }
-func XCTAssertEqual(_ a: Double, _ b: Double, accuracy: Double) { check(abs(a-b) <= accuracy) }
-func XCTAssertGreaterThan<T: Comparable>(_ a: T, _ b: T, _ message: String = "") { check(a > b, message.isEmpty ? "\(a) <= \(b)" : message) }
-func XCTAssertGreaterThanOrEqual<T: Comparable>(_ a: T, _ b: T, _ message: String = "") { check(a >= b, message.isEmpty ? "\(a) < \(b)" : message) }
-func XCTAssertLessThan<T: Comparable>(_ a: T, _ b: T, _ message: String = "") { check(a < b, message.isEmpty ? "\(a) >= \(b)" : message) }
-func XCTAssertLessThanOrEqual<T: Comparable>(_ a: T, _ b: T, _ message: String = "") { check(a <= b, message.isEmpty ? "\(a) > \(b)" : message) }
+func XCTAssertEqual(_ a: Double, _ b: Double, accuracy: Double, _ message: String = "") { check(abs(a-b) <= accuracy, message.isEmpty ? "\\(a) != \\(b)" : message + " — \\(a) != \\(b)") }
+func XCTAssertGreaterThan<T: Comparable>(_ a: T, _ b: T, _ message: String = "") { check(a > b, message.isEmpty ? "\\(a) <= \\(b)" : message) }
+func XCTAssertGreaterThanOrEqual<T: Comparable>(_ a: T, _ b: T, _ message: String = "") { check(a >= b, message.isEmpty ? "\\(a) < \\(b)" : message) }
+func XCTAssertLessThan<T: Comparable>(_ a: T, _ b: T, _ message: String = "") { check(a < b, message.isEmpty ? "\\(a) >= \\(b)" : message) }
+func XCTAssertLessThanOrEqual<T: Comparable>(_ a: T, _ b: T, _ message: String = "") { check(a <= b, message.isEmpty ? "\\(a) > \\(b)" : message) }
 func XCTFail(_ message: String) { check(false,message) }
 func XCTAssertThrowsError<T>(_ action: @autoclosure () throws -> T) { do { _ = try action(); check(false,"Expected error") } catch { check(true) } }
 '''
