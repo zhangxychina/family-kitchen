@@ -1,372 +1,69 @@
 // !$*UTF8*$!
-{
-	archiveVersion = 1;
-	classes = {
-	};
-	objectVersion = 56;
-	objects = {
-
-/* Begin PBXBuildFile section */
-		052487C422265235967BFAA5 /* Sources/FamilyCore/Dietary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E604F2D0F73A34FF2ED2C6 /* Sources/FamilyCore/Dietary.swift */; };
-		0EB6087D90617D5ABA04F97E /* FamilyKitchen/FamilyKitchenApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9DB16BF67C106FE6394E3A /* FamilyKitchen/FamilyKitchenApp.swift */; };
-		111C0E2E19C435AE61C03B97 /* FamilyKitchen/HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30D9F99A438FC8686B4EFA2A /* FamilyKitchen/HistoryView.swift */; };
-		204038CCFD9B1CA3F1BEF93B /* FamilyKitchen/AddDishView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3336038FF2DABC133853D12D /* FamilyKitchen/AddDishView.swift */; };
-		561BD11E6C1D4074400D1A91 /* Sources/FamilyCore/StepsEN.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB79A5637587CBF15A4F3D59 /* Sources/FamilyCore/StepsEN.swift */; };
-		63674C850309D112930CE1D9 /* Sources/FamilyCore/RecipeImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81DD13EA7C2EA6D83604C8E9 /* Sources/FamilyCore/RecipeImport.swift */; };
-		7C1C564A9CB654A7D287F6AD /* Tests/FamilyKitchenUITests/FamilyKitchenUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A73201C599290F9EBF17338 /* Tests/FamilyKitchenUITests/FamilyKitchenUITests.swift */; };
-		7CE357B40CFBFFED22C84B05 /* Sources/FamilyCore/Catalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CFE617AD669C9410A1EB473 /* Sources/FamilyCore/Catalog.swift */; };
-		868D280E3B7CB6053498465E /* Sources/FamilyCore/Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89167F08BD3A004726FF6121 /* Sources/FamilyCore/Models.swift */; };
-		8842038EC1462D1E547C49F6 /* Sources/FamilyCore/Seasons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4B7B006948500B0E2ADDF8 /* Sources/FamilyCore/Seasons.swift */; };
-		99F6BEC13B62E50CA3D1A4A6 /* FamilyKitchen/KitchenViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9A0B4B85446F848F105F45 /* FamilyKitchen/KitchenViews.swift */; };
-		9F745B2781E6ADA019992727 /* Sources/FamilyCore/PantryMatching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0723BC5A0DCC20CE5754A6FA /* Sources/FamilyCore/PantryMatching.swift */; };
-		AFCC70794F5FB2523904E6DA /* FamilyKitchen/PantryScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B727EB8D072B434A008233 /* FamilyKitchen/PantryScanner.swift */; };
-		CF5C11FEB8C4A365084F2BD5 /* Sources/FamilyCore/Nutrition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 752CDCCA1DDBC4BD680FC799 /* Sources/FamilyCore/Nutrition.swift */; };
-		CF8A4D27E1C506A7C75A76BE /* FamilyKitchen/Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DBFD424981ED7661080F9681 /* FamilyKitchen/Assets.xcassets */; };
-		DF7E57A1F282FC538810BCBF /* Sources/FamilyCore/Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70A57D93BF5C19B1925C53E9 /* Sources/FamilyCore/Storage.swift */; };
-		E60C48DB9534D789786E996C /* FamilyKitchen/ShopCheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87C04B348D6F54CCE6548A7B /* FamilyKitchen/ShopCheckView.swift */; };
-		FC1CABB896DB0B8D6E1BEE40 /* FamilyKitchen/Brand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B4A7D52C7EB4EF608D4B85B /* FamilyKitchen/Brand.swift */; };
-/* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		7C3F7C2476CF2BD9AE55EACD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 98F54143AB4E86B28C3AFEE0 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 0E8A3AD980EC179856012B7E;
-			remoteInfo = FamilyKitchen;
-		};
-/* End PBXContainerItemProxy section */
-
-/* Begin PBXFileReference section */
-		01B727EB8D072B434A008233 /* FamilyKitchen/PantryScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyKitchen/PantryScanner.swift; sourceTree = "<group>"; };
-		0723BC5A0DCC20CE5754A6FA /* Sources/FamilyCore/PantryMatching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/FamilyCore/PantryMatching.swift; sourceTree = "<group>"; };
-		0A4B7B006948500B0E2ADDF8 /* Sources/FamilyCore/Seasons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/FamilyCore/Seasons.swift; sourceTree = "<group>"; };
-		1A73201C599290F9EBF17338 /* Tests/FamilyKitchenUITests/FamilyKitchenUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests/FamilyKitchenUITests/FamilyKitchenUITests.swift; sourceTree = "<group>"; };
-		30D9F99A438FC8686B4EFA2A /* FamilyKitchen/HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyKitchen/HistoryView.swift; sourceTree = "<group>"; };
-		3336038FF2DABC133853D12D /* FamilyKitchen/AddDishView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyKitchen/AddDishView.swift; sourceTree = "<group>"; };
-		38A007151ABE87CC01A5B6E9 /* FamilyKitchen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = FamilyKitchen.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		70A57D93BF5C19B1925C53E9 /* Sources/FamilyCore/Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/FamilyCore/Storage.swift; sourceTree = "<group>"; };
-		73E604F2D0F73A34FF2ED2C6 /* Sources/FamilyCore/Dietary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/FamilyCore/Dietary.swift; sourceTree = "<group>"; };
-		752CDCCA1DDBC4BD680FC799 /* Sources/FamilyCore/Nutrition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/FamilyCore/Nutrition.swift; sourceTree = "<group>"; };
-		81DD13EA7C2EA6D83604C8E9 /* Sources/FamilyCore/RecipeImport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/FamilyCore/RecipeImport.swift; sourceTree = "<group>"; };
-		87C04B348D6F54CCE6548A7B /* FamilyKitchen/ShopCheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyKitchen/ShopCheckView.swift; sourceTree = "<group>"; };
-		89167F08BD3A004726FF6121 /* Sources/FamilyCore/Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/FamilyCore/Models.swift; sourceTree = "<group>"; };
-		9B4A7D52C7EB4EF608D4B85B /* FamilyKitchen/Brand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyKitchen/Brand.swift; sourceTree = "<group>"; };
-		9CFE617AD669C9410A1EB473 /* Sources/FamilyCore/Catalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/FamilyCore/Catalog.swift; sourceTree = "<group>"; };
-		9F9DB16BF67C106FE6394E3A /* FamilyKitchen/FamilyKitchenApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyKitchen/FamilyKitchenApp.swift; sourceTree = "<group>"; };
-		A7C9FD69DA095A3BF0CB4587 /* FamilyKitchenUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = FamilyKitchenUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		AB79A5637587CBF15A4F3D59 /* Sources/FamilyCore/StepsEN.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/FamilyCore/StepsEN.swift; sourceTree = "<group>"; };
-		CE9A0B4B85446F848F105F45 /* FamilyKitchen/KitchenViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyKitchen/KitchenViews.swift; sourceTree = "<group>"; };
-		DBFD424981ED7661080F9681 /* FamilyKitchen/Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = FamilyKitchen/Assets.xcassets; sourceTree = "<group>"; };
-/* End PBXFileReference section */
-
-/* Begin PBXFrameworksBuildPhase section */
-		7561BFB015D8F536760CB671 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXFrameworksBuildPhase section */
-
-/* Begin PBXGroup section */
-		B28B7AF69320201D1CF206EB = {
-			isa = PBXGroup;
-			children = (
-				1A73201C599290F9EBF17338 /* Tests/FamilyKitchenUITests/FamilyKitchenUITests.swift */,
-				9F9DB16BF67C106FE6394E3A /* FamilyKitchen/FamilyKitchenApp.swift */,
-				CE9A0B4B85446F848F105F45 /* FamilyKitchen/KitchenViews.swift */,
-				9B4A7D52C7EB4EF608D4B85B /* FamilyKitchen/Brand.swift */,
-				30D9F99A438FC8686B4EFA2A /* FamilyKitchen/HistoryView.swift */,
-				3336038FF2DABC133853D12D /* FamilyKitchen/AddDishView.swift */,
-				87C04B348D6F54CCE6548A7B /* FamilyKitchen/ShopCheckView.swift */,
-				01B727EB8D072B434A008233 /* FamilyKitchen/PantryScanner.swift */,
-				89167F08BD3A004726FF6121 /* Sources/FamilyCore/Models.swift */,
-				70A57D93BF5C19B1925C53E9 /* Sources/FamilyCore/Storage.swift */,
-				0723BC5A0DCC20CE5754A6FA /* Sources/FamilyCore/PantryMatching.swift */,
-				9CFE617AD669C9410A1EB473 /* Sources/FamilyCore/Catalog.swift */,
-				752CDCCA1DDBC4BD680FC799 /* Sources/FamilyCore/Nutrition.swift */,
-				73E604F2D0F73A34FF2ED2C6 /* Sources/FamilyCore/Dietary.swift */,
-				0A4B7B006948500B0E2ADDF8 /* Sources/FamilyCore/Seasons.swift */,
-				AB79A5637587CBF15A4F3D59 /* Sources/FamilyCore/StepsEN.swift */,
-				81DD13EA7C2EA6D83604C8E9 /* Sources/FamilyCore/RecipeImport.swift */,
-				DBFD424981ED7661080F9681 /* FamilyKitchen/Assets.xcassets */,
-				FBDC4F23F93125BBEEAE800C /* Products */,
-			);
-			sourceTree = "<group>";
-		};
-		FBDC4F23F93125BBEEAE800C /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				A7C9FD69DA095A3BF0CB4587 /* FamilyKitchenUITests.xctest */,
-				38A007151ABE87CC01A5B6E9 /* FamilyKitchen.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-/* End PBXGroup section */
-
-/* Begin PBXNativeTarget section */
-		0E8A3AD980EC179856012B7E /* FamilyKitchen */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = F37922C48DA5978D02C9E50E /* Build configuration list for PBXNativeTarget "FamilyKitchen" */;
-			buildPhases = (
-				BCE16DD0260827ECF338C787 /* Sources */,
-				7561BFB015D8F536760CB671 /* Frameworks */,
-				0189424A5A60FED329FA868E /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = FamilyKitchen;
-			productName = FamilyKitchen;
-			productReference = 38A007151ABE87CC01A5B6E9 /* FamilyKitchen.app */;
-			productType = "com.apple.product-type.application";
-		};
-		5A84779F73F7B6419BDB1882 /* FamilyKitchenUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = AED4B730112F3401C4D7AC6B /* Build configuration list for PBXNativeTarget "FamilyKitchenUITests" */;
-			buildPhases = (
-				9B65503EE939B7F8DAEDF693 /* Sources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				46098F1CD6D7EADDB246BA75 /* PBXTargetDependency */,
-			);
-			name = FamilyKitchenUITests;
-			productName = FamilyKitchenUITests;
-			productReference = A7C9FD69DA095A3BF0CB4587 /* FamilyKitchenUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
-/* End PBXNativeTarget section */
-
-/* Begin PBXProject section */
-		98F54143AB4E86B28C3AFEE0 /* Project object */ = {
-			isa = PBXProject;
-			attributes = {
-				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1600;
-			};
-			buildConfigurationList = 862894B703A6DEDF96A9DD6C /* Build configuration list for PBXProject "FamilyKitchen" */;
-			compatibilityVersion = "Xcode 14.0";
-			developmentRegion = en;
-			hasScannedForEncodings = 0;
-			knownRegions = (
-				en,
-				"zh-Hans",
-				Base,
-			);
-			mainGroup = B28B7AF69320201D1CF206EB;
-			productRefGroup = FBDC4F23F93125BBEEAE800C /* Products */;
-			projectDirPath = "";
-			projectRoot = "";
-			targets = (
-				0E8A3AD980EC179856012B7E /* FamilyKitchen */,
-				5A84779F73F7B6419BDB1882 /* FamilyKitchenUITests */,
-			);
-		};
-/* End PBXProject section */
-
-/* Begin PBXResourcesBuildPhase section */
-		0189424A5A60FED329FA868E /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CF8A4D27E1C506A7C75A76BE /* FamilyKitchen/Assets.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
-
-/* Begin PBXSourcesBuildPhase section */
-		9B65503EE939B7F8DAEDF693 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				7C1C564A9CB654A7D287F6AD /* Tests/FamilyKitchenUITests/FamilyKitchenUITests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BCE16DD0260827ECF338C787 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0EB6087D90617D5ABA04F97E /* FamilyKitchen/FamilyKitchenApp.swift in Sources */,
-				99F6BEC13B62E50CA3D1A4A6 /* FamilyKitchen/KitchenViews.swift in Sources */,
-				FC1CABB896DB0B8D6E1BEE40 /* FamilyKitchen/Brand.swift in Sources */,
-				111C0E2E19C435AE61C03B97 /* FamilyKitchen/HistoryView.swift in Sources */,
-				204038CCFD9B1CA3F1BEF93B /* FamilyKitchen/AddDishView.swift in Sources */,
-				E60C48DB9534D789786E996C /* FamilyKitchen/ShopCheckView.swift in Sources */,
-				AFCC70794F5FB2523904E6DA /* FamilyKitchen/PantryScanner.swift in Sources */,
-				868D280E3B7CB6053498465E /* Sources/FamilyCore/Models.swift in Sources */,
-				DF7E57A1F282FC538810BCBF /* Sources/FamilyCore/Storage.swift in Sources */,
-				9F745B2781E6ADA019992727 /* Sources/FamilyCore/PantryMatching.swift in Sources */,
-				7CE357B40CFBFFED22C84B05 /* Sources/FamilyCore/Catalog.swift in Sources */,
-				CF5C11FEB8C4A365084F2BD5 /* Sources/FamilyCore/Nutrition.swift in Sources */,
-				052487C422265235967BFAA5 /* Sources/FamilyCore/Dietary.swift in Sources */,
-				8842038EC1462D1E547C49F6 /* Sources/FamilyCore/Seasons.swift in Sources */,
-				561BD11E6C1D4074400D1A91 /* Sources/FamilyCore/StepsEN.swift in Sources */,
-				63674C850309D112930CE1D9 /* Sources/FamilyCore/RecipeImport.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		46098F1CD6D7EADDB246BA75 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 0E8A3AD980EC179856012B7E /* FamilyKitchen */;
-			targetProxy = 7C3F7C2476CF2BD9AE55EACD /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
-/* Begin XCBuildConfiguration section */
-		5A8C91857F674E16E2724F47 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 2HKWUJYXM7;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Family Kitchen";
-				INFOPLIST_KEY_NSCameraUsageDescription = "Photograph your shelves to check what you already have before shopping. Photos are read on this iPhone and never uploaded.";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 0.4;
-				PRODUCT_BUNDLE_IDENTIFIER = com.familykitchen.app;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SUPPORTS_MACCATALYST = NO;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Release;
-		};
-		89E1FD6268CC0F221A2BE178 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-			};
-			name = Debug;
-		};
-		94C1D7A82E2F92E70C5BA5D8 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.familykitchen.app.uitests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-				TEST_TARGET_NAME = FamilyKitchen;
-			};
-			name = Debug;
-		};
-		9609A256A79253DD705A918E /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.familykitchen.app.uitests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-				TEST_TARGET_NAME = FamilyKitchen;
-			};
-			name = Release;
-		};
-		E6DE6C99132752C914FEF632 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_VERSION = 5.0;
-			};
-			name = Release;
-		};
-		E9B2E96ABC5F6856F2BE79CF /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 2HKWUJYXM7;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Family Kitchen";
-				INFOPLIST_KEY_NSCameraUsageDescription = "Photograph your shelves to check what you already have before shopping. Photos are read on this iPhone and never uploaded.";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 0.4;
-				PRODUCT_BUNDLE_IDENTIFIER = com.familykitchen.app;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SUPPORTS_MACCATALYST = NO;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Debug;
-		};
-/* End XCBuildConfiguration section */
-
-/* Begin XCConfigurationList section */
-		862894B703A6DEDF96A9DD6C /* Build configuration list for PBXProject "FamilyKitchen" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				89E1FD6268CC0F221A2BE178 /* Debug */,
-				E6DE6C99132752C914FEF632 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		AED4B730112F3401C4D7AC6B /* Build configuration list for PBXNativeTarget "FamilyKitchenUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				94C1D7A82E2F92E70C5BA5D8 /* Debug */,
-				9609A256A79253DD705A918E /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		F37922C48DA5978D02C9E50E /* Build configuration list for PBXNativeTarget "FamilyKitchen" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				E9B2E96ABC5F6856F2BE79CF /* Debug */,
-				5A8C91857F674E16E2724F47 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-/* End XCConfigurationList section */
-	};
-	rootObject = 98F54143AB4E86B28C3AFEE0 /* Project object */;
-}
+{ archiveVersion = 1; classes = {}; objectVersion = 56; objects = {
+9F9DB16BF67C106FE6394E3A = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FamilyKitchen/FamilyKitchenApp.swift"; sourceTree = "<group>"; };
+0EB6087D90617D5ABA04F97E = { isa = PBXBuildFile; fileRef = 9F9DB16BF67C106FE6394E3A; };
+CE9A0B4B85446F848F105F45 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FamilyKitchen/KitchenViews.swift"; sourceTree = "<group>"; };
+99F6BEC13B62E50CA3D1A4A6 = { isa = PBXBuildFile; fileRef = CE9A0B4B85446F848F105F45; };
+9B4A7D52C7EB4EF608D4B85B = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FamilyKitchen/Brand.swift"; sourceTree = "<group>"; };
+FC1CABB896DB0B8D6E1BEE40 = { isa = PBXBuildFile; fileRef = 9B4A7D52C7EB4EF608D4B85B; };
+30D9F99A438FC8686B4EFA2A = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FamilyKitchen/HistoryView.swift"; sourceTree = "<group>"; };
+111C0E2E19C435AE61C03B97 = { isa = PBXBuildFile; fileRef = 30D9F99A438FC8686B4EFA2A; };
+3336038FF2DABC133853D12D = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FamilyKitchen/AddDishView.swift"; sourceTree = "<group>"; };
+204038CCFD9B1CA3F1BEF93B = { isa = PBXBuildFile; fileRef = 3336038FF2DABC133853D12D; };
+87C04B348D6F54CCE6548A7B = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FamilyKitchen/ShopCheckView.swift"; sourceTree = "<group>"; };
+E60C48DB9534D789786E996C = { isa = PBXBuildFile; fileRef = 87C04B348D6F54CCE6548A7B; };
+01B727EB8D072B434A008233 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FamilyKitchen/PantryScanner.swift"; sourceTree = "<group>"; };
+AFCC70794F5FB2523904E6DA = { isa = PBXBuildFile; fileRef = 01B727EB8D072B434A008233; };
+B06D387AC89A058525406753 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FamilyKitchen/KitchenChatView.swift"; sourceTree = "<group>"; };
+A714F2911E515FAC0710E3A0 = { isa = PBXBuildFile; fileRef = B06D387AC89A058525406753; };
+0405632EF40083C3F94A66F8 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FamilyKitchen/VoiceInput.swift"; sourceTree = "<group>"; };
+0B68E8D0B87DB29FDBB190EF = { isa = PBXBuildFile; fileRef = 0405632EF40083C3F94A66F8; };
+89167F08BD3A004726FF6121 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/FamilyCore/Models.swift"; sourceTree = "<group>"; };
+868D280E3B7CB6053498465E = { isa = PBXBuildFile; fileRef = 89167F08BD3A004726FF6121; };
+70A57D93BF5C19B1925C53E9 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/FamilyCore/Storage.swift"; sourceTree = "<group>"; };
+DF7E57A1F282FC538810BCBF = { isa = PBXBuildFile; fileRef = 70A57D93BF5C19B1925C53E9; };
+0723BC5A0DCC20CE5754A6FA = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/FamilyCore/PantryMatching.swift"; sourceTree = "<group>"; };
+9F745B2781E6ADA019992727 = { isa = PBXBuildFile; fileRef = 0723BC5A0DCC20CE5754A6FA; };
+9CFE617AD669C9410A1EB473 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/FamilyCore/Catalog.swift"; sourceTree = "<group>"; };
+7CE357B40CFBFFED22C84B05 = { isa = PBXBuildFile; fileRef = 9CFE617AD669C9410A1EB473; };
+752CDCCA1DDBC4BD680FC799 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/FamilyCore/Nutrition.swift"; sourceTree = "<group>"; };
+CF5C11FEB8C4A365084F2BD5 = { isa = PBXBuildFile; fileRef = 752CDCCA1DDBC4BD680FC799; };
+73E604F2D0F73A34FF2ED2C6 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/FamilyCore/Dietary.swift"; sourceTree = "<group>"; };
+052487C422265235967BFAA5 = { isa = PBXBuildFile; fileRef = 73E604F2D0F73A34FF2ED2C6; };
+0A4B7B006948500B0E2ADDF8 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/FamilyCore/Seasons.swift"; sourceTree = "<group>"; };
+8842038EC1462D1E547C49F6 = { isa = PBXBuildFile; fileRef = 0A4B7B006948500B0E2ADDF8; };
+AB79A5637587CBF15A4F3D59 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/FamilyCore/StepsEN.swift"; sourceTree = "<group>"; };
+561BD11E6C1D4074400D1A91 = { isa = PBXBuildFile; fileRef = AB79A5637587CBF15A4F3D59; };
+81DD13EA7C2EA6D83604C8E9 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/FamilyCore/RecipeImport.swift"; sourceTree = "<group>"; };
+63674C850309D112930CE1D9 = { isa = PBXBuildFile; fileRef = 81DD13EA7C2EA6D83604C8E9; };
+62445EC5342DDA33522F3FBA = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/FamilyCore/KitchenCommands.swift"; sourceTree = "<group>"; };
+6B4A121E226F1069BC36DD0B = { isa = PBXBuildFile; fileRef = 62445EC5342DDA33522F3FBA; };
+DBFD424981ED7661080F9681 = { isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "FamilyKitchen/Assets.xcassets"; sourceTree = "<group>"; };
+CF8A4D27E1C506A7C75A76BE = { isa = PBXBuildFile; fileRef = DBFD424981ED7661080F9681; };
+38A007151ABE87CC01A5B6E9 = { isa = PBXFileReference; explicitFileType = wrapper.application; path = FamilyKitchen.app; sourceTree = BUILT_PRODUCTS_DIR; };
+FBDC4F23F93125BBEEAE800C = { isa = PBXGroup; children = (A7C9FD69DA095A3BF0CB4587,38A007151ABE87CC01A5B6E9,); name = Products; sourceTree = "<group>"; };
+B28B7AF69320201D1CF206EB = { isa = PBXGroup; children = (29642EB98F6C820CB70A101E,C0B57E3ED34BE9110C637506,9F9DB16BF67C106FE6394E3A,CE9A0B4B85446F848F105F45,9B4A7D52C7EB4EF608D4B85B,30D9F99A438FC8686B4EFA2A,3336038FF2DABC133853D12D,87C04B348D6F54CCE6548A7B,01B727EB8D072B434A008233,B06D387AC89A058525406753,0405632EF40083C3F94A66F8,89167F08BD3A004726FF6121,70A57D93BF5C19B1925C53E9,0723BC5A0DCC20CE5754A6FA,9CFE617AD669C9410A1EB473,752CDCCA1DDBC4BD680FC799,73E604F2D0F73A34FF2ED2C6,0A4B7B006948500B0E2ADDF8,AB79A5637587CBF15A4F3D59,81DD13EA7C2EA6D83604C8E9,62445EC5342DDA33522F3FBA,DBFD424981ED7661080F9681,FBDC4F23F93125BBEEAE800C,); sourceTree = "<group>"; };
+BCE16DD0260827ECF338C787 = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (0EB6087D90617D5ABA04F97E,99F6BEC13B62E50CA3D1A4A6,FC1CABB896DB0B8D6E1BEE40,111C0E2E19C435AE61C03B97,204038CCFD9B1CA3F1BEF93B,E60C48DB9534D789786E996C,AFCC70794F5FB2523904E6DA,A714F2911E515FAC0710E3A0,0B68E8D0B87DB29FDBB190EF,868D280E3B7CB6053498465E,DF7E57A1F282FC538810BCBF,9F745B2781E6ADA019992727,7CE357B40CFBFFED22C84B05,CF5C11FEB8C4A365084F2BD5,052487C422265235967BFAA5,8842038EC1462D1E547C49F6,561BD11E6C1D4074400D1A91,63674C850309D112930CE1D9,6B4A121E226F1069BC36DD0B,); runOnlyForDeploymentPostprocessing = 0; };
+0189424A5A60FED329FA868E = { isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (CF8A4D27E1C506A7C75A76BE,); runOnlyForDeploymentPostprocessing = 0; };
+7561BFB015D8F536760CB671 = { isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+89E1FD6268CC0F221A2BE178 = { isa = XCBuildConfiguration; buildSettings = { CLANG_ENABLE_MODULES = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; SDKROOT = iphoneos; SWIFT_VERSION = 5.0;SWIFT_OPTIMIZATION_LEVEL = "-Onone"; DEBUG_INFORMATION_FORMAT = dwarf; }; name = Debug; };
+E6DE6C99132752C914FEF632 = { isa = XCBuildConfiguration; buildSettings = { CLANG_ENABLE_MODULES = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; SDKROOT = iphoneos; SWIFT_VERSION = 5.0;SWIFT_OPTIMIZATION_LEVEL = "-O"; DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym"; }; name = Release; };
+862894B703A6DEDF96A9DD6C = { isa = XCConfigurationList; buildConfigurations = (89E1FD6268CC0F221A2BE178,E6DE6C99132752C914FEF632,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+E9B2E96ABC5F6856F2BE79CF = { isa = XCBuildConfiguration; buildSettings = { CLANG_ENABLE_MODULES = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; SDKROOT = iphoneos; SWIFT_VERSION = 5.0;CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; INFOPLIST_KEY_CFBundleDisplayName = "Family Kitchen"; INFOPLIST_KEY_NSCameraUsageDescription = "Photograph your shelves to check what you already have before shopping. Photos are read on this iPhone and never uploaded."; INFOPLIST_KEY_NSMicrophoneUsageDescription = "Say what changed in your kitchen — a dish to swap, something you already have at home. Speech is recognised on this iPhone and no recording is kept."; INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Your English and Mandarin are recognised on this iPhone so you can change the menu and the shopping list by voice. Nothing is uploaded."; INFOPLIST_KEY_UILaunchScreen_Generation = YES; INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES; INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait"; PRODUCT_BUNDLE_IDENTIFIER = com.familykitchen.app; PRODUCT_NAME = "$(TARGET_NAME)"; TARGETED_DEVICE_FAMILY = 1; SUPPORTS_MACCATALYST = NO; SWIFT_EMIT_LOC_STRINGS = YES; CURRENT_PROJECT_VERSION = 1; MARKETING_VERSION = 0.4;SWIFT_OPTIMIZATION_LEVEL = "-Onone"; DEBUG_INFORMATION_FORMAT = dwarf; }; name = Debug; };
+5A8C91857F674E16E2724F47 = { isa = XCBuildConfiguration; buildSettings = { CLANG_ENABLE_MODULES = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; SDKROOT = iphoneos; SWIFT_VERSION = 5.0;CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; INFOPLIST_KEY_CFBundleDisplayName = "Family Kitchen"; INFOPLIST_KEY_NSCameraUsageDescription = "Photograph your shelves to check what you already have before shopping. Photos are read on this iPhone and never uploaded."; INFOPLIST_KEY_NSMicrophoneUsageDescription = "Say what changed in your kitchen — a dish to swap, something you already have at home. Speech is recognised on this iPhone and no recording is kept."; INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Your English and Mandarin are recognised on this iPhone so you can change the menu and the shopping list by voice. Nothing is uploaded."; INFOPLIST_KEY_UILaunchScreen_Generation = YES; INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES; INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait"; PRODUCT_BUNDLE_IDENTIFIER = com.familykitchen.app; PRODUCT_NAME = "$(TARGET_NAME)"; TARGETED_DEVICE_FAMILY = 1; SUPPORTS_MACCATALYST = NO; SWIFT_EMIT_LOC_STRINGS = YES; CURRENT_PROJECT_VERSION = 1; MARKETING_VERSION = 0.4;SWIFT_OPTIMIZATION_LEVEL = "-O"; DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym"; }; name = Release; };
+F37922C48DA5978D02C9E50E = { isa = XCConfigurationList; buildConfigurations = (E9B2E96ABC5F6856F2BE79CF,5A8C91857F674E16E2724F47,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+0E8A3AD980EC179856012B7E = { isa = PBXNativeTarget; buildConfigurationList = F37922C48DA5978D02C9E50E; buildPhases = (BCE16DD0260827ECF338C787,7561BFB015D8F536760CB671,0189424A5A60FED329FA868E,); buildRules = (); dependencies = (); name = FamilyKitchen; productName = FamilyKitchen; productReference = 38A007151ABE87CC01A5B6E9; productType = "com.apple.product-type.application"; };
+29642EB98F6C820CB70A101E = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Tests/FamilyKitchenUITests/FamilyKitchenUITests.swift"; sourceTree = "<group>"; };
+C0B57E3ED34BE9110C637506 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Tests/FamilyKitchenUITests/Screenshots.swift"; sourceTree = "<group>"; };
+12152E98B2A898D2C257D92A = { isa = PBXBuildFile; fileRef = 29642EB98F6C820CB70A101E; };
+D68E2D6E9C900BCF04015DD7 = { isa = PBXBuildFile; fileRef = C0B57E3ED34BE9110C637506; };
+A7C9FD69DA095A3BF0CB4587 = { isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = FamilyKitchenUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+9B65503EE939B7F8DAEDF693 = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (12152E98B2A898D2C257D92A,D68E2D6E9C900BCF04015DD7,); runOnlyForDeploymentPostprocessing = 0; };
+94C1D7A82E2F92E70C5BA5D8 = { isa = XCBuildConfiguration; buildSettings = { CLANG_ENABLE_MODULES = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; SDKROOT = iphoneos; SWIFT_VERSION = 5.0; GENERATE_INFOPLIST_FILE = YES; CODE_SIGN_STYLE = Automatic; PRODUCT_BUNDLE_IDENTIFIER = com.familykitchen.app.uitests; PRODUCT_NAME = "$(TARGET_NAME)"; TEST_TARGET_NAME = FamilyKitchen; TARGETED_DEVICE_FAMILY = 1; }; name = Debug; };
+9609A256A79253DD705A918E = { isa = XCBuildConfiguration; buildSettings = { CLANG_ENABLE_MODULES = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; SDKROOT = iphoneos; SWIFT_VERSION = 5.0; GENERATE_INFOPLIST_FILE = YES; CODE_SIGN_STYLE = Automatic; PRODUCT_BUNDLE_IDENTIFIER = com.familykitchen.app.uitests; PRODUCT_NAME = "$(TARGET_NAME)"; TEST_TARGET_NAME = FamilyKitchen; TARGETED_DEVICE_FAMILY = 1; }; name = Release; };
+AED4B730112F3401C4D7AC6B = { isa = XCConfigurationList; buildConfigurations = (94C1D7A82E2F92E70C5BA5D8,9609A256A79253DD705A918E,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+7C3F7C2476CF2BD9AE55EACD = { isa = PBXContainerItemProxy; containerPortal = 98F54143AB4E86B28C3AFEE0; proxyType = 1; remoteGlobalIDString = 0E8A3AD980EC179856012B7E; remoteInfo = FamilyKitchen; };
+46098F1CD6D7EADDB246BA75 = { isa = PBXTargetDependency; target = 0E8A3AD980EC179856012B7E; targetProxy = 7C3F7C2476CF2BD9AE55EACD; };
+5A84779F73F7B6419BDB1882 = { isa = PBXNativeTarget; buildConfigurationList = AED4B730112F3401C4D7AC6B; buildPhases = (9B65503EE939B7F8DAEDF693,); buildRules = (); dependencies = (46098F1CD6D7EADDB246BA75,); name = FamilyKitchenUITests; productName = FamilyKitchenUITests; productReference = A7C9FD69DA095A3BF0CB4587; productType = "com.apple.product-type.bundle.ui-testing"; };
+98F54143AB4E86B28C3AFEE0 = { isa = PBXProject; attributes = { BuildIndependentTargetsInParallel = YES; LastUpgradeCheck = 1600; }; buildConfigurationList = 862894B703A6DEDF96A9DD6C; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (en, "zh-Hans", Base); mainGroup = B28B7AF69320201D1CF206EB; productRefGroup = FBDC4F23F93125BBEEAE800C; projectDirPath = ""; projectRoot = ""; targets = (0E8A3AD980EC179856012B7E,5A84779F73F7B6419BDB1882,); };
+}; rootObject = 98F54143AB4E86B28C3AFEE0; }

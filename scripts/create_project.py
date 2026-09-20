@@ -5,7 +5,7 @@ def ident(s):return hashlib.sha1(s.encode()).hexdigest()[:24].upper()
 def q(s):return '"'+s+'"'
 objects=[]
 def obj(key,content):objects.append(f'{ident(key)} = {{ {content} }};');return ident(key)
-sources=['FamilyKitchen/FamilyKitchenApp.swift','FamilyKitchen/KitchenViews.swift','FamilyKitchen/Brand.swift','FamilyKitchen/HistoryView.swift','FamilyKitchen/AddDishView.swift','FamilyKitchen/ShopCheckView.swift','FamilyKitchen/PantryScanner.swift','Sources/FamilyCore/Models.swift','Sources/FamilyCore/Storage.swift','Sources/FamilyCore/PantryMatching.swift','Sources/FamilyCore/Catalog.swift','Sources/FamilyCore/Nutrition.swift','Sources/FamilyCore/Dietary.swift','Sources/FamilyCore/Seasons.swift','Sources/FamilyCore/StepsEN.swift','Sources/FamilyCore/RecipeImport.swift']
+sources=['FamilyKitchen/FamilyKitchenApp.swift','FamilyKitchen/KitchenViews.swift','FamilyKitchen/Brand.swift','FamilyKitchen/HistoryView.swift','FamilyKitchen/AddDishView.swift','FamilyKitchen/ShopCheckView.swift','FamilyKitchen/PantryScanner.swift','FamilyKitchen/KitchenChatView.swift','FamilyKitchen/VoiceInput.swift','Sources/FamilyCore/Models.swift','Sources/FamilyCore/Storage.swift','Sources/FamilyCore/PantryMatching.swift','Sources/FamilyCore/Catalog.swift','Sources/FamilyCore/Nutrition.swift','Sources/FamilyCore/Dietary.swift','Sources/FamilyCore/Seasons.swift','Sources/FamilyCore/StepsEN.swift','Sources/FamilyCore/RecipeImport.swift','Sources/FamilyCore/KitchenCommands.swift']
 refs=[]; builds=[]
 for file in sources:
     refs.append(obj(file,'isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = '+q(file)+'; sourceTree = "<group>";'))
@@ -20,7 +20,7 @@ phase=obj('sources','isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; f
 resources=obj('resources','isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = ('+assetbuild+',); runOnlyForDeploymentPostprocessing = 0;')
 frameworks=obj('frameworks','isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0;')
 base='CLANG_ENABLE_MODULES = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; SDKROOT = iphoneos; SWIFT_VERSION = 5.0;'
-app='CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; INFOPLIST_KEY_CFBundleDisplayName = "Family Kitchen"; INFOPLIST_KEY_NSCameraUsageDescription = "Photograph your shelves to check what you already have before shopping. Photos are read on this iPhone and never uploaded."; INFOPLIST_KEY_UILaunchScreen_Generation = YES; INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES; INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait"; PRODUCT_BUNDLE_IDENTIFIER = com.familykitchen.app; PRODUCT_NAME = "$(TARGET_NAME)"; TARGETED_DEVICE_FAMILY = 1; SUPPORTS_MACCATALYST = NO; SWIFT_EMIT_LOC_STRINGS = YES; CURRENT_PROJECT_VERSION = 1; MARKETING_VERSION = 0.4;'
+app='CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; INFOPLIST_KEY_CFBundleDisplayName = "Family Kitchen"; INFOPLIST_KEY_NSCameraUsageDescription = "Photograph your shelves to check what you already have before shopping. Photos are read on this iPhone and never uploaded."; INFOPLIST_KEY_NSMicrophoneUsageDescription = "Say what changed in your kitchen — a dish to swap, something you already have at home. Speech is recognised on this iPhone and no recording is kept."; INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Your English and Mandarin are recognised on this iPhone so you can change the menu and the shopping list by voice. Nothing is uploaded."; INFOPLIST_KEY_UILaunchScreen_Generation = YES; INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES; INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait"; PRODUCT_BUNDLE_IDENTIFIER = com.familykitchen.app; PRODUCT_NAME = "$(TARGET_NAME)"; TARGETED_DEVICE_FAMILY = 1; SUPPORTS_MACCATALYST = NO; SWIFT_EMIT_LOC_STRINGS = YES; CURRENT_PROJECT_VERSION = 1; MARKETING_VERSION = 0.4;'
 for scope in ['project','app']:
     configs=[]
     for mode in ['Debug','Release']:
@@ -28,9 +28,11 @@ for scope in ['project','app']:
         configs.append(obj(scope+mode,f'isa = XCBuildConfiguration; buildSettings = {{ {settings} }}; name = {mode};'))
     obj(scope+'configs','isa = XCConfigurationList; buildConfigurations = ('+','.join(configs)+',); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release;')
 target=obj('target','isa = PBXNativeTarget; buildConfigurationList = '+ident('appconfigs')+'; buildPhases = ('+','.join([phase,frameworks,resources])+',); buildRules = (); dependencies = (); name = FamilyKitchen; productName = FamilyKitchen; productReference = '+product+'; productType = "com.apple.product-type.application";')
-uiTestSource='Tests/FamilyKitchenUITests/FamilyKitchenUITests.swift'
-uiRef=obj('uiRef','isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = '+q(uiTestSource)+'; sourceTree = "<group>";')
-uiBuild=obj('uiBuild','isa = PBXBuildFile; fileRef = '+uiRef+';')
+uiTestSources=['Tests/FamilyKitchenUITests/FamilyKitchenUITests.swift','Tests/FamilyKitchenUITests/Screenshots.swift']
+uiRefs=[obj('uiRef'+f,'isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = '+q(f)+'; sourceTree = "<group>";') for f in uiTestSources]
+uiRef=uiRefs[0]
+uiBuilds=[obj('uiBuild'+f,'isa = PBXBuildFile; fileRef = '+ident('uiRef'+f)+';') for f in uiTestSources]
+uiBuild=','.join(uiBuilds)
 uiProduct=obj('uiProduct','isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = FamilyKitchenUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR;')
 uiPhase=obj('uiPhase','isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = ('+uiBuild+',); runOnlyForDeploymentPostprocessing = 0;')
 uiConfigs=[]
@@ -40,7 +42,7 @@ uiConfigList=obj('uiConfigs','isa = XCConfigurationList; buildConfigurations = (
 uiProxy=obj('uiProxy','isa = PBXContainerItemProxy; containerPortal = '+ident('project')+'; proxyType = 1; remoteGlobalIDString = '+target+'; remoteInfo = FamilyKitchen;')
 uiDependency=obj('uiDependency','isa = PBXTargetDependency; target = '+target+'; targetProxy = '+uiProxy+';')
 uiTarget=obj('uiTarget','isa = PBXNativeTarget; buildConfigurationList = '+uiConfigList+'; buildPhases = ('+uiPhase+',); buildRules = (); dependencies = ('+uiDependency+',); name = FamilyKitchenUITests; productName = FamilyKitchenUITests; productReference = '+uiProduct+'; productType = "com.apple.product-type.bundle.ui-testing";')
-objects[:]=[entry.replace('children = (','children = ('+uiRef+',',1) if entry.startswith(ident('main')+' =') else entry for entry in objects]
+objects[:]=[entry.replace('children = (','children = ('+','.join(uiRefs)+',',1) if entry.startswith(ident('main')+' =') else entry for entry in objects]
 objects[:]=[entry.replace('children = (','children = ('+uiProduct+',',1) if entry.startswith(ident('products')+' =') else entry for entry in objects]
 project=obj('project','isa = PBXProject; attributes = { BuildIndependentTargetsInParallel = YES; LastUpgradeCheck = 1600; }; buildConfigurationList = '+ident('projectconfigs')+'; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (en, "zh-Hans", Base); mainGroup = '+main+'; productRefGroup = '+products+'; projectDirPath = ""; projectRoot = ""; targets = ('+target+','+uiTarget+',);')
 p=root/'FamilyKitchen.xcodeproj';p.mkdir(exist_ok=True)

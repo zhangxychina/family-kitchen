@@ -64,7 +64,7 @@ struct ShoppingView: View {
                     Text("Already in your kitchen or already in the basket. Kept here so you can check the reasoning, and put anything back on the list by tapping it.")
                 }
             }
-        }.navigationTitle("Shopping")
+        }.navigationTitle("Shopping").kitchenChat()
     }
 }
 /// One line of the shopping list. Ticking it off records the purchase; tapping again
