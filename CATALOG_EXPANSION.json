@@ -1,0 +1,2763 @@
+{
+  "ingredients": [
+    {
+      "id": "ginger",
+      "en": "Fresh ginger",
+      "zh": "鲜姜",
+      "unit": "g",
+      "category": "Produce",
+      "storage": "Refrigerated"
+    },
+    {
+      "id": "garlic",
+      "en": "Garlic",
+      "zh": "蒜",
+      "unit": "g",
+      "category": "Produce",
+      "storage": "Pantry"
+    },
+    {
+      "id": "mushroom",
+      "en": "White mushrooms",
+      "zh": "白蘑菇",
+      "unit": "g",
+      "category": "Produce",
+      "storage": "Refrigerated"
+    },
+    {
+      "id": "pineapple",
+      "en": "Pineapple chunks in juice, drained",
+      "zh": "菠萝块（原汁罐装沥干）",
+      "unit": "g",
+      "category": "Pantry",
+      "storage": "Pantry"
+    },
+    {
+      "id": "pepper",
+      "en": "Red bell pepper",
+      "zh": "红甜椒",
+      "unit": "g",
+      "category": "Produce",
+      "storage": "Refrigerated"
+    },
+    {
+      "id": "maple",
+      "en": "Maple syrup",
+      "zh": "枫糖浆",
+      "unit": "mL",
+      "category": "Seasonings",
+      "storage": "Pantry"
+    },
+    {
+      "id": "celery",
+      "en": "Celery",
+      "zh": "芹菜",
+      "unit": "g",
+      "category": "Produce",
+      "storage": "Refrigerated"
+    },
+    {
+      "id": "pork",
+      "en": "Pork tenderloin",
+      "zh": "猪里脊",
+      "unit": "g",
+      "category": "Protein",
+      "storage": "Refrigerated"
+    },
+    {
+      "id": "cabbage",
+      "en": "Green cabbage",
+      "zh": "圆白菜",
+      "unit": "g",
+      "category": "Produce",
+      "storage": "Refrigerated"
+    },
+    {
+      "id": "zucchini",
+      "en": "Zucchini",
+      "zh": "西葫芦",
+      "unit": "g",
+      "category": "Produce",
+      "storage": "Refrigerated"
+    },
+    {
+      "id": "shrimp",
+      "en": "Raw peeled deveined shrimp, thawed",
+      "zh": "已解冻去壳去虾线生虾仁",
+      "unit": "g",
+      "category": "Protein",
+      "storage": "Refrigerated"
+    },
+    {
+      "id": "corn",
+      "en": "Frozen sweet corn",
+      "zh": "冷冻甜玉米粒",
+      "unit": "g",
+      "category": "Frozen",
+      "storage": "Frozen"
+    },
+    {
+      "id": "cod",
+      "en": "Boneless cod fillet",
+      "zh": "去骨鳕鱼柳",
+      "unit": "g",
+      "category": "Protein",
+      "storage": "Refrigerated"
+    },
+    {
+      "id": "chickpea",
+      "en": "Canned chickpeas, drained",
+      "zh": "罐装鹰嘴豆（沥干）",
+      "unit": "g",
+      "category": "Pantry",
+      "storage": "Pantry"
+    },
+    {
+      "id": "udon",
+      "en": "Plain precooked udon noodles",
+      "zh": "原味预煮乌冬面",
+      "unit": "g",
+      "category": "Grains",
+      "storage": "Refrigerated"
+    },
+    {
+      "id": "vermicelli",
+      "en": "Dry rice vermicelli",
+      "zh": "干米粉",
+      "unit": "g",
+      "category": "Grains",
+      "storage": "Pantry"
+    },
+    {
+      "id": "soba",
+      "en": "Dry buckwheat soba noodles",
+      "zh": "干荞麦面",
+      "unit": "g",
+      "category": "Grains",
+      "storage": "Pantry"
+    },
+    {
+      "id": "orzo",
+      "en": "Dry orzo pasta",
+      "zh": "米粒意面",
+      "unit": "g",
+      "category": "Grains",
+      "storage": "Pantry"
+    },
+    {
+      "id": "tuna",
+      "en": "Canned light tuna in water, drained",
+      "zh": "水浸罐装淡色金枪鱼（沥干）",
+      "unit": "g",
+      "category": "Protein",
+      "storage": "Pantry"
+    },
+    {
+      "id": "turkey",
+      "en": "Ground turkey",
+      "zh": "火鸡肉末",
+      "unit": "g",
+      "category": "Protein",
+      "storage": "Refrigerated"
+    },
+    {
+      "id": "blackbean",
+      "en": "Canned black beans, drained",
+      "zh": "罐装黑豆（沥干）",
+      "unit": "g",
+      "category": "Pantry",
+      "storage": "Pantry"
+    },
+    {
+      "id": "tortilla",
+      "en": "8-inch whole wheat tortillas",
+      "zh": "8英寸全麦卷饼皮",
+      "unit": "each",
+      "category": "Grains",
+      "storage": "Pantry"
+    },
+    {
+      "id": "freshtomato",
+      "en": "Fresh tomatoes",
+      "zh": "鲜番茄",
+      "unit": "g",
+      "category": "Produce",
+      "storage": "Refrigerated"
+    },
+    {
+      "id": "lettuce",
+      "en": "Romaine lettuce",
+      "zh": "罗马生菜",
+      "unit": "g",
+      "category": "Produce",
+      "storage": "Refrigerated"
+    },
+    {
+      "id": "cucumber",
+      "en": "Cucumber",
+      "zh": "黄瓜",
+      "unit": "g",
+      "category": "Produce",
+      "storage": "Refrigerated"
+    },
+    {
+      "id": "cheddar",
+      "en": "Shredded cheddar cheese",
+      "zh": "切达奶酪丝",
+      "unit": "g",
+      "category": "Dairy & eggs",
+      "storage": "Refrigerated"
+    },
+    {
+      "id": "pita",
+      "en": "Whole wheat pita bread",
+      "zh": "全麦皮塔饼",
+      "unit": "each",
+      "category": "Grains",
+      "storage": "Pantry"
+    },
+    {
+      "id": "couscous",
+      "en": "Quick-cooking couscous",
+      "zh": "速熟库斯库斯",
+      "unit": "g",
+      "category": "Grains",
+      "storage": "Pantry"
+    },
+    {
+      "id": "lentil",
+      "en": "Canned lentils, drained",
+      "zh": "罐装扁豆（沥干）",
+      "unit": "g",
+      "category": "Pantry",
+      "storage": "Pantry"
+    },
+    {
+      "id": "apple",
+      "en": "Apples",
+      "zh": "苹果",
+      "unit": "each",
+      "category": "Produce",
+      "storage": "Refrigerated"
+    },
+    {
+      "id": "cinnamon",
+      "en": "Ground cinnamon",
+      "zh": "肉桂粉",
+      "unit": "g",
+      "category": "Seasonings",
+      "storage": "Pantry"
+    },
+    {
+      "id": "pumpkin",
+      "en": "Plain canned pumpkin puree",
+      "zh": "原味罐装南瓜泥",
+      "unit": "g",
+      "category": "Pantry",
+      "storage": "Pantry"
+    },
+    {
+      "id": "strawberry",
+      "en": "Strawberries",
+      "zh": "草莓",
+      "unit": "g",
+      "category": "Produce",
+      "storage": "Refrigerated"
+    },
+    {
+      "id": "pear",
+      "en": "Pears",
+      "zh": "梨",
+      "unit": "each",
+      "category": "Produce",
+      "storage": "Refrigerated"
+    },
+    {
+      "id": "peach",
+      "en": "Peaches",
+      "zh": "桃子",
+      "unit": "each",
+      "category": "Produce",
+      "storage": "Refrigerated"
+    },
+    {
+      "id": "avocado",
+      "en": "Avocados",
+      "zh": "牛油果",
+      "unit": "each",
+      "category": "Produce",
+      "storage": "Refrigerated"
+    },
+    {
+      "id": "peanutbutter",
+      "en": "Smooth peanut butter",
+      "zh": "细滑花生酱",
+      "unit": "g",
+      "category": "Pantry",
+      "storage": "Pantry"
+    },
+    {
+      "id": "cottage",
+      "en": "Cottage cheese",
+      "zh": "茅屋奶酪",
+      "unit": "g",
+      "category": "Dairy & eggs",
+      "storage": "Refrigerated"
+    },
+    {
+      "id": "englishmuffin",
+      "en": "Whole wheat English muffins",
+      "zh": "全麦英式松饼",
+      "unit": "each",
+      "category": "Grains",
+      "storage": "Pantry"
+    }
+  ],
+  "recipes": [
+    {
+      "id": "gingerchicken",
+      "en": "Ginger chicken & bok choy rice",
+      "zh": "姜香鸡丝小白菜饭",
+      "breakfast": false,
+      "minutes": 30,
+      "starch": "Rice",
+      "protein": "Chicken",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "chicken",
+          "quantity": 750
+        },
+        {
+          "ingredient": "bokchoy",
+          "quantity": 700
+        },
+        {
+          "ingredient": "ginger",
+          "quantity": 20
+        },
+        {
+          "ingredient": "soy",
+          "quantity": 30
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        },
+        {
+          "ingredient": "rice",
+          "quantity": 375
+        }
+      ],
+      "steps": [
+        "0–6分钟：速煮米按包装加水开煮；鸡胸肉切细条，姜切丝，小白菜洗净切段。",
+        "6–23分钟：大平底锅加油炒姜丝和鸡丝；鸡肉分批炒至中心74°C / 165°F后盛出，原锅炒白菜至软。",
+        "23–30分钟：放回鸡丝，加生抽和少许水拌匀。 配米饭分装。生肉须提前冷藏解冻；操作生熟分开。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "mushroomchicken",
+      "en": "Mushroom chicken & broccoli rice",
+      "zh": "蘑菇鸡肉西兰花饭",
+      "breakfast": false,
+      "minutes": 30,
+      "starch": "Rice",
+      "protein": "Chicken",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "chicken",
+          "quantity": 700
+        },
+        {
+          "ingredient": "mushroom",
+          "quantity": 350
+        },
+        {
+          "ingredient": "broccoli",
+          "quantity": 450
+        },
+        {
+          "ingredient": "soy",
+          "quantity": 30
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        },
+        {
+          "ingredient": "rice",
+          "quantity": 375
+        }
+      ],
+      "steps": [
+        "0–6分钟：速煮米按包装加水开煮；鸡肉切薄片，蘑菇切片，西兰花切小朵。",
+        "6–23分钟：锅加油分批煎鸡片至中心74°C / 165°F；同时蒸西兰花6–8分钟，鸡肉锅加入蘑菇炒软。",
+        "23–30分钟：加入西兰花、生抽和少许水拌匀。 配米饭分装。生肉须提前冷藏解冻；操作生熟分开。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "pineapplechicken",
+      "en": "Pineapple chicken rice",
+      "zh": "菠萝甜椒鸡肉饭",
+      "breakfast": false,
+      "minutes": 30,
+      "starch": "Rice",
+      "protein": "Chicken",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "chicken",
+          "quantity": 750
+        },
+        {
+          "ingredient": "pineapple",
+          "quantity": 300
+        },
+        {
+          "ingredient": "pepper",
+          "quantity": 500
+        },
+        {
+          "ingredient": "soy",
+          "quantity": 30
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        },
+        {
+          "ingredient": "rice",
+          "quantity": 375
+        }
+      ],
+      "steps": [
+        "0–6分钟：速煮米按包装加水开煮；鸡肉和甜椒切小块，菠萝沥干。",
+        "6–23分钟：热油分批炒鸡块，中心达74°C / 165°F后加入甜椒炒软；加入菠萝和生抽。",
+        "23–30分钟：加少量清水翻炒成薄汁，不加辣椒。 配米饭分装。生肉须提前冷藏解冻；操作生熟分开。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "teriyakichicken",
+      "en": "Maple-soy chicken & carrot rice",
+      "zh": "枫糖酱香鸡肉胡萝卜饭",
+      "breakfast": false,
+      "minutes": 30,
+      "starch": "Rice",
+      "protein": "Chicken",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "chicken",
+          "quantity": 750
+        },
+        {
+          "ingredient": "carrot",
+          "quantity": 700
+        },
+        {
+          "ingredient": "soy",
+          "quantity": 35
+        },
+        {
+          "ingredient": "maple",
+          "quantity": 20
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        },
+        {
+          "ingredient": "rice",
+          "quantity": 375
+        }
+      ],
+      "steps": [
+        "0–6分钟：速煮米按包装加水开煮；鸡肉切薄条，胡萝卜切薄片。",
+        "6–23分钟：鸡条分批煎至中心74°C / 165°F；同时将胡萝卜蒸熟，生抽、枫糖浆和50mL水混匀。",
+        "23–30分钟：酱汁倒入鸡肉锅煮开，拌匀；与胡萝卜分别摆盘。 配米饭分装。生肉须提前冷藏解冻；操作生熟分开。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "chickenpeas",
+      "en": "Chicken, pea & carrot rice",
+      "zh": "鸡丁豌豆胡萝卜饭",
+      "breakfast": false,
+      "minutes": 30,
+      "starch": "Rice",
+      "protein": "Chicken",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "chicken",
+          "quantity": 750
+        },
+        {
+          "ingredient": "peas",
+          "quantity": 350
+        },
+        {
+          "ingredient": "carrot",
+          "quantity": 350
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        },
+        {
+          "ingredient": "soy",
+          "quantity": 30
+        },
+        {
+          "ingredient": "rice",
+          "quantity": 375
+        }
+      ],
+      "steps": [
+        "0–6分钟：速煮米按包装加水开煮；鸡肉切约1厘米丁，胡萝卜切小丁。",
+        "6–23分钟：大锅热油炒鸡丁；加入胡萝卜、豌豆和少许水，加盖焖熟，鸡丁中心达到74°C / 165°F。",
+        "23–30分钟：加生抽拌匀，蔬菜须熟软。 配米饭分装。生肉须提前冷藏解冻；操作生熟分开。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "beefbroccoli",
+      "en": "Beef & broccoli rice",
+      "zh": "西兰花牛肉饭",
+      "breakfast": false,
+      "minutes": 30,
+      "starch": "Rice",
+      "protein": "Beef",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "beef",
+          "quantity": 750
+        },
+        {
+          "ingredient": "broccoli",
+          "quantity": 700
+        },
+        {
+          "ingredient": "garlic",
+          "quantity": 10
+        },
+        {
+          "ingredient": "soy",
+          "quantity": 35
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        },
+        {
+          "ingredient": "rice",
+          "quantity": 375
+        }
+      ],
+      "steps": [
+        "0–6分钟：速煮米按包装加水开煮；牛肉逆纹切薄片，西兰花切小朵，蒜切末。",
+        "6–23分钟：西兰花蒸6–8分钟；另一大锅热油炒蒜和牛肉，分批煎至中心63°C / 145°F。",
+        "23–30分钟：牛肉静置3分钟后，与西兰花、生抽及少许水拌热。 配米饭分装。生肉须提前冷藏解冻；操作生熟分开。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "beefmushroom",
+      "en": "Beef, mushroom & spinach rice",
+      "zh": "蘑菇菠菜牛肉饭",
+      "breakfast": false,
+      "minutes": 30,
+      "starch": "Rice",
+      "protein": "Beef",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "beef",
+          "quantity": 750
+        },
+        {
+          "ingredient": "mushroom",
+          "quantity": 350
+        },
+        {
+          "ingredient": "spinach",
+          "quantity": 350
+        },
+        {
+          "ingredient": "soy",
+          "quantity": 30
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        },
+        {
+          "ingredient": "rice",
+          "quantity": 375
+        }
+      ],
+      "steps": [
+        "0–6分钟：速煮米按包装加水开煮；牛肉切薄条，蘑菇切片，菠菜洗净。",
+        "6–23分钟：热油分批炒牛肉至中心63°C / 145°F，盛出静置3分钟；原锅炒蘑菇至软，再炒菠菜。",
+        "23–30分钟：放回牛肉，加生抽和少许水拌匀。 配米饭分装。生肉须提前冷藏解冻；操作生熟分开。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "beefcelery",
+      "en": "Celery beef & carrot rice",
+      "zh": "芹菜胡萝卜牛肉饭",
+      "breakfast": false,
+      "minutes": 30,
+      "starch": "Rice",
+      "protein": "Beef",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "beef",
+          "quantity": 750
+        },
+        {
+          "ingredient": "celery",
+          "quantity": 400
+        },
+        {
+          "ingredient": "carrot",
+          "quantity": 300
+        },
+        {
+          "ingredient": "soy",
+          "quantity": 30
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        },
+        {
+          "ingredient": "rice",
+          "quantity": 375
+        }
+      ],
+      "steps": [
+        "0–6分钟：速煮米按包装加水开煮；牛肉、芹菜、胡萝卜切细条，芹菜去粗筋。",
+        "6–23分钟：分批炒牛肉至中心63°C / 145°F，盛出静置3分钟；炒胡萝卜、芹菜，加水焖至软。",
+        "23–30分钟：牛肉放回锅中，加生抽拌匀。 配米饭分装。生肉须提前冷藏解冻；操作生熟分开。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "beefpepper",
+      "en": "Sweet pepper beef rice",
+      "zh": "甜椒牛肉饭",
+      "breakfast": false,
+      "minutes": 30,
+      "starch": "Rice",
+      "protein": "Beef",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "beef",
+          "quantity": 750
+        },
+        {
+          "ingredient": "pepper",
+          "quantity": 700
+        },
+        {
+          "ingredient": "soy",
+          "quantity": 30
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        },
+        {
+          "ingredient": "rice",
+          "quantity": 375
+        }
+      ],
+      "steps": [
+        "0–6分钟：速煮米按包装加水开煮；牛肉切薄条，甜椒去籽切条。",
+        "6–23分钟：热油分批炒牛肉至中心63°C / 145°F，盛出静置3分钟；炒甜椒至软。",
+        "23–30分钟：加入牛肉、生抽、少量清水拌匀。红甜椒不辣。 配米饭分装。生肉须提前冷藏解冻；操作生熟分开。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "porkcabbage",
+      "en": "Pork & cabbage rice",
+      "zh": "里脊圆白菜饭",
+      "breakfast": false,
+      "minutes": 30,
+      "starch": "Rice",
+      "protein": "Pork",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "pork",
+          "quantity": 750
+        },
+        {
+          "ingredient": "cabbage",
+          "quantity": 750
+        },
+        {
+          "ingredient": "ginger",
+          "quantity": 15
+        },
+        {
+          "ingredient": "soy",
+          "quantity": 30
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        },
+        {
+          "ingredient": "rice",
+          "quantity": 375
+        }
+      ],
+      "steps": [
+        "0–6分钟：速煮米按包装加水开煮；猪里脊切细条，圆白菜切丝，姜切末。",
+        "6–23分钟：油热后炒姜和里脊，分批煎至中心63°C / 145°F，盛出静置3分钟；原锅炒圆白菜至软。",
+        "23–30分钟：猪肉放回，加入生抽及少许水拌匀。 配米饭分装。生肉须提前冷藏解冻；操作生熟分开。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "porkmushroom",
+      "en": "Pork, mushroom & bok choy rice",
+      "zh": "蘑菇小白菜里脊饭",
+      "breakfast": false,
+      "minutes": 30,
+      "starch": "Rice",
+      "protein": "Pork",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "pork",
+          "quantity": 750
+        },
+        {
+          "ingredient": "mushroom",
+          "quantity": 350
+        },
+        {
+          "ingredient": "bokchoy",
+          "quantity": 400
+        },
+        {
+          "ingredient": "soy",
+          "quantity": 30
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        },
+        {
+          "ingredient": "rice",
+          "quantity": 375
+        }
+      ],
+      "steps": [
+        "0–6分钟：速煮米按包装加水开煮；猪肉切薄片，蘑菇切片，小白菜洗切。",
+        "6–23分钟：分批炒猪肉至中心63°C / 145°F，盛出静置3分钟；炒蘑菇和小白菜至熟软。",
+        "23–30分钟：猪肉放回，拌入生抽及少量水。 配米饭分装。生肉须提前冷藏解冻；操作生熟分开。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "porkzucchini",
+      "en": "Pork & zucchini rice",
+      "zh": "西葫芦胡萝卜里脊饭",
+      "breakfast": false,
+      "minutes": 30,
+      "starch": "Rice",
+      "protein": "Pork",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "pork",
+          "quantity": 750
+        },
+        {
+          "ingredient": "zucchini",
+          "quantity": 450
+        },
+        {
+          "ingredient": "carrot",
+          "quantity": 250
+        },
+        {
+          "ingredient": "soy",
+          "quantity": 30
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        },
+        {
+          "ingredient": "rice",
+          "quantity": 375
+        }
+      ],
+      "steps": [
+        "0–6分钟：速煮米按包装加水开煮；猪肉切薄条，西葫芦和胡萝卜切薄片。",
+        "6–23分钟：猪肉分批炒至中心63°C / 145°F，盛出静置3分钟；加少量水炒熟两种蔬菜。",
+        "23–30分钟：放回里脊，加入生抽拌匀。 配米饭分装。生肉须提前冷藏解冻；操作生熟分开。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "shrimpegg",
+      "en": "Shrimp, egg & broccoli rice",
+      "zh": "虾仁炒蛋西兰花饭",
+      "breakfast": false,
+      "minutes": 30,
+      "starch": "Rice",
+      "protein": "Shellfish",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "shrimp",
+          "quantity": 650
+        },
+        {
+          "ingredient": "egg",
+          "quantity": 5
+        },
+        {
+          "ingredient": "broccoli",
+          "quantity": 650
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 30
+        },
+        {
+          "ingredient": "salt",
+          "quantity": 3
+        },
+        {
+          "ingredient": "rice",
+          "quantity": 375
+        }
+      ],
+      "steps": [
+        "0–6分钟：速煮米按包装加水开煮；用已解冻虾仁，检查虾线；鸡蛋打散，西兰花切小朵。",
+        "6–23分钟：西兰花蒸熟；平底锅加油炒鸡蛋至凝固盛出，分批炒虾仁至肉质珍珠白且不透明。",
+        "23–30分钟：鸡蛋、虾仁加盐拌热；西兰花摆在旁边。 配米饭分装。生肉须提前冷藏解冻；操作生熟分开。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "shrimppeas",
+      "en": "Shrimp & pea fried rice",
+      "zh": "虾仁豌豆炒饭",
+      "breakfast": false,
+      "minutes": 30,
+      "starch": "Rice",
+      "protein": "Shellfish",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "egg",
+          "quantity": 5
+        },
+        {
+          "ingredient": "shrimp",
+          "quantity": 700
+        },
+        {
+          "ingredient": "peas",
+          "quantity": 350
+        },
+        {
+          "ingredient": "carrot",
+          "quantity": 350
+        },
+        {
+          "ingredient": "soy",
+          "quantity": 30
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 30
+        },
+        {
+          "ingredient": "rice",
+          "quantity": 375
+        }
+      ],
+      "steps": [
+        "0–6分钟：速煮米按包装加水开煮；速煮米煮好后摊开散汽；虾仁提前解冻，胡萝卜切小丁。",
+        "6–23分钟：先炒蛋至完全凝固盛出，再炒虾仁至肉质不透明；加入胡萝卜、豌豆和少许水炒至熟软。",
+        "23–30分钟：分两批拌入炒蛋、现煮米饭、生抽炒至热透；不依赖隔夜饭。 配米饭分装。生肉须提前冷藏解冻；操作生熟分开。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "shrimpcorn",
+      "en": "Shrimp, corn & zucchini rice",
+      "zh": "虾仁玉米西葫芦饭",
+      "breakfast": false,
+      "minutes": 30,
+      "starch": "Rice",
+      "protein": "Shellfish",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "shrimp",
+          "quantity": 750
+        },
+        {
+          "ingredient": "corn",
+          "quantity": 300
+        },
+        {
+          "ingredient": "zucchini",
+          "quantity": 450
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        },
+        {
+          "ingredient": "salt",
+          "quantity": 3
+        },
+        {
+          "ingredient": "rice",
+          "quantity": 375
+        }
+      ],
+      "steps": [
+        "0–6分钟：速煮米按包装加水开煮；用已解冻虾仁；西葫芦切小丁。",
+        "6–23分钟：炒虾仁至不透明盛出；原锅炒西葫芦、玉米至熟软。",
+        "23–30分钟：加盐与虾仁拌热。 配米饭分装。生肉须提前冷藏解冻；操作生熟分开。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "codtomato",
+      "en": "Tomato cod & spinach rice",
+      "zh": "番茄菠菜鳕鱼饭",
+      "breakfast": false,
+      "minutes": 30,
+      "starch": "Rice",
+      "protein": "Fish",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "cod",
+          "quantity": 800
+        },
+        {
+          "ingredient": "tomato",
+          "quantity": 600
+        },
+        {
+          "ingredient": "spinach",
+          "quantity": 350
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        },
+        {
+          "ingredient": "salt",
+          "quantity": 3
+        },
+        {
+          "ingredient": "rice",
+          "quantity": 375
+        }
+      ],
+      "steps": [
+        "0–6分钟：速煮米按包装加水开煮；鳕鱼检查鱼刺，切较大块；菠菜洗净。",
+        "6–23分钟：锅热油加碎番茄煮开，放鳕鱼轻炖至中心63°C / 145°F；加入菠菜煮软。",
+        "23–30分钟：加盐，轻推拌匀，保留鱼块。 配米饭分装。生肉须提前冷藏解冻；操作生熟分开。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "codginger",
+      "en": "Ginger cod & bok choy rice",
+      "zh": "姜丝清蒸鳕鱼小白菜饭",
+      "breakfast": false,
+      "minutes": 30,
+      "starch": "Rice",
+      "protein": "Fish",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "cod",
+          "quantity": 800
+        },
+        {
+          "ingredient": "bokchoy",
+          "quantity": 700
+        },
+        {
+          "ingredient": "ginger",
+          "quantity": 20
+        },
+        {
+          "ingredient": "soy",
+          "quantity": 30
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 20
+        },
+        {
+          "ingredient": "rice",
+          "quantity": 375
+        }
+      ],
+      "steps": [
+        "0–6分钟：速煮米按包装加水开煮；鱼检查刺分成薄份，姜切丝，小白菜洗切。",
+        "6–23分钟：鱼放盘撒姜，蒸至中心63°C / 145°F；另一锅加油炒白菜至软。",
+        "23–30分钟：蒸鱼淋生抽，白菜放旁边。 配米饭分装。生肉须提前冷藏解冻；操作生熟分开。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "tofutomato",
+      "en": "Tomato tofu & egg rice",
+      "zh": "番茄豆腐炒蛋饭",
+      "breakfast": false,
+      "minutes": 30,
+      "starch": "Rice",
+      "protein": "Tofu",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "tofu",
+          "quantity": 700
+        },
+        {
+          "ingredient": "egg",
+          "quantity": 5
+        },
+        {
+          "ingredient": "tomato",
+          "quantity": 700
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        },
+        {
+          "ingredient": "salt",
+          "quantity": 3
+        },
+        {
+          "ingredient": "rice",
+          "quantity": 375
+        }
+      ],
+      "steps": [
+        "0–6分钟：速煮米按包装加水开煮；豆腐沥水切小块，鸡蛋打散。",
+        "6–23分钟：油锅炒蛋至完全凝固盛出；锅中放碎番茄煮开，加入豆腐轻炖8分钟。",
+        "23–30分钟：放回鸡蛋加盐拌热；汤汁可以拌饭。 配米饭分装。生肉须提前冷藏解冻；操作生熟分开。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "tofumushroom",
+      "en": "Mushroom tofu & bok choy rice",
+      "zh": "蘑菇豆腐小白菜饭",
+      "breakfast": false,
+      "minutes": 30,
+      "starch": "Rice",
+      "protein": "Tofu",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "tofu",
+          "quantity": 900
+        },
+        {
+          "ingredient": "mushroom",
+          "quantity": 350
+        },
+        {
+          "ingredient": "bokchoy",
+          "quantity": 400
+        },
+        {
+          "ingredient": "soy",
+          "quantity": 35
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 30
+        },
+        {
+          "ingredient": "rice",
+          "quantity": 375
+        }
+      ],
+      "steps": [
+        "0–6分钟：速煮米按包装加水开煮；豆腐沥干切块，蘑菇切片，白菜洗切。",
+        "6–23分钟：大平底锅分批煎豆腐至两面微黄盛出；炒蘑菇和白菜，加少许水焖熟。",
+        "23–30分钟：放回豆腐，加入生抽拌热。 配米饭分装。生肉须提前冷藏解冻；操作生熟分开。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "chickpeacurry",
+      "en": "Mild chickpea & spinach curry rice",
+      "zh": "不辣鹰嘴豆菠菜咖喱饭",
+      "breakfast": false,
+      "minutes": 30,
+      "starch": "Rice",
+      "protein": "Legumes",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "chickpea",
+          "quantity": 1000
+        },
+        {
+          "ingredient": "spinach",
+          "quantity": 400
+        },
+        {
+          "ingredient": "carrot",
+          "quantity": 300
+        },
+        {
+          "ingredient": "curry",
+          "quantity": 12
+        },
+        {
+          "ingredient": "milk",
+          "quantity": 300
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        },
+        {
+          "ingredient": "salt",
+          "quantity": 3
+        },
+        {
+          "ingredient": "rice",
+          "quantity": 375
+        }
+      ],
+      "steps": [
+        "0–6分钟：速煮米按包装加水开煮；鹰嘴豆沥水冲洗，胡萝卜切薄片，菠菜洗净。",
+        "6–23分钟：油锅炒胡萝卜、无辣椒咖喱粉，加牛奶和适量水煮软；加入熟鹰嘴豆炖至热透。",
+        "23–30分钟：加菠菜煮软，用盐调味。 配米饭分装。生肉须提前冷藏解冻；操作生熟分开。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "chickenudon",
+      "en": "Chicken & cabbage udon",
+      "zh": "鸡丝圆白菜炒乌冬",
+      "breakfast": false,
+      "minutes": 25,
+      "starch": "Noodles",
+      "protein": "Chicken",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "chicken",
+          "quantity": 750
+        },
+        {
+          "ingredient": "cabbage",
+          "quantity": 450
+        },
+        {
+          "ingredient": "carrot",
+          "quantity": 250
+        },
+        {
+          "ingredient": "soy",
+          "quantity": 35
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 30
+        },
+        {
+          "ingredient": "udon",
+          "quantity": 1000
+        }
+      ],
+      "steps": [
+        "0–7分钟：烧一大锅水，鸡肉切细条，白菜、胡萝卜切丝。",
+        "7–20分钟：乌冬按包装煮散沥水；另一锅热油分批炒鸡肉至中心74°C / 165°F，再炒蔬菜至软。",
+        "20–25分钟：放入乌冬、生抽和少量面汤，分批炒匀。 分成当前家庭人数的份量。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "chickenvermicelli",
+      "en": "Chicken & vegetable rice noodle soup",
+      "zh": "鸡丝蔬菜汤米粉",
+      "breakfast": false,
+      "minutes": 25,
+      "starch": "Noodles",
+      "protein": "Chicken",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "chicken",
+          "quantity": 750
+        },
+        {
+          "ingredient": "bokchoy",
+          "quantity": 450
+        },
+        {
+          "ingredient": "carrot",
+          "quantity": 250
+        },
+        {
+          "ingredient": "soy",
+          "quantity": 35
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 20
+        },
+        {
+          "ingredient": "vermicelli",
+          "quantity": 450
+        }
+      ],
+      "steps": [
+        "0–7分钟：烧一大锅水，鸡肉切细丝，菜洗切；干米粉按包装所需时间泡软。",
+        "7–20分钟：汤锅加入鸡丝和胡萝卜煮至鸡肉中心74°C / 165°F；放入米粉，按包装煮熟。",
+        "20–25分钟：加小白菜煮软，拌生抽和油；按口味加水调整汤量。 分成当前家庭人数的份量。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "chickensoba",
+      "en": "Chicken & broccoli soba",
+      "zh": "鸡肉西兰花荞麦面",
+      "breakfast": false,
+      "minutes": 25,
+      "starch": "Noodles",
+      "protein": "Chicken",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "chicken",
+          "quantity": 750
+        },
+        {
+          "ingredient": "broccoli",
+          "quantity": 700
+        },
+        {
+          "ingredient": "soy",
+          "quantity": 35
+        },
+        {
+          "ingredient": "sesame",
+          "quantity": 15
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        },
+        {
+          "ingredient": "soba",
+          "quantity": 450
+        }
+      ],
+      "steps": [
+        "0–7分钟：烧一大锅水，鸡肉切薄条，西兰花切小朵。",
+        "7–20分钟：荞麦面按包装煮熟，西兰花另蒸熟；另一锅热油分批煎鸡条至中心74°C / 165°F。",
+        "20–25分钟：面沥水加入鸡肉与菜，拌生抽、芝麻及少许面汤。 分成当前家庭人数的份量。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "chickenorzo",
+      "en": "Chicken & zucchini orzo",
+      "zh": "鸡肉西葫芦米粒意面",
+      "breakfast": false,
+      "minutes": 25,
+      "starch": "Noodles",
+      "protein": "Chicken",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "chicken",
+          "quantity": 750
+        },
+        {
+          "ingredient": "zucchini",
+          "quantity": 500
+        },
+        {
+          "ingredient": "tomato",
+          "quantity": 500
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        },
+        {
+          "ingredient": "salt",
+          "quantity": 3
+        },
+        {
+          "ingredient": "orzo",
+          "quantity": 450
+        }
+      ],
+      "steps": [
+        "0–7分钟：烧一大锅水，鸡肉和西葫芦切小丁。",
+        "7–20分钟：米粒意面按包装煮熟；另一锅热油炒鸡丁至中心74°C / 165°F，加入西葫芦与碎番茄煮熟。",
+        "20–25分钟：米粒面沥水拌入酱汁，加盐及少许面汤。 分成当前家庭人数的份量。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "beefudon",
+      "en": "Beef & mushroom udon soup",
+      "zh": "牛肉蘑菇乌冬汤面",
+      "breakfast": false,
+      "minutes": 25,
+      "starch": "Noodles",
+      "protein": "Beef",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "beef",
+          "quantity": 750
+        },
+        {
+          "ingredient": "mushroom",
+          "quantity": 350
+        },
+        {
+          "ingredient": "bokchoy",
+          "quantity": 400
+        },
+        {
+          "ingredient": "soy",
+          "quantity": 35
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 20
+        },
+        {
+          "ingredient": "udon",
+          "quantity": 1000
+        }
+      ],
+      "steps": [
+        "0–7分钟：烧一大锅水，牛肉逆纹切薄片，蘑菇和白菜洗切。",
+        "7–20分钟：锅中加水煮蘑菇与牛肉至牛肉中心63°C / 145°F；继续小火3分钟，加入乌冬。",
+        "20–25分钟：白菜煮软，加生抽与油，按包装确认面已热透。 分成当前家庭人数的份量。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "beefcabbagenoodles",
+      "en": "Beef & cabbage stir-fried noodles",
+      "zh": "牛肉圆白菜炒面",
+      "breakfast": false,
+      "minutes": 25,
+      "starch": "Noodles",
+      "protein": "Beef",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "beef",
+          "quantity": 750
+        },
+        {
+          "ingredient": "cabbage",
+          "quantity": 700
+        },
+        {
+          "ingredient": "soy",
+          "quantity": 35
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 30
+        },
+        {
+          "ingredient": "noodles",
+          "quantity": 450
+        }
+      ],
+      "steps": [
+        "0–7分钟：烧一大锅水，牛肉切细条，圆白菜切丝。",
+        "7–20分钟：挂面按包装煮熟沥水；另一锅炒牛肉至中心63°C / 145°F后盛出静置3分钟，再炒白菜至软。",
+        "20–25分钟：牛肉、面条入锅，分批加生抽与少许水炒匀。 分成当前家庭人数的份量。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "porknoodles",
+      "en": "Pork & spinach noodle soup",
+      "zh": "里脊菠菜汤面",
+      "breakfast": false,
+      "minutes": 25,
+      "starch": "Noodles",
+      "protein": "Pork",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "pork",
+          "quantity": 750
+        },
+        {
+          "ingredient": "spinach",
+          "quantity": 400
+        },
+        {
+          "ingredient": "carrot",
+          "quantity": 300
+        },
+        {
+          "ingredient": "soy",
+          "quantity": 35
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 20
+        },
+        {
+          "ingredient": "noodles",
+          "quantity": 450
+        }
+      ],
+      "steps": [
+        "0–7分钟：烧一大锅水，里脊和胡萝卜切细丝，菠菜洗净。",
+        "7–20分钟：水开后煮胡萝卜与里脊，猪肉中心至少63°C / 145°F并继续小火3分钟；加入挂面煮熟。",
+        "20–25分钟：菠菜煮软，加生抽与油，按口味补热水。 分成当前家庭人数的份量。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "porktomatopasta",
+      "en": "Pork & zucchini tomato penne",
+      "zh": "里脊西葫芦番茄通心粉",
+      "breakfast": false,
+      "minutes": 25,
+      "starch": "Noodles",
+      "protein": "Pork",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "pork",
+          "quantity": 750
+        },
+        {
+          "ingredient": "zucchini",
+          "quantity": 400
+        },
+        {
+          "ingredient": "tomato",
+          "quantity": 600
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        },
+        {
+          "ingredient": "salt",
+          "quantity": 3
+        },
+        {
+          "ingredient": "penne",
+          "quantity": 450
+        }
+      ],
+      "steps": [
+        "0–7分钟：烧一大锅水，里脊切小丁，西葫芦切薄片。",
+        "7–20分钟：面按包装煮；另锅热油炒里脊，加番茄和西葫芦轻炖，猪肉中心达63°C / 145°F后继续小火3分钟。",
+        "20–25分钟：面沥水拌入酱汁，加盐。 分成当前家庭人数的份量。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "shrimpudon",
+      "en": "Shrimp & broccoli udon",
+      "zh": "虾仁西兰花炒乌冬",
+      "breakfast": false,
+      "minutes": 25,
+      "starch": "Noodles",
+      "protein": "Shellfish",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "shrimp",
+          "quantity": 750
+        },
+        {
+          "ingredient": "broccoli",
+          "quantity": 450
+        },
+        {
+          "ingredient": "carrot",
+          "quantity": 250
+        },
+        {
+          "ingredient": "soy",
+          "quantity": 35
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        },
+        {
+          "ingredient": "udon",
+          "quantity": 1000
+        }
+      ],
+      "steps": [
+        "0–7分钟：烧一大锅水，提前解冻虾仁，西兰花切小朵，胡萝卜切细条。",
+        "7–20分钟：乌冬按包装煮散；同时将蔬菜蒸软；另一大锅炒虾仁至肉质珍珠白不透明。",
+        "20–25分钟：加入乌冬、菜、生抽及少许面汤，分批翻炒。 分成当前家庭人数的份量。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "shrimpspaghetti",
+      "en": "Lemon shrimp & spinach spaghetti",
+      "zh": "柠檬虾仁菠菜意面",
+      "breakfast": false,
+      "minutes": 25,
+      "starch": "Noodles",
+      "protein": "Shellfish",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "shrimp",
+          "quantity": 750
+        },
+        {
+          "ingredient": "spinach",
+          "quantity": 650
+        },
+        {
+          "ingredient": "lemon",
+          "quantity": 1
+        },
+        {
+          "ingredient": "garlic",
+          "quantity": 10
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 35
+        },
+        {
+          "ingredient": "salt",
+          "quantity": 3
+        },
+        {
+          "ingredient": "spaghetti",
+          "quantity": 450
+        }
+      ],
+      "steps": [
+        "0–7分钟：烧一大锅水，用已解冻虾仁，菠菜洗净，蒜切末。",
+        "7–20分钟：面按包装煮；另一锅加油炒蒜和虾仁至虾肉不透明，加入菠菜炒软。",
+        "20–25分钟：面沥水加入，加柠檬汁、盐及少量面汤拌匀。 分成当前家庭人数的份量。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "shrimpvermicelli",
+      "en": "Shrimp & egg rice noodle soup",
+      "zh": "虾仁鸡蛋青菜汤米粉",
+      "breakfast": false,
+      "minutes": 25,
+      "starch": "Noodles",
+      "protein": "Shellfish",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "shrimp",
+          "quantity": 650
+        },
+        {
+          "ingredient": "egg",
+          "quantity": 5
+        },
+        {
+          "ingredient": "bokchoy",
+          "quantity": 650
+        },
+        {
+          "ingredient": "soy",
+          "quantity": 30
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 15
+        },
+        {
+          "ingredient": "vermicelli",
+          "quantity": 450
+        }
+      ],
+      "steps": [
+        "0–7分钟：烧一大锅水，虾仁提前解冻，米粉按包装泡软；鸡蛋打散，白菜切段。",
+        "7–20分钟：水开后煮虾仁至不透明，放米粉煮熟；慢慢倒入蛋液搅成蛋花，煮至完全凝固。",
+        "20–25分钟：加入白菜煮软，用生抽、油调味。 分成当前家庭人数的份量。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "tunapasta",
+      "en": "Tuna & pea tomato pasta",
+      "zh": "金枪鱼豌豆番茄意面",
+      "breakfast": false,
+      "minutes": 25,
+      "starch": "Noodles",
+      "protein": "Fish",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "tuna",
+          "quantity": 600
+        },
+        {
+          "ingredient": "peas",
+          "quantity": 450
+        },
+        {
+          "ingredient": "tomato",
+          "quantity": 600
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        },
+        {
+          "ingredient": "salt",
+          "quantity": 2
+        },
+        {
+          "ingredient": "penne",
+          "quantity": 450
+        }
+      ],
+      "steps": [
+        "0–7分钟：烧一大锅水，罐装淡色金枪鱼沥水，用叉子分散。",
+        "7–20分钟：面按包装煮；另一锅加油、碎番茄与豌豆煮至豌豆熟软，再加入鱼肉加热。",
+        "20–25分钟：面沥水加入酱汁拌匀，少量盐调味。 分成当前家庭人数的份量。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "salmonpasta",
+      "en": "Salmon & broccoli milk-sauce penne",
+      "zh": "三文鱼西兰花奶香通心粉",
+      "breakfast": false,
+      "minutes": 25,
+      "starch": "Noodles",
+      "protein": "Fish",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "salmon",
+          "quantity": 750
+        },
+        {
+          "ingredient": "broccoli",
+          "quantity": 650
+        },
+        {
+          "ingredient": "milk",
+          "quantity": 350
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        },
+        {
+          "ingredient": "salt",
+          "quantity": 3
+        },
+        {
+          "ingredient": "penne",
+          "quantity": 450
+        }
+      ],
+      "steps": [
+        "0–7分钟：烧一大锅水，鱼去刺切小块，西兰花切小朵。",
+        "7–20分钟：面按包装煮，最后几分钟加入西兰花；另一锅热油煎鱼至中心63°C / 145°F，再加牛奶轻煮。",
+        "20–25分钟：面与菜沥水加入鱼锅，轻拌成薄奶汁，加盐。 分成当前家庭人数的份量。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "tofusoba",
+      "en": "Tofu & spinach soba",
+      "zh": "豆腐菠菜荞麦面",
+      "breakfast": false,
+      "minutes": 25,
+      "starch": "Noodles",
+      "protein": "Tofu",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "tofu",
+          "quantity": 900
+        },
+        {
+          "ingredient": "spinach",
+          "quantity": 400
+        },
+        {
+          "ingredient": "carrot",
+          "quantity": 300
+        },
+        {
+          "ingredient": "soy",
+          "quantity": 35
+        },
+        {
+          "ingredient": "sesame",
+          "quantity": 15
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 30
+        },
+        {
+          "ingredient": "soba",
+          "quantity": 450
+        }
+      ],
+      "steps": [
+        "0–7分钟：烧一大锅水，豆腐沥干切小块，胡萝卜切细丝，菠菜洗净。",
+        "7–20分钟：面按包装煮；平底锅分批煎豆腐至微黄，再加入胡萝卜及少许水焖熟，放菠菜炒软。",
+        "20–25分钟：面沥水拌入，加生抽、芝麻和少许面汤。 分成当前家庭人数的份量。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "mushroomtofunoodles",
+      "en": "Mushroom & tofu noodle soup",
+      "zh": "蘑菇豆腐青菜汤面",
+      "breakfast": false,
+      "minutes": 25,
+      "starch": "Noodles",
+      "protein": "Tofu",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "tofu",
+          "quantity": 900
+        },
+        {
+          "ingredient": "mushroom",
+          "quantity": 350
+        },
+        {
+          "ingredient": "bokchoy",
+          "quantity": 400
+        },
+        {
+          "ingredient": "soy",
+          "quantity": 35
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 20
+        },
+        {
+          "ingredient": "noodles",
+          "quantity": 450
+        }
+      ],
+      "steps": [
+        "0–7分钟：烧一大锅水，豆腐切块，蘑菇切片，白菜洗切。",
+        "7–20分钟：油锅炒蘑菇后加足量清水煮开，放豆腐轻煮5分钟；加入挂面按包装煮熟。",
+        "20–25分钟：放白菜煮软，用生抽调味。 分成当前家庭人数的份量。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "eggtomatonoodles",
+      "en": "Tomato & egg spinach noodles",
+      "zh": "番茄鸡蛋菠菜面",
+      "breakfast": false,
+      "minutes": 25,
+      "starch": "Noodles",
+      "protein": "Egg",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "egg",
+          "quantity": 10
+        },
+        {
+          "ingredient": "tomato",
+          "quantity": 700
+        },
+        {
+          "ingredient": "spinach",
+          "quantity": 400
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        },
+        {
+          "ingredient": "salt",
+          "quantity": 3
+        },
+        {
+          "ingredient": "noodles",
+          "quantity": 450
+        }
+      ],
+      "steps": [
+        "0–7分钟：烧一大锅水，鸡蛋打散，菠菜洗净。",
+        "7–20分钟：锅加油炒蛋至完全凝固盛出；加碎番茄及清水煮开，加入挂面按包装煮熟。",
+        "20–25分钟：放回鸡蛋，加菠菜煮软，盐调味。 分成当前家庭人数的份量。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "chickpeapasta",
+      "en": "Chickpea & zucchini penne",
+      "zh": "鹰嘴豆西葫芦通心粉",
+      "breakfast": false,
+      "minutes": 25,
+      "starch": "Noodles",
+      "protein": "Legumes",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "chickpea",
+          "quantity": 1000
+        },
+        {
+          "ingredient": "zucchini",
+          "quantity": 450
+        },
+        {
+          "ingredient": "tomato",
+          "quantity": 600
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        },
+        {
+          "ingredient": "salt",
+          "quantity": 3
+        },
+        {
+          "ingredient": "penne",
+          "quantity": 450
+        }
+      ],
+      "steps": [
+        "0–7分钟：烧一大锅水，罐装鹰嘴豆沥水冲洗，西葫芦切小丁。",
+        "7–20分钟：面按包装煮；另一锅热油炒西葫芦，加碎番茄、鹰嘴豆煮至熟软热透。",
+        "20–25分钟：面沥水拌入酱汁，加盐调味。 分成当前家庭人数的份量。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "turkeytacos",
+      "en": "Mild turkey & bean tacos",
+      "zh": "不辣火鸡黑豆软饼",
+      "breakfast": false,
+      "minutes": 30,
+      "starch": "Bread",
+      "protein": "Turkey",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "turkey",
+          "quantity": 700
+        },
+        {
+          "ingredient": "blackbean",
+          "quantity": 400
+        },
+        {
+          "ingredient": "tortilla",
+          "quantity": 10
+        },
+        {
+          "ingredient": "freshtomato",
+          "quantity": 400
+        },
+        {
+          "ingredient": "lettuce",
+          "quantity": 300
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        },
+        {
+          "ingredient": "salt",
+          "quantity": 3
+        }
+      ],
+      "steps": [
+        "0–8分钟：黑豆沥水冲洗；番茄切小丁，生菜洗净切细丝，处理生肉与生菜用具分开。",
+        "8–23分钟：热油炒散火鸡肉末至中心74°C / 165°F，加入黑豆、盐和少许水加热；另一干锅分批温热饼皮。",
+        "23–30分钟：肉豆、生菜、番茄装入软饼，每人约2个；不放辣酱。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "chickenwraps",
+      "en": "Chicken & yogurt salad wraps",
+      "zh": "鸡肉酸奶蔬菜卷",
+      "breakfast": false,
+      "minutes": 30,
+      "starch": "Bread",
+      "protein": "Chicken",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "chicken",
+          "quantity": 750
+        },
+        {
+          "ingredient": "tortilla",
+          "quantity": 10
+        },
+        {
+          "ingredient": "cucumber",
+          "quantity": 350
+        },
+        {
+          "ingredient": "lettuce",
+          "quantity": 300
+        },
+        {
+          "ingredient": "yogurt",
+          "quantity": 250
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        },
+        {
+          "ingredient": "salt",
+          "quantity": 3
+        }
+      ],
+      "steps": [
+        "0–8分钟：鸡胸肉切细条；黄瓜、生菜洗净切细条，生熟工具分开。",
+        "8–23分钟：热油分批煎鸡条至中心74°C / 165°F，加盐；饼皮按包装温热。",
+        "23–30分钟：每张饼抹原味酸奶，加入鸡肉、黄瓜、生菜后卷紧切半。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "beanquesadillas",
+      "en": "Black bean & corn quesadillas",
+      "zh": "黑豆玉米芝士夹饼",
+      "breakfast": false,
+      "minutes": 30,
+      "starch": "Bread",
+      "protein": "Legumes",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "blackbean",
+          "quantity": 1000
+        },
+        {
+          "ingredient": "corn",
+          "quantity": 350
+        },
+        {
+          "ingredient": "pepper",
+          "quantity": 350
+        },
+        {
+          "ingredient": "cheddar",
+          "quantity": 200
+        },
+        {
+          "ingredient": "tortilla",
+          "quantity": 10
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 20
+        }
+      ],
+      "steps": [
+        "0–7分钟：黑豆沥水压粗泥，甜椒切小丁。",
+        "7–15分钟：少量油炒甜椒和玉米至熟软，拌入黑豆加热。",
+        "15–30分钟：每张饼半边放豆菜、奶酪丝，对折；两个平底锅同时分批煎至两面微黄奶酪融化，切块。单锅需另加时间。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "chickpeapita",
+      "en": "Chickpea & cucumber pita pockets",
+      "zh": "鹰嘴豆黄瓜酸奶口袋饼",
+      "breakfast": false,
+      "minutes": 20,
+      "starch": "Bread",
+      "protein": "Legumes",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "chickpea",
+          "quantity": 1100
+        },
+        {
+          "ingredient": "pita",
+          "quantity": 5
+        },
+        {
+          "ingredient": "cucumber",
+          "quantity": 400
+        },
+        {
+          "ingredient": "freshtomato",
+          "quantity": 400
+        },
+        {
+          "ingredient": "yogurt",
+          "quantity": 300
+        },
+        {
+          "ingredient": "lemon",
+          "quantity": 1
+        },
+        {
+          "ingredient": "salt",
+          "quantity": 2
+        }
+      ],
+      "steps": [
+        "0–6分钟：鹰嘴豆沥水冲洗，黄瓜和番茄洗净切小丁。",
+        "6–14分钟：鹰嘴豆加少量水加热，略压碎；酸奶拌柠檬汁和盐。皮塔饼按包装温热。",
+        "14–20分钟：每个饼切成两半口袋，装入豆、菜与酸奶酱。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "chickencouscous",
+      "en": "Chicken & vegetable couscous",
+      "zh": "鸡肉豌豆胡萝卜库斯库斯",
+      "breakfast": false,
+      "minutes": 25,
+      "starch": "Couscous",
+      "protein": "Chicken",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "chicken",
+          "quantity": 750
+        },
+        {
+          "ingredient": "couscous",
+          "quantity": 400
+        },
+        {
+          "ingredient": "peas",
+          "quantity": 350
+        },
+        {
+          "ingredient": "carrot",
+          "quantity": 350
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        },
+        {
+          "ingredient": "salt",
+          "quantity": 3
+        }
+      ],
+      "steps": [
+        "0–6分钟：烧水；鸡肉切细条、胡萝卜切小丁。库斯库斯按包装用沸水加盖泡熟。",
+        "6–20分钟：大锅热油炒鸡肉至中心74°C / 165°F，加入胡萝卜、豌豆及少许水焖熟。",
+        "20–25分钟：库斯库斯用叉子拨松，拌入鸡肉、菜和盐。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "lentilcouscous",
+      "en": "Lentil & spinach couscous",
+      "zh": "扁豆菠菜番茄库斯库斯",
+      "breakfast": false,
+      "minutes": 20,
+      "starch": "Couscous",
+      "protein": "Legumes",
+      "vegetable": true,
+      "ingredients": [
+        {
+          "ingredient": "lentil",
+          "quantity": 1100
+        },
+        {
+          "ingredient": "couscous",
+          "quantity": 400
+        },
+        {
+          "ingredient": "spinach",
+          "quantity": 450
+        },
+        {
+          "ingredient": "tomato",
+          "quantity": 600
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        },
+        {
+          "ingredient": "salt",
+          "quantity": 3
+        }
+      ],
+      "steps": [
+        "0–5分钟：扁豆沥水冲洗；库斯库斯按包装用沸水加盖泡熟，菠菜洗净。",
+        "5–15分钟：油锅加入碎番茄、熟扁豆炖至热透，加入菠菜煮软。",
+        "15–20分钟：用盐调味，盛在拨松的库斯库斯上。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "appleoats",
+      "en": "Apple cinnamon oats",
+      "zh": "苹果肉桂牛奶燕麦",
+      "breakfast": true,
+      "minutes": 15,
+      "starch": "Oats",
+      "protein": "Dairy",
+      "vegetable": false,
+      "ingredients": [
+        {
+          "ingredient": "oats",
+          "quantity": 250
+        },
+        {
+          "ingredient": "milk",
+          "quantity": 1000
+        },
+        {
+          "ingredient": "apple",
+          "quantity": 3
+        },
+        {
+          "ingredient": "cinnamon",
+          "quantity": 2
+        }
+      ],
+      "steps": [
+        "0–5分钟：苹果洗净去核，切小丁；幼儿可去皮。",
+        "5–15分钟：燕麦、牛奶、苹果一起小火煮约10分钟，常搅拌，稠时加水；撒肉桂粉，确认苹果软后分碗。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "pumpkinoats",
+      "en": "Pumpkin banana oats",
+      "zh": "南瓜香蕉牛奶燕麦",
+      "breakfast": true,
+      "minutes": 12,
+      "starch": "Oats",
+      "protein": "Dairy",
+      "vegetable": false,
+      "ingredients": [
+        {
+          "ingredient": "oats",
+          "quantity": 250
+        },
+        {
+          "ingredient": "milk",
+          "quantity": 1000
+        },
+        {
+          "ingredient": "pumpkin",
+          "quantity": 400
+        },
+        {
+          "ingredient": "banana",
+          "quantity": 3
+        }
+      ],
+      "steps": [
+        "0–3分钟：燕麦、牛奶、原味南瓜泥入锅搅匀。",
+        "3–12分钟：小火煮熟燕麦，常搅拌，稠时加水；香蕉切片，盛碗后加入。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "strawberryoats",
+      "en": "Strawberry yogurt oats",
+      "zh": "草莓酸奶热燕麦",
+      "breakfast": true,
+      "minutes": 15,
+      "starch": "Oats",
+      "protein": "Dairy",
+      "vegetable": false,
+      "ingredients": [
+        {
+          "ingredient": "oats",
+          "quantity": 250
+        },
+        {
+          "ingredient": "milk",
+          "quantity": 750
+        },
+        {
+          "ingredient": "yogurt",
+          "quantity": 500
+        },
+        {
+          "ingredient": "strawberry",
+          "quantity": 400
+        }
+      ],
+      "steps": [
+        "0–10分钟：燕麦加牛奶小火煮熟，稠时加水；同时洗净草莓去蒂切片。",
+        "10–15分钟：燕麦分碗稍放凉，拌入原味酸奶和草莓。无需前夜准备。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "pearyogurt",
+      "en": "Pear yogurt oat bowls",
+      "zh": "香梨燕麦酸奶碗",
+      "breakfast": true,
+      "minutes": 10,
+      "starch": "Oats",
+      "protein": "Dairy",
+      "vegetable": false,
+      "ingredients": [
+        {
+          "ingredient": "yogurt",
+          "quantity": 1000
+        },
+        {
+          "ingredient": "oats",
+          "quantity": 200
+        },
+        {
+          "ingredient": "pear",
+          "quantity": 3
+        }
+      ],
+      "steps": [
+        "选择包装注明可直接食用的燕麦；否则先按包装煮熟，额外时间另计。",
+        "梨洗净去核切小丁；原味酸奶分碗，加入燕麦与梨，幼儿梨丁按年龄煮软。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "peachyogurt",
+      "en": "Peach yogurt oat bowls",
+      "zh": "鲜桃燕麦酸奶碗",
+      "breakfast": true,
+      "minutes": 10,
+      "starch": "Oats",
+      "protein": "Dairy",
+      "vegetable": false,
+      "ingredients": [
+        {
+          "ingredient": "yogurt",
+          "quantity": 1000
+        },
+        {
+          "ingredient": "oats",
+          "quantity": 200
+        },
+        {
+          "ingredient": "peach",
+          "quantity": 4
+        }
+      ],
+      "steps": [
+        "选择可直接食用燕麦；需煮熟者先按包装处理，时间另计。",
+        "桃子洗净去核切片，按孩子年龄切小；与原味酸奶、燕麦分碗。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "berryfrenchtoast",
+      "en": "Blueberry French toast",
+      "zh": "蓝莓法式吐司",
+      "breakfast": true,
+      "minutes": 25,
+      "starch": "Bread",
+      "protein": "Egg",
+      "vegetable": false,
+      "ingredients": [
+        {
+          "ingredient": "bread",
+          "quantity": 10
+        },
+        {
+          "ingredient": "egg",
+          "quantity": 5
+        },
+        {
+          "ingredient": "milk",
+          "quantity": 350
+        },
+        {
+          "ingredient": "berries",
+          "quantity": 300
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        }
+      ],
+      "steps": [
+        "0–5分钟：鸡蛋加牛奶打匀，蓝莓洗净；每片全麦面包两面短暂浸蛋液。",
+        "5–23分钟：两个平底锅刷油并行分批煎吐司，每面约3分钟，中心蛋液完全凝固至71°C / 160°F；单锅需更久。",
+        "23–25分钟：装盘配蓝莓，幼儿蓝莓按年龄切开或压碎。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "bananapancakes",
+      "en": "Banana oat pancakes & yogurt",
+      "zh": "香蕉燕麦小饼配酸奶",
+      "breakfast": true,
+      "minutes": 30,
+      "starch": "Oats",
+      "protein": "Egg",
+      "vegetable": false,
+      "ingredients": [
+        {
+          "ingredient": "oats",
+          "quantity": 250
+        },
+        {
+          "ingredient": "banana",
+          "quantity": 3
+        },
+        {
+          "ingredient": "egg",
+          "quantity": 5
+        },
+        {
+          "ingredient": "milk",
+          "quantity": 250
+        },
+        {
+          "ingredient": "yogurt",
+          "quantity": 500
+        },
+        {
+          "ingredient": "strawberry",
+          "quantity": 300
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        }
+      ],
+      "steps": [
+        "0–7分钟：燕麦用料理机打细，香蕉压泥，与鸡蛋、牛奶混匀；草莓洗切。",
+        "7–27分钟：两个平底锅刷油，分批摊直径约8厘米小饼，每面煎约3分钟，中心熟透至71°C / 160°F；单锅会更久。",
+        "27–30分钟：配原味酸奶、草莓，按食量分装。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "spinachomelet",
+      "en": "Spinach omelet, toast & orange",
+      "zh": "菠菜蛋饼吐司配橙子",
+      "breakfast": true,
+      "minutes": 20,
+      "starch": "Bread",
+      "protein": "Egg",
+      "vegetable": false,
+      "ingredients": [
+        {
+          "ingredient": "egg",
+          "quantity": 10
+        },
+        {
+          "ingredient": "spinach",
+          "quantity": 350
+        },
+        {
+          "ingredient": "bread",
+          "quantity": 10
+        },
+        {
+          "ingredient": "orange",
+          "quantity": 3
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        }
+      ],
+      "steps": [
+        "0–6分钟：菠菜洗切，鸡蛋打散；橙子去皮切块，面包分批烤热。",
+        "6–17分钟：油锅炒软菠菜，分两锅或两批倒蛋液煎成薄蛋饼，中心完全凝固至71°C / 160°F。",
+        "17–20分钟：蛋饼切块，与吐司、橙子分装。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "avocadoeggtoast",
+      "en": "Avocado egg toast & tomato",
+      "zh": "牛油果炒蛋吐司配番茄",
+      "breakfast": true,
+      "minutes": 20,
+      "starch": "Bread",
+      "protein": "Egg",
+      "vegetable": false,
+      "ingredients": [
+        {
+          "ingredient": "bread",
+          "quantity": 10
+        },
+        {
+          "ingredient": "egg",
+          "quantity": 10
+        },
+        {
+          "ingredient": "avocado",
+          "quantity": 3
+        },
+        {
+          "ingredient": "freshtomato",
+          "quantity": 400
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 20
+        }
+      ],
+      "steps": [
+        "0–6分钟：面包分批烤热，牛油果去皮去核压泥，番茄洗净切块。",
+        "6–16分钟：鸡蛋打散，锅加油分批炒至蛋液完全凝固。",
+        "16–20分钟：吐司抹牛油果、铺炒蛋，旁边配番茄。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "peanutbananatoast",
+      "en": "Peanut banana toast & milk",
+      "zh": "花生香蕉吐司配牛奶",
+      "breakfast": true,
+      "minutes": 10,
+      "starch": "Bread",
+      "protein": "Dairy",
+      "vegetable": false,
+      "ingredients": [
+        {
+          "ingredient": "bread",
+          "quantity": 10
+        },
+        {
+          "ingredient": "peanutbutter",
+          "quantity": 150
+        },
+        {
+          "ingredient": "banana",
+          "quantity": 4
+        },
+        {
+          "ingredient": "milk",
+          "quantity": 1000
+        }
+      ],
+      "steps": [
+        "0–6分钟：面包分批烤热，香蕉切薄片；确认家庭能食用花生和牛奶。",
+        "6–10分钟：吐司薄抹细滑花生酱、铺香蕉，牛奶分杯；幼儿不直接吞食一团花生酱。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "cottagefruittoast",
+      "en": "Cottage cheese toast & berries",
+      "zh": "茅屋奶酪吐司配草莓",
+      "breakfast": true,
+      "minutes": 10,
+      "starch": "Bread",
+      "protein": "Dairy",
+      "vegetable": false,
+      "ingredients": [
+        {
+          "ingredient": "bread",
+          "quantity": 10
+        },
+        {
+          "ingredient": "cottage",
+          "quantity": 750
+        },
+        {
+          "ingredient": "strawberry",
+          "quantity": 500
+        }
+      ],
+      "steps": [
+        "0–6分钟：面包分批烤热，草莓洗净去蒂切小块。",
+        "6–10分钟：吐司抹茅屋奶酪，配草莓分装；余下奶酪及时冷藏。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "breakfastburrito",
+      "en": "Egg, bean & spinach burritos",
+      "zh": "鸡蛋黑豆菠菜早餐卷",
+      "breakfast": true,
+      "minutes": 25,
+      "starch": "Bread",
+      "protein": "Egg",
+      "vegetable": false,
+      "ingredients": [
+        {
+          "ingredient": "tortilla",
+          "quantity": 5
+        },
+        {
+          "ingredient": "egg",
+          "quantity": 10
+        },
+        {
+          "ingredient": "blackbean",
+          "quantity": 400
+        },
+        {
+          "ingredient": "spinach",
+          "quantity": 300
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 25
+        }
+      ],
+      "steps": [
+        "0–6分钟：黑豆沥水冲洗，菠菜洗切，鸡蛋打散。",
+        "6–20分钟：油锅炒菠菜、黑豆至热透，盛出；炒鸡蛋至完全凝固。另一锅温热饼皮。",
+        "20–25分钟：豆菜和炒蛋装入饼皮卷紧，切成方便孩子拿取的小段。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "breakfastquesadilla",
+      "en": "Egg & tomato cheese quesadillas",
+      "zh": "鸡蛋番茄芝士早餐夹饼",
+      "breakfast": true,
+      "minutes": 25,
+      "starch": "Bread",
+      "protein": "Egg",
+      "vegetable": false,
+      "ingredients": [
+        {
+          "ingredient": "tortilla",
+          "quantity": 5
+        },
+        {
+          "ingredient": "egg",
+          "quantity": 8
+        },
+        {
+          "ingredient": "freshtomato",
+          "quantity": 400
+        },
+        {
+          "ingredient": "cheddar",
+          "quantity": 150
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 20
+        }
+      ],
+      "steps": [
+        "0–5分钟：番茄洗净切小丁，鸡蛋打散。",
+        "5–13分钟：油锅炒番茄至稍收汁，倒入鸡蛋炒至完全凝固。",
+        "13–25分钟：饼半边放蛋、奶酪后对折；两个平底锅并行分批煎至奶酪融化，切块。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "corneggporridge",
+      "en": "Corn & egg quick rice porridge",
+      "zh": "玉米鸡蛋快手粥",
+      "breakfast": true,
+      "minutes": 25,
+      "starch": "Rice",
+      "protein": "Egg",
+      "vegetable": false,
+      "ingredients": [
+        {
+          "ingredient": "rice",
+          "quantity": 250
+        },
+        {
+          "ingredient": "egg",
+          "quantity": 8
+        },
+        {
+          "ingredient": "corn",
+          "quantity": 400
+        },
+        {
+          "ingredient": "milk",
+          "quantity": 500
+        },
+        {
+          "ingredient": "salt",
+          "quantity": 2
+        }
+      ],
+      "steps": [
+        "0–5分钟：速煮米加约2升水开始煮，鸡蛋打散。此配方用速煮米，不是普通生米慢熬粥。",
+        "5–20分钟：加玉米煮至米粒软，适量补水；加入牛奶再次小火煮热。",
+        "20–25分钟：缓缓倒蛋液搅成蛋花，煮至完全凝固，加盐，稍放凉再分碗。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "savorytofuoats",
+      "en": "Savory tofu & egg oats",
+      "zh": "豆腐菠菜鸡蛋咸燕麦",
+      "breakfast": true,
+      "minutes": 20,
+      "starch": "Oats",
+      "protein": "Tofu",
+      "vegetable": false,
+      "ingredients": [
+        {
+          "ingredient": "oats",
+          "quantity": 250
+        },
+        {
+          "ingredient": "tofu",
+          "quantity": 500
+        },
+        {
+          "ingredient": "egg",
+          "quantity": 5
+        },
+        {
+          "ingredient": "spinach",
+          "quantity": 300
+        },
+        {
+          "ingredient": "soy",
+          "quantity": 20
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 15
+        }
+      ],
+      "steps": [
+        "0–5分钟：豆腐切小丁，菠菜洗切，鸡蛋打散。",
+        "5–16分钟：燕麦加约1.5升水煮软，加入豆腐、菠菜和油煮至热透，稠时补水。",
+        "16–20分钟：倒入蛋液搅匀煮至完全凝固，加生抽调味后分碗。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "breakfasttomatonoodles",
+      "en": "Breakfast tomato & egg noodles",
+      "zh": "早餐番茄鸡蛋小碗面",
+      "breakfast": true,
+      "minutes": 20,
+      "starch": "Noodles",
+      "protein": "Egg",
+      "vegetable": false,
+      "ingredients": [
+        {
+          "ingredient": "noodles",
+          "quantity": 300
+        },
+        {
+          "ingredient": "egg",
+          "quantity": 8
+        },
+        {
+          "ingredient": "tomato",
+          "quantity": 500
+        },
+        {
+          "ingredient": "spinach",
+          "quantity": 250
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 20
+        },
+        {
+          "ingredient": "salt",
+          "quantity": 2
+        }
+      ],
+      "steps": [
+        "0–5分钟：烧水，鸡蛋打散，菠菜洗净。",
+        "5–15分钟：锅加油炒蛋至完全凝固，倒碎番茄和热水煮开；加入挂面按包装煮熟。",
+        "15–20分钟：加菠菜煮软、盐调味，连汤分成早餐小碗。"
+      ],
+      "favorite": false
+    },
+    {
+      "id": "eggmuffin",
+      "en": "Egg & spinach English muffins",
+      "zh": "鸡蛋菠菜芝士英式松饼",
+      "breakfast": true,
+      "minutes": 20,
+      "starch": "Bread",
+      "protein": "Egg",
+      "vegetable": false,
+      "ingredients": [
+        {
+          "ingredient": "englishmuffin",
+          "quantity": 5
+        },
+        {
+          "ingredient": "egg",
+          "quantity": 8
+        },
+        {
+          "ingredient": "spinach",
+          "quantity": 250
+        },
+        {
+          "ingredient": "cheddar",
+          "quantity": 125
+        },
+        {
+          "ingredient": "oil",
+          "quantity": 20
+        }
+      ],
+      "steps": [
+        "0–6分钟：英式松饼横切后分批烤热，菠菜洗切，鸡蛋打散。",
+        "6–16分钟：油锅炒软菠菜，加入蛋液炒至完全凝固。",
+        "16–20分钟：把菜蛋和奶酪夹入松饼中，趁热盖合。"
+      ],
+      "favorite": false
+    }
+  ]
+}

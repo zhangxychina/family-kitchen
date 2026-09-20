@@ -1,0 +1,54 @@
+# 扩充验证记录
+
+菜单：56 套晚餐 + 20 套早餐。配图 70/76。
+
+核心回归：PASS
+
+```text
+RUN testScalingAndAggregation
+RUN testPurchasedAndStoredNeverDoubleCount
+RUN testReplaceRecomputesAndClearsVotes
+RUN testPlanDailyAndBalanced
+RUN testCookDeductsOnlyOnceAndConfirmedStockOnly
+RUN testConfirmDuplicateReplacesTotal
+RUN testPersistenceRoundTripAndCorruption
+RUN testWarningsAndCatalogIntegrity
+RUN testDiscreteUnitsRoundedPerMeal
+RUN testNewPlanKeepsPurchasedGroceries
+RUN testRecognitionDoesNotInventResults
+RUN testExpandedCatalogCountsAndIdentifiers
+RUN testSpicyMealsAreOptInAndScaleForOne
+RUN testRotationUsesWholeCatalog
+RUN testConsecutiveWeeksVaryAndMaintainProteinRange
+RUN testAllSwapsScaleAndPreservePurchasedGroceries
+RUN testInvalidPersistentDataIsRejected
+RUN testApprovalProgressAndConfirmAll
+RUN testSwapOptionsStayInSlotAndAvoidRepeats
+RUN testNoConsumptionWhenPlanningOrSkippingDeduction
+PASS testScalingAndAggregation
+PASS testPurchasedAndStoredNeverDoubleCount
+PASS testReplaceRecomputesAndClearsVotes
+PASS testPlanDailyAndBalanced
+PASS testCookDeductsOnlyOnceAndConfirmedStockOnly
+PASS testConfirmDuplicateReplacesTotal
+PASS testPersistenceRoundTripAndCorruption
+PASS testWarningsAndCatalogIntegrity
+PASS testDiscreteUnitsRoundedPerMeal
+PASS testNewPlanKeepsPurchasedGroceries
+PASS testRecognitionDoesNotInventResults
+PASS testExpandedCatalogCountsAndIdentifiers
+PASS testSpicyMealsAreOptInAndScaleForOne
+PASS testRotationUsesWholeCatalog
+PASS testConsecutiveWeeksVaryAndMaintainProteinRange
+PASS testAllSwapsScaleAndPreservePurchasedGroceries
+PASS testInvalidPersistentDataIsRejected
+PASS testApprovalProgressAndConfirmAll
+PASS testSwapOptionsStayInSlotAndAvoidRepeats
+PASS testNoConsumptionWhenPlanningOrSkippingDeduction
+20 scenarios passed; 2558 assertions.
+
+```
+
+SwiftUI/UI 测试源码语法解析及工程 plist 检查通过；这不等于 iOS 编译通过。Xcode 27 已安装，许可尚未接受，模拟器/真机构建及 UI 测试仍未执行。详见 DEVICE_ACCEPTANCE.md。
+
+扩充辣菜前的 Mac Release 核心性能（历史记录）：100 次，70 菜谱、68 库存条目、6 人，计划+采购中位 1.92 ms，p95 2.46 ms，最大 7.12 ms。不是 iPhone 设备测量。

@@ -1,0 +1,328 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		63780F1B40A6228DB481D1F5 /* FamilyTable/PantryViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 809F742EEC0D5D364D26CCC7 /* FamilyTable/PantryViews.swift */; };
+		CCAD47BDBC777BE320710609 /* FamilyTable/Brand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74C4A002E432DC9265031941 /* FamilyTable/Brand.swift */; };
+		7C1C564A9CB654A7D287F6AD /* Tests/FamilyTableUITests/FamilyTableUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A73201C599290F9EBF17338 /* Tests/FamilyTableUITests/FamilyTableUITests.swift */; };
+		7CE357B40CFBFFED22C84B05 /* Sources/FamilyCore/Catalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CFE617AD669C9410A1EB473 /* Sources/FamilyCore/Catalog.swift */; };
+		868D280E3B7CB6053498465E /* Sources/FamilyCore/Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89167F08BD3A004726FF6121 /* Sources/FamilyCore/Models.swift */; };
+		CF8A4D27E1C506A7C75A76BE /* FamilyTable/Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 077A994FF8C9EB87EF6576BC /* FamilyTable/Assets.xcassets */; };
+		F6950ACC5CA72B82AA35EB96 /* FamilyTable/FamilyTableApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 116E1F1D546D8101B1BCAED9 /* FamilyTable/FamilyTableApp.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		7C3F7C2476CF2BD9AE55EACD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 98F54143AB4E86B28C3AFEE0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0E8A3AD980EC179856012B7E;
+			remoteInfo = FamilyTable;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		077A994FF8C9EB87EF6576BC /* FamilyTable/Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = FamilyTable/Assets.xcassets; sourceTree = "<group>"; };
+		116E1F1D546D8101B1BCAED9 /* FamilyTable/FamilyTableApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyTable/FamilyTableApp.swift; sourceTree = "<group>"; };
+		1A73201C599290F9EBF17338 /* Tests/FamilyTableUITests/FamilyTableUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests/FamilyTableUITests/FamilyTableUITests.swift; sourceTree = "<group>"; };
+		38A007151ABE87CC01A5B6E9 /* FamilyTable.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = FamilyTable.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		809F742EEC0D5D364D26CCC7 /* FamilyTable/PantryViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyTable/PantryViews.swift; sourceTree = "<group>"; };
+		74C4A002E432DC9265031941 /* FamilyTable/Brand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyTable/Brand.swift; sourceTree = "<group>"; };
+		89167F08BD3A004726FF6121 /* Sources/FamilyCore/Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/FamilyCore/Models.swift; sourceTree = "<group>"; };
+		9CFE617AD669C9410A1EB473 /* Sources/FamilyCore/Catalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/FamilyCore/Catalog.swift; sourceTree = "<group>"; };
+		A7C9FD69DA095A3BF0CB4587 /* FamilyTableUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = FamilyTableUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		7561BFB015D8F536760CB671 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		B28B7AF69320201D1CF206EB = {
+			isa = PBXGroup;
+			children = (
+				1A73201C599290F9EBF17338 /* Tests/FamilyTableUITests/FamilyTableUITests.swift */,
+				116E1F1D546D8101B1BCAED9 /* FamilyTable/FamilyTableApp.swift */,
+				809F742EEC0D5D364D26CCC7 /* FamilyTable/PantryViews.swift */,
+				74C4A002E432DC9265031941 /* FamilyTable/Brand.swift */,
+				89167F08BD3A004726FF6121 /* Sources/FamilyCore/Models.swift */,
+				9CFE617AD669C9410A1EB473 /* Sources/FamilyCore/Catalog.swift */,
+				077A994FF8C9EB87EF6576BC /* FamilyTable/Assets.xcassets */,
+				FBDC4F23F93125BBEEAE800C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		FBDC4F23F93125BBEEAE800C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A7C9FD69DA095A3BF0CB4587 /* FamilyTableUITests.xctest */,
+				38A007151ABE87CC01A5B6E9 /* FamilyTable.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0E8A3AD980EC179856012B7E /* FamilyTable */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F37922C48DA5978D02C9E50E /* Build configuration list for PBXNativeTarget "FamilyTable" */;
+			buildPhases = (
+				BCE16DD0260827ECF338C787 /* Sources */,
+				7561BFB015D8F536760CB671 /* Frameworks */,
+				0189424A5A60FED329FA868E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FamilyTable;
+			productName = FamilyTable;
+			productReference = 38A007151ABE87CC01A5B6E9 /* FamilyTable.app */;
+			productType = "com.apple.product-type.application";
+		};
+		5A84779F73F7B6419BDB1882 /* FamilyTableUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AED4B730112F3401C4D7AC6B /* Build configuration list for PBXNativeTarget "FamilyTableUITests" */;
+			buildPhases = (
+				9B65503EE939B7F8DAEDF693 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				46098F1CD6D7EADDB246BA75 /* PBXTargetDependency */,
+			);
+			name = FamilyTableUITests;
+			productName = FamilyTableUITests;
+			productReference = A7C9FD69DA095A3BF0CB4587 /* FamilyTableUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		98F54143AB4E86B28C3AFEE0 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+			};
+			buildConfigurationList = 862894B703A6DEDF96A9DD6C /* Build configuration list for PBXProject "FamilyTable" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				"zh-Hans",
+				Base,
+			);
+			mainGroup = B28B7AF69320201D1CF206EB;
+			productRefGroup = FBDC4F23F93125BBEEAE800C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0E8A3AD980EC179856012B7E /* FamilyTable */,
+				5A84779F73F7B6419BDB1882 /* FamilyTableUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0189424A5A60FED329FA868E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF8A4D27E1C506A7C75A76BE /* FamilyTable/Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9B65503EE939B7F8DAEDF693 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7C1C564A9CB654A7D287F6AD /* Tests/FamilyTableUITests/FamilyTableUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BCE16DD0260827ECF338C787 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6950ACC5CA72B82AA35EB96 /* FamilyTable/FamilyTableApp.swift in Sources */,
+				63780F1B40A6228DB481D1F5 /* FamilyTable/PantryViews.swift in Sources */,
+				CCAD47BDBC777BE320710609 /* FamilyTable/Brand.swift in Sources */,
+				868D280E3B7CB6053498465E /* Sources/FamilyCore/Models.swift in Sources */,
+				7CE357B40CFBFFED22C84B05 /* Sources/FamilyCore/Catalog.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		46098F1CD6D7EADDB246BA75 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0E8A3AD980EC179856012B7E /* FamilyTable */;
+			targetProxy = 7C3F7C2476CF2BD9AE55EACD /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		5A8C91857F674E16E2724F47 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 2HKWUJYXM7;
+				GENERATE_INFOPLIST_FILE = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_KEY_CFBundleDisplayName = "Zhang Family Kitchen";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Photograph pantry items for manual review. Photos stay on your iPhone.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.familytable.local;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		89E1FD6268CC0F221A2BE178 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		94C1D7A82E2F92E70C5BA5D8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.familytable.local.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = FamilyTable;
+			};
+			name = Debug;
+		};
+		9609A256A79253DD705A918E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.familytable.local.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = FamilyTable;
+			};
+			name = Release;
+		};
+		E6DE6C99132752C914FEF632 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		E9B2E96ABC5F6856F2BE79CF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 2HKWUJYXM7;
+				GENERATE_INFOPLIST_FILE = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_KEY_CFBundleDisplayName = "Zhang Family Kitchen";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Photograph pantry items for manual review. Photos stay on your iPhone.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.familytable.local;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		862894B703A6DEDF96A9DD6C /* Build configuration list for PBXProject "FamilyTable" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				89E1FD6268CC0F221A2BE178 /* Debug */,
+				E6DE6C99132752C914FEF632 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AED4B730112F3401C4D7AC6B /* Build configuration list for PBXNativeTarget "FamilyTableUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				94C1D7A82E2F92E70C5BA5D8 /* Debug */,
+				9609A256A79253DD705A918E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F37922C48DA5978D02C9E50E /* Build configuration list for PBXNativeTarget "FamilyTable" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E9B2E96ABC5F6856F2BE79CF /* Debug */,
+				5A8C91857F674E16E2724F47 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 98F54143AB4E86B28C3AFEE0 /* Project object */;
+}
