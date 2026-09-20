@@ -56,7 +56,15 @@ xcodebuild -project FamilyTable.xcodeproj -scheme FamilyTable -sdk iphonesimulat
 
 本轮已增加早餐/晚餐筛选、60周推荐覆盖回归、相机权限拒绝提示、照片后台处理及独立 UI 测试目标。完整菜单见 `MENU_CATALOG.md`，设备验收阻塞与步骤见 `DEVICE_ACCEPTANCE.md`。
 
-本机已安装 Xcode 27，但尚未接受 Apple 许可或完成首次设置；默认开发路径仍指向 Command Line Tools。Swift 核心可编译，但标准 `swift test` 在导入 XCTest 时被环境阻止。提供 `scripts/check_core.py`，用原有 XCTest 场景生成独立 Swift 断言运行器，不依赖 XCTest；执行记录见 `VALIDATION.md`。SwiftUI 文件和新增 UI 测试做过语法解析，Xcode 工程通过 plist 格式检查。**未在模拟器或 iPhone 完成编译、启动、布局、相机及交互验收，不能视为已验证的可安装成品。**
+0.1 已用 Xcode 27 对 iOS Simulator SDK 完成整体编译，`** BUILD SUCCEEDED **`：
+
+```sh
+DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild \
+  -project FamilyTable.xcodeproj -scheme FamilyTable -sdk iphonesimulator \
+  -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
+```
+
+系统默认开发路径仍指向 Command Line Tools，因此命令里显式指定 `DEVELOPER_DIR`；标准 `swift test` 在该环境导入 XCTest 时仍被阻止。提供 `scripts/check_core.py`，用原有 XCTest 场景生成独立 Swift 断言运行器，不依赖 XCTest；执行记录见 `VALIDATION.md`。注意 `swiftc -parse` 只检查语法，不检查调用签名——0.1 就曾因此漏掉一处 `LabeledContent` 参数标签错误，改动 SwiftUI 后应以上面的 `xcodebuild` 为准。**编译通过不等于验收：启动、布局、相机及完整交互仍未在模拟器或 iPhone 上逐项确认。**
 
 ```sh
 python3 scripts/check_core.py

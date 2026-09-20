@@ -193,7 +193,7 @@ struct SettingsView: View {
                 Button("Add location") { store.update { $0.locations.append(Location(name:name.trimmingCharacters(in:.whitespaces),zone:zone)) }; name = "" }.disabled(name.trimmingCharacters(in:.whitespaces).isEmpty)
             }
             Section("About this first edition") {
-                LabeledContent("Version","\(Brand.appName) · \(Brand.appNameZh) \(Brand.version)")
+                LabeledContent("Version",value:"\(Brand.appName) · \(Brand.appNameZh) \(Brand.version)")
                 Text("Local to this iPhone. No account, cloud sync or photo uploads. Parent/child roles are social controls on a shared device. 50 dinner and 20 breakfast recipes; breakfast preferences and children's ages have not been assumed.").font(.footnote)
                 Text("Images: AI-generated recipe illustrations, created for this app. They are not photographs of tested recipes. Cooking times are estimates, not kitchen-tested guarantees.").font(.footnote)
             }
