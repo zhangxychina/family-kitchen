@@ -5,7 +5,7 @@ def ident(s):return hashlib.sha1(s.encode()).hexdigest()[:24].upper()
 def q(s):return '"'+s+'"'
 objects=[]
 def obj(key,content):objects.append(f'{ident(key)} = {{ {content} }};');return ident(key)
-sources=['FamilyTable/FamilyTableApp.swift','FamilyTable/PantryViews.swift','FamilyTable/Brand.swift','Sources/FamilyCore/Models.swift','Sources/FamilyCore/Catalog.swift','Sources/FamilyCore/Nutrition.swift']
+sources=['FamilyTable/FamilyTableApp.swift','FamilyTable/PantryViews.swift','FamilyTable/Brand.swift','FamilyTable/HistoryView.swift','Sources/FamilyCore/Models.swift','Sources/FamilyCore/Catalog.swift','Sources/FamilyCore/Nutrition.swift','Sources/FamilyCore/Dietary.swift','Sources/FamilyCore/Seasons.swift']
 refs=[]; builds=[]
 for file in sources:
     refs.append(obj(file,'isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = '+q(file)+'; sourceTree = "<group>";'))
@@ -20,7 +20,7 @@ phase=obj('sources','isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; f
 resources=obj('resources','isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = ('+assetbuild+',); runOnlyForDeploymentPostprocessing = 0;')
 frameworks=obj('frameworks','isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0;')
 base='CLANG_ENABLE_MODULES = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; SDKROOT = iphoneos; SWIFT_VERSION = 5.0;'
-app='CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; INFOPLIST_KEY_CFBundleDisplayName = "Zhang Kitchen"; INFOPLIST_KEY_NSCameraUsageDescription = "Photograph pantry items for manual review. Photos stay on your iPhone."; INFOPLIST_KEY_UILaunchScreen_Generation = YES; INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES; INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait"; PRODUCT_BUNDLE_IDENTIFIER = com.familytable.local; PRODUCT_NAME = "$(TARGET_NAME)"; TARGETED_DEVICE_FAMILY = 1; SUPPORTS_MACCATALYST = NO; SWIFT_EMIT_LOC_STRINGS = YES; CURRENT_PROJECT_VERSION = 1; MARKETING_VERSION = 0.1;'
+app='CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; INFOPLIST_KEY_CFBundleDisplayName = "Zhang Kitchen"; INFOPLIST_KEY_NSCameraUsageDescription = "Photograph pantry items for manual review. Photos stay on your iPhone."; INFOPLIST_KEY_UILaunchScreen_Generation = YES; INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES; INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait"; PRODUCT_BUNDLE_IDENTIFIER = com.zhangkitchen.app; PRODUCT_NAME = "$(TARGET_NAME)"; TARGETED_DEVICE_FAMILY = 1; SUPPORTS_MACCATALYST = NO; SWIFT_EMIT_LOC_STRINGS = YES; CURRENT_PROJECT_VERSION = 1; MARKETING_VERSION = 0.2;'
 for scope in ['project','app']:
     configs=[]
     for mode in ['Debug','Release']:
@@ -35,7 +35,7 @@ uiProduct=obj('uiProduct','isa = PBXFileReference; explicitFileType = wrapper.cf
 uiPhase=obj('uiPhase','isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = ('+uiBuild+',); runOnlyForDeploymentPostprocessing = 0;')
 uiConfigs=[]
 for mode in ['Debug','Release']:
-    uiConfigs.append(obj('ui'+mode,'isa = XCBuildConfiguration; buildSettings = { '+base+' GENERATE_INFOPLIST_FILE = YES; CODE_SIGN_STYLE = Automatic; PRODUCT_BUNDLE_IDENTIFIER = com.familytable.local.uitests; PRODUCT_NAME = "$(TARGET_NAME)"; TEST_TARGET_NAME = FamilyTable; TARGETED_DEVICE_FAMILY = 1; }; name = '+mode+';'))
+    uiConfigs.append(obj('ui'+mode,'isa = XCBuildConfiguration; buildSettings = { '+base+' GENERATE_INFOPLIST_FILE = YES; CODE_SIGN_STYLE = Automatic; PRODUCT_BUNDLE_IDENTIFIER = com.zhangkitchen.app.uitests; PRODUCT_NAME = "$(TARGET_NAME)"; TEST_TARGET_NAME = FamilyTable; TARGETED_DEVICE_FAMILY = 1; }; name = '+mode+';'))
 uiConfigList=obj('uiConfigs','isa = XCConfigurationList; buildConfigurations = ('+','.join(uiConfigs)+',); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release;')
 uiProxy=obj('uiProxy','isa = PBXContainerItemProxy; containerPortal = '+ident('project')+'; proxyType = 1; remoteGlobalIDString = '+target+'; remoteInfo = FamilyTable;')
 uiDependency=obj('uiDependency','isa = PBXTargetDependency; target = '+target+'; targetProxy = '+uiProxy+';')

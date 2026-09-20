@@ -18,7 +18,15 @@ import ImageIO
             try? FileManager.default.removeItem(at: directory)
         }
         do { state = try StateFile.load(from: file) }
-        catch { state = FamilyState(); if FileManager.default.fileExists(atPath: file.path) { loadBlocked = true; self.error = "Saved data could not be read. Original file is preserved. Restart before making changes or restore your backup." } }
+        catch {
+            state = FamilyState()
+            if FileManager.default.fileExists(atPath: file.path) {
+                loadBlocked = true
+                self.error = (error as? StateError) == .newerVersion
+                    ? "This kitchen was saved by a newer version of \(Brand.appName). Update the app to open it. Your data is untouched."
+                    : "Saved data could not be read. Original file is preserved. Restart before making changes or restore your backup."
+            }
+        }
     }
     @discardableResult func update(_ action: (inout FamilyState) -> Void) -> Bool {
         guard !loadBlocked else { return false }
@@ -84,7 +92,9 @@ struct RecipeArtwork: View {
     }
 }
 struct RecipeCard: View {
+    @EnvironmentObject var store: FamilyStore
     let recipe: Recipe
+    private var month: Int { Calendar.current.component(.month,from:Date()) }
     var body: some View {
         VStack(alignment:.leading,spacing:10) {
             RecipeArtwork(recipe: recipe)
@@ -93,6 +103,21 @@ struct RecipeCard: View {
                 Text(recipe.zh).foregroundStyle(.secondary)
                 Text(recipe.flavor).font(.caption).foregroundStyle(recipe.isSpicy ? Color.orange : Color.secondary)
                 Label("\(recipe.minutes) min · whole meal",systemImage:"clock").font(.caption).foregroundStyle(.secondary)
+                let conflicts = recipe.conflicts(with:store.state.excludedAllergens)
+                HStack(spacing: 8) {
+                    if !conflicts.isEmpty {
+                        Label("Contains \(conflicts.map(\.en).sorted().joined(separator: ", "))",systemImage:"exclamationmark.triangle.fill")
+                            .font(.caption2.weight(.medium)).foregroundStyle(Brand.clay)
+                            .padding(.horizontal,8).padding(.vertical,4)
+                            .background(Brand.clay.opacity(0.1),in:Capsule())
+                    }
+                    if recipe.isInSeason(month:month) {
+                        Label("In season · 应季",systemImage:"leaf.fill")
+                            .font(.caption2.weight(.medium)).foregroundStyle(Brand.protein)
+                            .padding(.horizontal,8).padding(.vertical,4)
+                            .background(Brand.protein.opacity(0.1),in:Capsule())
+                    }
+                }
             }.padding([.horizontal,.bottom])
         }.background(.white).clipShape(RoundedRectangle(cornerRadius:20)).overlay(RoundedRectangle(cornerRadius:20).stroke(.black.opacity(0.04)))
     }
@@ -249,11 +274,15 @@ struct WeekView: View {
                 DatePicker("Week starting",selection:$start,displayedComponents:.date)
                 Button { generate() } label: { Label("Plan this week's menu · 生成一周菜单",systemImage:"wand.and.stars").frame(maxWidth:.infinity) }
                     .buttonStyle(.borderedProminent).controlSize(.large).accessibilityIdentifier("planWeek")
+                NavigationLink { HistoryView() } label: { Label("What we've eaten · 吃过什么",systemImage:"clock.arrow.circlepath") }
             }.padding(.vertical,6)
         } footer: {
             InfoNote(title:"How the week is chosen · 菜单怎么排出来的",lines:[
                 "Mild meals only; spicy dishes are never recommended, though you can swap one in.",
                 "Rice and noodles alternate, and no dinner repeats within the week.",
+                "Produce at its seasonal peak is favoured, so the week follows the calendar — tomatoes and zucchini in summer, cabbage and broccoli in winter.",
+                "Anything eaten recently is pushed down the list; the last fortnight counts most.",
+                "Allergens your household excludes are never recommended or offered as a swap.",
                 "Ingredients you have confirmed in the pantry raise a meal's chances, so less is bought twice.",
                 "Dinner times assume 5–6 people, quick-cooking rice, thawed ingredients and two burners.",
                 "Breakfast preferences are not known yet — review the first week together and swap freely."
@@ -278,6 +307,7 @@ struct WeekView: View {
                 .padding(.vertical,6)
             Button { store.update { $0.approveAll() } } label: { Label("Confirm all \(progress.total) meals",systemImage:"checkmark.seal") }
                 .disabled(progress.approved == progress.total).accessibilityIdentifier("confirmAllMeals")
+            NavigationLink { HistoryView() } label: { Label("What we've eaten · 吃过什么",systemImage:"clock.arrow.circlepath") }
             Button(role:.destructive) { replacePlan = true } label: { Label("Plan a different week",systemImage:"arrow.triangle.2.circlepath") }
         }
     }
@@ -313,15 +343,34 @@ struct MealReview: View {
                 Section("Why this meal") {
                     Text("\(r.starch) + \(r.protein)\(r.vegetable ? " + vegetables" : " + fruit / grain") · \(r.flavor) · \(r.minutes) minutes including preparation.")
                     if store.state.preferred.contains(r.id) { Text("A family favorite") }
+                    let month = Calendar.current.component(.month,from:m.date)
+                    let seasonal = r.seasonalIngredients(month:month).inSeason
+                    if !seasonal.isEmpty {
+                        Label("In season now: \(seasonal.map(\.en).joined(separator: ", ")) · 应季",systemImage:"leaf")
+                            .font(.footnote).foregroundStyle(Brand.protein)
+                    }
+                    if let days = store.state.daysSinceLastEaten(r.id,asOf:m.date) {
+                        Text("Last eaten \(days) day\(days == 1 ? "" : "s") before this meal · \(store.state.timesEaten(r.id,asOf:m.date)) time(s) in 90 days")
+                            .font(.footnote).foregroundStyle(.secondary)
+                    } else {
+                        Text("New to the family · 还没吃过").font(.footnote).foregroundStyle(.secondary)
+                    }
                     let perPerson = r.nutrition(per:store.state.people)
                     Text("About \(Int(perPerson.kcal.rounded())) kcal and \(Int(perPerson.protein.rounded()))g protein per person · 每人约 \(Int(perPerson.kcal.rounded())) 千卡")
                         .font(.footnote).foregroundStyle(.secondary)
                     ForEach(store.state.warnings(for:m),id:\.self) { Text($0).foregroundStyle(.orange) }
                 }
                 Section("Everyone gets a say") {
-                    ForEach(1...3,id:\.self) { child in
-                        let key = "Child \(child)"
-                        Picker(key,selection:Binding(get:{ m.votes[key] ?? "Not yet" },set:{ value in store.update { s in if let i = s.meals.firstIndex(where:{$0.id == mealID}) { s.meals[i].votes[key] = value; s.meals[i].approved = false } } })) {
+                    let voters = store.state.members.filter(\.isChild)
+                    if voters.isEmpty {
+                        NavigationLink { SettingsView() } label: {
+                            Label("Add your family to vote · 添加家庭成员",systemImage:"person.2.badge.plus")
+                        }
+                        Text("Once the children are listed in settings, each of them gets a vote here.").font(.caption).foregroundStyle(.secondary)
+                    }
+                    ForEach(voters) { member in
+                        let key = member.id.uuidString
+                        Picker(member.name,selection:Binding(get:{ m.votes[key] ?? "Not yet" },set:{ value in store.update { s in if let i = s.meals.firstIndex(where:{$0.id == mealID}) { s.meals[i].votes[key] = value; s.meals[i].approved = false } } })) {
                             Text("Not yet").tag("Not yet"); Text("Looks good").tag("Looks good"); Text("Prefer a swap").tag("Prefer a swap")
                         }.disabled(m.cooked)
                     }
@@ -360,13 +409,16 @@ struct MealReview: View {
     }
 }
 struct RecipesView: View {
+    @EnvironmentObject var store: FamilyStore
     @State private var search = ""
+    @State private var seasonalOnly = false
     @State private var category = "All"
     @State private var flavor = "All"
     private var filtered: [Recipe] {
         Catalog.recipes.filter { recipe in
             (category == "All" || (category == "Breakfast" ? recipe.breakfast : !recipe.breakfast)) &&
             (flavor == "All" || (flavor == "Mild" ? !recipe.isSpicy : recipe.cuisine == flavor)) &&
+            (!seasonalOnly || recipe.isInSeason(month: Calendar.current.component(.month, from: Date()))) &&
             (search.isEmpty || (recipe.name + " " + recipe.flavor).localizedCaseInsensitiveContains(search))
         }
     }
@@ -386,6 +438,11 @@ struct RecipesView: View {
                     Text("Sichuan · 川菜").tag("Sichuan · 川菜")
                 }.pickerStyle(.menu).accessibilityIdentifier("recipeFlavor")
                 Text("Spicy meals are optional swaps; weekly recommendations stay mild.").font(.caption).foregroundStyle(.secondary)
+                Toggle("In season this month · 只看应季",isOn:$seasonalOnly).font(.subheadline)
+                let produce = Catalog.produceInSeason(month:Calendar.current.component(.month,from:Date()))
+                if !produce.isEmpty {
+                    Text("At its peak right now: \(produce.map(\.en).joined(separator: ", "))").font(.caption).foregroundStyle(.secondary)
+                }
                 if filtered.isEmpty { ContentUnavailableView.search(text:search) }
                 ForEach(filtered) { recipe in
                     NavigationLink { RecipeDetail(recipe:recipe) } label: { RecipeCard(recipe:recipe) }.buttonStyle(.plain)
@@ -416,6 +473,32 @@ struct RecipeDetail: View {
                               complete:recipe.nutritionIsComplete)
                     .listRowInsets(EdgeInsets(top:14,leading:16,bottom:14,trailing:16))
             } header: { Text("Nutrition estimate · 营养估算") }
+            Section("Allergens & season · 过敏原与时令") {
+                let conflicts = recipe.conflicts(with:store.state.excludedAllergens)
+                if !conflicts.isEmpty {
+                    Label("Contains \(conflicts.map(\.name).sorted().joined(separator: ", ")), which your household avoids.",systemImage:"exclamationmark.triangle.fill")
+                        .font(.subheadline).foregroundStyle(Brand.clay)
+                }
+                if recipe.allergens.isEmpty {
+                    Text("No major allergens among these ingredients · 无主要过敏原").font(.footnote).foregroundStyle(.secondary)
+                } else {
+                    ForEach(recipe.allergens.sorted { $0.rawValue < $1.rawValue },id:\.self) { allergen in
+                        Text("\(allergen.name) — from \(recipe.ingredients(carrying:allergen).map(\.en).joined(separator: ", "))")
+                            .font(.footnote).foregroundStyle(.secondary)
+                    }
+                    Text("Based on ingredients, not on the label in your hand. Check packaging for the brands you buy.").font(.caption).foregroundStyle(.secondary)
+                }
+                let month = Calendar.current.component(.month,from:Date())
+                let season = recipe.seasonalIngredients(month:month)
+                if !season.inSeason.isEmpty {
+                    Label("At its peak this month: \(season.inSeason.map(\.en).joined(separator: ", "))",systemImage:"leaf")
+                        .font(.footnote).foregroundStyle(Brand.protein)
+                }
+                if !season.outOfSeason.isEmpty {
+                    Text("Out of season now: \(season.outOfSeason.map(\.en).joined(separator: ", ")) — fine to buy, usually shipped and dearer.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                }
+            }
             Section("Ingredients & locations · 食材与位置") {
                 ForEach(recipe.scaled(servings),id:\.ingredient) { portion in
                     let item = Catalog.ingredient(portion.ingredient)

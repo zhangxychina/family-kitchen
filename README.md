@@ -1,6 +1,6 @@
 # Zhang Kitchen · 张家厨房
 
-**Version 0.1 · by Frank Zhang**
+**Version 0.2 · by Frank Zhang**
 
 An iPhone app that turns "what's for dinner?" into a question the whole family answers once a week — and then does the shopping list, the fridge map and the recipe for you.
 
@@ -37,6 +37,32 @@ After shopping, **Put away** suggests a shelf for each item based on how it need
 **5. Cook tonight · 照着做饭**
 **Today** shows the day's breakfast and dinner, the recipe steps in Chinese, the amounts for your family size, and — the part that saves the most time — where each ingredient is right now. After dinner, one tap records the meal as cooked.
 
+## Who's at the table
+
+Add the people who live here, by name, in **Pantry → Family & storage**. Mark each one child or adult: the children are the ones who get a vote on every meal, and their names appear on the meal screen. Any number of people works — the app has no opinion about how big your family is.
+
+Portions follow that list, and the stepper can be raised for guests.
+
+## Allergies and foods to avoid
+
+The same screen carries the major allergens: milk, egg, fish, shellfish, peanut, tree nuts, wheat/gluten, soy and sesame. Exclude one and it is **never recommended and never offered as a swap**. If you deliberately choose a dish that contains it, the app still lets you — and flags it clearly, on the card, in the meal review and in the recipe.
+
+This matches ingredients, not the label in your hand. Two that surprise people: ordinary soy sauce is brewed with wheat, and most dried soba is cut with wheat flour — both are marked. Cross-contact from shared equipment is invisible to any app, so a family managing a real allergy still reads every package.
+
+## Cooking with the seasons
+
+Menus follow the calendar. Produce at its US seasonal peak — cheaper, better tasting, less often shipped across a hemisphere — is favoured when the week is planned, so July leans on tomatoes, zucchini, cucumbers and peaches, while January leans on cabbage, broccoli, bok choy and oranges.
+
+Each recipe shows what is at its peak this month and what is out of season, the recipe list has an **in season this month** filter, and the browse screen names the produce that is good right now. Out-of-season food is never blocked — it is simply not pushed at you.
+
+## What we've eaten
+
+Every meal you mark as cooked is recorded, and whenever a planned week is replaced the old week is archived too. Open **Week → What we've eaten** to see it by week, along with the dishes that have come round most often in the last 90 days.
+
+The record distinguishes **cooked** (someone confirmed it that day) from **planned** (it was on the menu and the week moved on). The app does not claim to know whether the second kind was eaten.
+
+Next week's menu uses this memory: anything eaten in the last fortnight is pushed well down the list, and a dish that keeps reappearing within three months is nudged down too. About two years of meals are kept, on this iPhone only.
+
 ## Nutrition
 
 Every recipe and every planned day shows an estimate, per person: calories, a labelled bar for protein / carbohydrate / fat, plus fibre and sodium.
@@ -57,6 +83,8 @@ Being honest about this is part of the design.
 - **Everything stays on this iPhone.** No account, no cloud sync, no uploads. Parent and child roles are a family agreement on a shared device, not passwords.
 - **Recipe pictures are AI-generated illustrations** made for this app — not photographs of tested cooking.
 - **Times and nutrition are estimates**, not kitchen-tested or laboratory-measured.
+- **Allergen filtering is ingredient-level**, not label-level, and cross-contact is not modelled.
+- **Seasonal data is a national US generalisation.** Your local market is the better authority.
 
 ## Running it on your iPhone
 
@@ -86,8 +114,10 @@ swift scripts/make_icon.swift FamilyTable/Assets.xcassets/AppIcon.appiconset/ico
 - `Tests/` — core scenarios and UI tests. `scripts/check_core.py` runs the core scenarios without XCTest, which this machine's default toolchain cannot import; it compiles every file in `Sources/FamilyCore` automatically.
 - The icon is drawn in Core Graphics by `scripts/make_icon.swift`, and `BrandMark` in `FamilyTable/Brand.swift` redraws the same 1024-unit coordinates in SwiftUI, so the home-screen icon and the in-app mark stay identical.
 - Note that `swiftc -parse` only checks syntax, never call signatures. Use the `xcodebuild` command above after touching SwiftUI.
-- Current scope: one active week at a time, on one device. No cloud sync, week history, list export, store grouping, barcode scanning, custom recipes or custom ingredients. 56 dinners, 20 breakfasts, 79 bilingual ingredients.
-- **Not yet accepted on a device.** It compiles, and the core logic is covered by 23 scenarios and ~3,000 assertions, but launch, layout, camera and full interaction have not been signed off on a real iPhone.
+- Saved files are versioned and migrated on load (`FamilyState.currentVersion`, `migrate()`): older files open and are upgraded, and a file written by a *newer* app is refused rather than overwritten. Add fields freely; add a conversion to `migrate()` whenever the shape of existing data changes.
+- Current scope: one active week at a time, on one device. No cloud sync, list export, store grouping, barcode scanning, custom recipes or custom ingredients. 56 dinners, 20 breakfasts, 79 bilingual ingredients with nutrition, allergen and seasonality tables.
+- Still on the list before selling: custom recipes, real food photography, cooking every recipe to verify the times, CloudKit family sharing, dark mode, and App Store paperwork (privacy labels, policy URL, listing).
+- **Not yet accepted on a device.** It compiles, and the core logic is covered by 28 scenarios and ~4,000 assertions, but launch, layout, camera and full interaction have not been signed off on a real iPhone.
 
 ## Food safety
 
@@ -130,6 +160,32 @@ Today 页会显示这五步和你当前所在的位置，不需要记顺序。
 **5. 照着做饭 · Cook tonight**
 **Today** 显示当天的早餐和晚餐、中文步骤、按家庭人数的用量，以及最省时间的那一项：每样食材现在放在哪里。吃完后一点即可记录为已完成。
 
+## 家里有谁
+
+在 **Pantry → Family & storage** 中按名字添加家庭成员，并标记为孩子或成人：孩子会出现在每一餐的投票中，显示的是他们自己的名字。人数不限，应用不预设家庭规模。
+
+份量按这份名单计算，有客人时可以用步进器临时调高。
+
+## 过敏与忌口
+
+同一页可以设置主要过敏原：奶、蛋、鱼、甲壳类、花生、坚果、小麦／麸质、大豆、芝麻。勾选后，含该过敏原的菜**不会被推荐，也不会出现在换菜选项里**。如果你主动选择含该过敏原的菜，应用仍然允许，但会在卡片、选餐页和菜谱中明确标注。
+
+这是按食材匹配，不是按你手上的包装标签。两处容易被忽略：普通生抽是用小麦酿造的，市售干荞麦面通常也掺了小麦粉，两者都已标记。共用设备造成的交叉污染是任何应用都看不到的，真正有过敏的家庭仍需逐一查看包装。
+
+## 顺着时令做饭
+
+菜单会跟着季节走。处于美国应季高峰的果蔬——更便宜、更好吃、也更少需要长途运输——在排菜单时会被优先考虑：七月偏向番茄、西葫芦、黄瓜和桃子，一月偏向卷心菜、西兰花、小白菜和橙子。
+
+每道菜会显示本月哪些食材正当季、哪些已过季；菜品列表有 **in season this month（只看应季）** 筛选；浏览页会列出当下最好的时令食材。非应季的食材不会被禁止，只是不会被主动推荐。
+
+## 吃过什么
+
+每一餐点了"已完成"都会被记录；替换旧的周计划时，旧的一周也会归档。打开 **Week → What we've eaten**，可以按周查看，并看到近 90 天里出现最频繁的菜。
+
+记录区分**已完成**（当天有人确认做了）和**已排入**（当时在菜单上，然后这一周过去了）。应用不会假设后者一定吃过。
+
+排下周菜单时会用上这份记忆：最近两周吃过的会被明显往后排，三个月内反复出现的也会被下调。记录保留约两年，只存在这台 iPhone 上。
+
 ## 营养
 
 每道菜、每个已排好的日子，都会显示每人的估算：热量，带文字标签的蛋白质／碳水／脂肪比例条，以及膳食纤维和钠。
@@ -150,6 +206,8 @@ Today 页会显示这五步和你当前所在的位置，不需要记顺序。
 - **数据全部留在这台 iPhone 上。** 没有账号、云同步或上传。家长与孩子的角色是共用设备上的家庭约定，不是密码账户。
 - **菜品图片是为本应用生成的 AI 示意图**，不是实拍。
 - **时间与营养都是估算**，没有经过厨房实测或实验室测定。
+- **过敏原按食材判断**，不是按包装标签，也不考虑交叉污染。
+- **时令数据是美国全国性的概括**，当地市场永远更准确。
 
 ## 在 iPhone 上运行
 
@@ -179,8 +237,10 @@ swift scripts/make_icon.swift FamilyTable/Assets.xcassets/AppIcon.appiconset/ico
 - `Tests/`：核心场景与 UI 测试。`scripts/check_core.py` 在不依赖 XCTest 的情况下运行核心场景（本机默认工具链无法导入 XCTest），并自动编译 `Sources/FamilyCore` 下的所有文件。
 - 图标由 `scripts/make_icon.swift` 用 Core Graphics 绘制，`FamilyTable/Brand.swift` 中的 `BrandMark` 用同一套 1024 坐标在 SwiftUI 里重绘，因此主屏图标与应用内标识完全一致。
 - 注意 `swiftc -parse` 只检查语法，不检查调用签名。改动 SwiftUI 后请用上面的 `xcodebuild` 验证。
-- 当前范围：单设备、单个进行中的周计划。没有云同步、历史周、清单导出、按商店分组、条码扫描、自建菜谱与自建食材。共 56 套晚餐、20 套早餐、79 种双语食材。
-- **尚未在设备上完成验收。** 可以编译，核心逻辑有 23 个场景约 3000 条断言覆盖，但启动、布局、相机与完整交互还没有在真机上逐项确认。
+- 存档带版本号并在读取时迁移（`FamilyState.currentVersion`、`migrate()`）：旧文件会被打开并升级；由**更新版本**写入的文件会被拒绝而不是覆盖。新增字段可以随意添加；既有数据的结构发生变化时，请在 `migrate()` 中补上转换逻辑。
+- 当前范围：单设备、单个进行中的周计划。没有云同步、清单导出、按商店分组、条码扫描、自建菜谱与自建食材。共 56 套晚餐、20 套早餐、79 种双语食材，并配有营养、过敏原与时令数据。
+- 上架前仍待完成：自建菜谱、真实菜品摄影、逐道实测烹饪时间、CloudKit 家庭共享、深色模式，以及 App Store 材料（隐私标签、隐私政策链接、商店页面）。
+- **尚未在设备上完成验收。** 可以编译，核心逻辑有 28 个场景约 4000 条断言覆盖，但启动、布局、相机与完整交互还没有在真机上逐项确认。
 
 ## 食品安全
 

@@ -8,7 +8,7 @@ enum Brand {
     static let appName = "Zhang Kitchen"
     static let appNameZh = "张家厨房"
     /// Marketing version; keep in step with MARKETING_VERSION in the Xcode project.
-    static let version = "0.1"
+    static let version = "0.2"
 
     // Surfaces and ink
     static let green = Color(red: 0.24, green: 0.39, blue: 0.28)
@@ -161,7 +161,7 @@ struct NutritionCard: View {
                 // The headline number never shrinks or wraps; the title reflows around it.
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
                     Text("\(Int(nutrition.kcal.rounded()))")
-                        .font(.system(size: 34, weight: .semibold, design: .rounded))
+                        .font(.system(.largeTitle, design: .rounded).weight(.semibold))
                         .foregroundStyle(Brand.deepGreen)
                     Text("kcal").font(.caption).foregroundStyle(.secondary)
                 }.fixedSize()

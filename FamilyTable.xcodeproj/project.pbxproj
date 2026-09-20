@@ -11,8 +11,11 @@
 		7C1C564A9CB654A7D287F6AD /* Tests/FamilyTableUITests/FamilyTableUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A73201C599290F9EBF17338 /* Tests/FamilyTableUITests/FamilyTableUITests.swift */; };
 		7CE357B40CFBFFED22C84B05 /* Sources/FamilyCore/Catalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CFE617AD669C9410A1EB473 /* Sources/FamilyCore/Catalog.swift */; };
 		CF5C11FEB8C4A365084F2BD5 /* Sources/FamilyCore/Nutrition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 752CDCCA1DDBC4BD680FC799 /* Sources/FamilyCore/Nutrition.swift */; };
+		8842038EC1462D1E547C49F6 /* Sources/FamilyCore/Seasons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4B7B006948500B0E2ADDF8 /* Sources/FamilyCore/Seasons.swift */; };
+		052487C422265235967BFAA5 /* Sources/FamilyCore/Dietary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E604F2D0F73A34FF2ED2C6 /* Sources/FamilyCore/Dietary.swift */; };
 		868D280E3B7CB6053498465E /* Sources/FamilyCore/Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89167F08BD3A004726FF6121 /* Sources/FamilyCore/Models.swift */; };
 		CCAD47BDBC777BE320710609 /* FamilyTable/Brand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74C4A002E432DC9265031941 /* FamilyTable/Brand.swift */; };
+		48F01FEAE77CDDEE4FA9DA52 /* FamilyTable/HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7001ED6B44FBB175A570B398 /* FamilyTable/HistoryView.swift */; };
 		CF8A4D27E1C506A7C75A76BE /* FamilyTable/Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 077A994FF8C9EB87EF6576BC /* FamilyTable/Assets.xcassets */; };
 		F6950ACC5CA72B82AA35EB96 /* FamilyTable/FamilyTableApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 116E1F1D546D8101B1BCAED9 /* FamilyTable/FamilyTableApp.swift */; };
 /* End PBXBuildFile section */
@@ -33,10 +36,13 @@
 		1A73201C599290F9EBF17338 /* Tests/FamilyTableUITests/FamilyTableUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests/FamilyTableUITests/FamilyTableUITests.swift; sourceTree = "<group>"; };
 		38A007151ABE87CC01A5B6E9 /* FamilyTable.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = FamilyTable.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		74C4A002E432DC9265031941 /* FamilyTable/Brand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyTable/Brand.swift; sourceTree = "<group>"; };
+		7001ED6B44FBB175A570B398 /* FamilyTable/HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyTable/HistoryView.swift; sourceTree = "<group>"; };
 		809F742EEC0D5D364D26CCC7 /* FamilyTable/PantryViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyTable/PantryViews.swift; sourceTree = "<group>"; };
 		89167F08BD3A004726FF6121 /* Sources/FamilyCore/Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/FamilyCore/Models.swift; sourceTree = "<group>"; };
 		9CFE617AD669C9410A1EB473 /* Sources/FamilyCore/Catalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/FamilyCore/Catalog.swift; sourceTree = "<group>"; };
 		752CDCCA1DDBC4BD680FC799 /* Sources/FamilyCore/Nutrition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/FamilyCore/Nutrition.swift; sourceTree = "<group>"; };
+		0A4B7B006948500B0E2ADDF8 /* Sources/FamilyCore/Seasons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/FamilyCore/Seasons.swift; sourceTree = "<group>"; };
+		73E604F2D0F73A34FF2ED2C6 /* Sources/FamilyCore/Dietary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/FamilyCore/Dietary.swift; sourceTree = "<group>"; };
 		A7C9FD69DA095A3BF0CB4587 /* FamilyTableUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = FamilyTableUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -58,9 +64,12 @@
 				116E1F1D546D8101B1BCAED9 /* FamilyTable/FamilyTableApp.swift */,
 				809F742EEC0D5D364D26CCC7 /* FamilyTable/PantryViews.swift */,
 				74C4A002E432DC9265031941 /* FamilyTable/Brand.swift */,
+				7001ED6B44FBB175A570B398 /* FamilyTable/HistoryView.swift */,
 				89167F08BD3A004726FF6121 /* Sources/FamilyCore/Models.swift */,
 				9CFE617AD669C9410A1EB473 /* Sources/FamilyCore/Catalog.swift */,
 				752CDCCA1DDBC4BD680FC799 /* Sources/FamilyCore/Nutrition.swift */,
+				0A4B7B006948500B0E2ADDF8 /* Sources/FamilyCore/Seasons.swift */,
+				73E604F2D0F73A34FF2ED2C6 /* Sources/FamilyCore/Dietary.swift */,
 				077A994FF8C9EB87EF6576BC /* FamilyTable/Assets.xcassets */,
 				FBDC4F23F93125BBEEAE800C /* Products */,
 			);
@@ -167,9 +176,12 @@
 				F6950ACC5CA72B82AA35EB96 /* FamilyTable/FamilyTableApp.swift in Sources */,
 				63780F1B40A6228DB481D1F5 /* FamilyTable/PantryViews.swift in Sources */,
 				CCAD47BDBC777BE320710609 /* FamilyTable/Brand.swift in Sources */,
+				48F01FEAE77CDDEE4FA9DA52 /* FamilyTable/HistoryView.swift in Sources */,
 				868D280E3B7CB6053498465E /* Sources/FamilyCore/Models.swift in Sources */,
 				7CE357B40CFBFFED22C84B05 /* Sources/FamilyCore/Catalog.swift in Sources */,
 				CF5C11FEB8C4A365084F2BD5 /* Sources/FamilyCore/Nutrition.swift in Sources */,
+				8842038EC1462D1E547C49F6 /* Sources/FamilyCore/Seasons.swift in Sources */,
+				052487C422265235967BFAA5 /* Sources/FamilyCore/Dietary.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -201,8 +213,8 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.familytable.local;
+				MARKETING_VERSION = 0.2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zhangkitchen.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
@@ -264,7 +276,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.familytable.local.uitests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zhangkitchen.app.uitests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -281,7 +293,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.familytable.local.uitests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zhangkitchen.app.uitests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -349,8 +361,8 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.familytable.local;
+				MARKETING_VERSION = 0.2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zhangkitchen.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;

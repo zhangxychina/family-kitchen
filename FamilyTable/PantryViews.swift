@@ -189,12 +189,56 @@ struct StockEditor: View {
 }
 struct SettingsView: View {
     @EnvironmentObject var store: FamilyStore
+    @State private var newMember = ""
+    @State private var newMemberIsChild = true
     @State private var name = ""
     @State private var zone = "Refrigerated"
     let zones = ["Refrigerated","Frozen","Pantry"]
     var body: some View {
         Form {
-            Section("Family") { Stepper("\(store.state.people) people",value:Binding(get:{store.state.people},set:{ n in store.update { $0.people = n; for i in $0.meals.indices where !$0.meals[i].cooked { $0.meals[i].approved = false } } }),in:1...12); Text("Default: five. Amounts scale immediately. Above six people, allow more preparation and batch-cooking time.").font(.caption) }
+            Section("Who eats here · 家里有谁") {
+                ForEach(store.state.members) { member in
+                    HStack {
+                        TextField("Name",text:Binding(
+                            get:{ store.state.members.first { $0.id == member.id }?.name ?? "" },
+                            set:{ value in store.update { s in if let i = s.members.firstIndex(where:{ $0.id == member.id }) { s.members[i].name = value } } }))
+                        Picker("",selection:Binding(
+                            get:{ store.state.members.first { $0.id == member.id }?.isChild ?? true },
+                            set:{ value in store.update { s in if let i = s.members.firstIndex(where:{ $0.id == member.id }) { s.members[i].isChild = value } } })) {
+                            Text("Child").tag(true); Text("Adult").tag(false)
+                        }.pickerStyle(.segmented).frame(width:150)
+                    }
+                }.onDelete { offsets in store.update { s in s.members.remove(atOffsets:offsets); s.people = max(1,s.members.isEmpty ? s.people : s.members.count) } }
+                HStack {
+                    TextField("Add a name",text:$newMember)
+                    Button("Add") {
+                        let name = newMember.trimmingCharacters(in:.whitespaces)
+                        store.update { s in s.members.append(FamilyMember(name:name,isChild:newMemberIsChild)); s.people = s.members.count }
+                        newMember = ""
+                    }.disabled(newMember.trimmingCharacters(in:.whitespaces).isEmpty)
+                }
+                Picker("New person is",selection:$newMemberIsChild) { Text("A child").tag(true); Text("An adult").tag(false) }
+                Text("Children get a vote on each meal. Add as many or as few people as your family has.").font(.caption).foregroundStyle(.secondary)
+            }
+            Section("Portions · 份量") {
+                Stepper("\(store.state.people) people",value:Binding(get:{store.state.people},set:{ n in store.update { $0.people = n; for i in $0.meals.indices where !$0.meals[i].cooked { $0.meals[i].approved = false } } }),in:1...12)
+                Text("Follows your family list, and you can raise it for guests. Amounts scale immediately. Above six people, allow more preparation and batch-cooking time.").font(.caption).foregroundStyle(.secondary)
+            }
+            Section("Allergies & foods to avoid · 过敏与忌口") {
+                ForEach(Allergen.allCases,id:\.self) { allergen in
+                    Toggle(allergen.name,isOn:Binding(
+                        get:{ store.state.excludedAllergens.contains(allergen) },
+                        set:{ on in store.update { s in
+                            if on { s.excludedAllergens.insert(allergen) } else { s.excludedAllergens.remove(allergen) }
+                        } }))
+                }
+                InfoNote(title:"What excluding does — and does not do · 排除的含义",lines:[
+                    "Excluded allergens are never recommended and never offered as a swap.",
+                    "A meal you choose yourself is still allowed, but it is clearly flagged.",
+                    "This matches ingredients, not labels. Brands, sauces and shared equipment cause cross-contact that no app can see — a family managing a real allergy still reads every package.",
+                    "Ordinary soy sauce contains wheat, and most dried soba is cut with wheat flour; both are marked accordingly."
+                ])
+            }
             Section("Your real storage locations") {
                 Text("These are your labels, not a map of your fridge. You can use Fridge shelf 1/2/3, Produce drawer, Yogurt zone, Door, Freezer or Pantry. Set the correct temperature zone.").font(.caption)
                 ForEach(store.state.locations) { location in

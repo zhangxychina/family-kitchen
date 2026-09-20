@@ -257,6 +257,121 @@ final class FamilyCoreTests: XCTestCase {
         // Unplanned days contribute nothing rather than guessing.
         XCTAssertEqual(s.nutrition(on:Calendar.current.date(byAdding:.day,value:30,to:start)!),Nutrition.zero)
     }
+    func testOldSavedFileMigratesInsteadOfBreaking() throws {
+        // A file written by version 1, including a field the current app no longer
+        // writes and votes under the old invented labels.
+        let legacy = """
+        {"version":1,"people":6,"locations":[],"stock":[],"purchases":[],"photoFiles":[],
+         "preferred":["sesame"],
+         "meals":[{"id":"\(UUID().uuidString)","date":0,"recipe":"sesame","breakfast":false,
+                   "approved":true,"cooked":false,"votes":{"Child 1":"Looks good","Child 2":"Prefer a swap"}}]}
+        """
+        let file = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString).appendingPathComponent("state.json")
+        try FileManager.default.createDirectory(at:file.deletingLastPathComponent(),withIntermediateDirectories:true)
+        defer { try? FileManager.default.removeItem(at:file.deletingLastPathComponent()) }
+        try Data(legacy.utf8).write(to:file)
+        let restored = try StateFile.load(from:file)
+        XCTAssertEqual(restored.version,FamilyState.currentVersion)
+        XCTAssertEqual(restored.people,6)
+        XCTAssertEqual(restored.preferred,["sesame"])
+        // Nothing is invented: exactly the two children who had voted now exist.
+        XCTAssertEqual(restored.members.count,2)
+        XCTAssertEqual(restored.members.map(\.name).sorted(),["Child 1","Child 2"])
+        XCTAssertTrue(restored.members.allSatisfy(\.isChild))
+        // And their votes came with them, under the new member ids.
+        let votes = restored.meals[0].votes
+        XCTAssertEqual(votes.count,2)
+        for member in restored.members { XCTAssertNotNil(votes[member.id.uuidString]) }
+        XCTAssertTrue(restored.history.isEmpty)
+        XCTAssertTrue(restored.excludedAllergens.isEmpty)
+        // Saving and reloading is now stable at the current version.
+        try StateFile.save(restored,to:file)
+        XCTAssertEqual(try StateFile.load(from:file).members.count,2)
+    }
+    func testFileFromANewerAppIsRefusedRatherThanOverwritten() throws {
+        var state = FamilyState(); state.version = FamilyState.currentVersion + 1
+        let file = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString).appendingPathComponent("state.json")
+        defer { try? FileManager.default.removeItem(at:file.deletingLastPathComponent()) }
+        try StateFile.save(state,to:file)
+        XCTAssertThrowsError(try StateFile.load(from:file))
+    }
+    func testAllergenExclusionsRemoveMealsEverywhere() {
+        var s = FamilyState()
+        s.excludedAllergens = [.peanut,.shellfish]
+        s.plan(start:FamilyState.nextMonday(after:Date()))
+        XCTAssertEqual(s.meals.count,14)
+        for meal in s.meals {
+            let recipe = Catalog.recipe(meal.recipe)!
+            XCTAssertTrue(recipe.isSafe(for:s.excludedAllergens),"\(recipe.id) slipped past the filter")
+        }
+        let dinner = s.meals.first { !$0.breakfast }!
+        XCTAssertTrue(s.swapOptions(for:dinner,includeSpicy:true).allSatisfy { $0.isSafe(for:s.excludedAllergens) })
+        // A conflicting meal swapped in on purpose is still flagged, not silently allowed.
+        let shrimp = Catalog.recipes.first { !$0.breakfast && $0.allergens.contains(.shellfish) }!
+        s.replace(dinner.id,with:shrimp.id)
+        XCTAssertTrue(s.warnings(for:s.meals.first { $0.id == dinner.id }!).contains { $0.contains("Shellfish") })
+        // The table itself has to agree with the ingredients it describes.
+        XCTAssertEqual(Set(Catalog.allergenTable.keys).subtracting(Catalog.ingredients.map(\.id)),[])
+        XCTAssertTrue(Catalog.allergens(of:"soy").contains(.wheat))
+        XCTAssertEqual(Catalog.recipe("sesame")!.ingredients(carrying:.sesame).map(\.id),["sesame"])
+    }
+    func testSeasonTableIsSaneAndPlanningFollowsTheMonth() {
+        for (id,months) in Catalog.peakMonths {
+            XCTAssertTrue(Catalog.ingredients.contains { $0.id == id },"unknown ingredient \(id)")
+            XCTAssertFalse(months.isEmpty)
+            XCTAssertTrue(months.allSatisfy { (1...12).contains($0) })
+        }
+        XCTAssertTrue(Catalog.produceInSeason(month:7).contains { $0.id == "freshtomato" })
+        XCTAssertFalse(Catalog.produceInSeason(month:1).contains { $0.id == "freshtomato" })
+        // A recipe with no seasonal produce is neither rewarded nor punished.
+        for recipe in Catalog.recipes {
+            for month in 1...12 { XCTAssertTrue((0.0...1.0).contains(recipe.seasonalScore(month:month))) }
+        }
+        // The July menu suits July better than the January menu does.
+        func menu(month: Int) -> [Recipe] {
+            var state = FamilyState()
+            var components = DateComponents(); components.year = 2026; components.month = month; components.day = 6
+            state.plan(start:Calendar.current.date(from:components)!)
+            return state.meals.filter { !$0.breakfast }.compactMap { Catalog.recipe($0.recipe) }
+        }
+        func fit(_ menu: [Recipe], month: Int) -> Double {
+            menu.map { $0.seasonalScore(month:month) }.reduce(0,+) / Double(max(1,menu.count))
+        }
+        let july = menu(month:7), january = menu(month:1)
+        XCTAssertGreaterThan(fit(july,month:7),fit(january,month:7))
+        XCTAssertGreaterThan(fit(january,month:1),fit(july,month:1))
+    }
+    func testHistoryRecordsMealsAndDiscouragesRepeats() {
+        var s = FamilyState()
+        let start = FamilyState.nextMonday(after:Date())
+        s.plan(start:start)
+        XCTAssertTrue(s.history.isEmpty)
+        let first = s.meals[0]
+        s.finish(first.id,consume:false)
+        XCTAssertEqual(s.history.count,1)
+        XCTAssertTrue(s.history[0].cooked)
+        XCTAssertEqual(s.history[0].recipe,first.recipe)
+        // Finishing twice cannot double-count, and the id stays the meal's own.
+        s.finish(first.id,consume:false)
+        XCTAssertEqual(s.history.count,1)
+        XCTAssertEqual(s.history[0].id,first.id)
+        // Replanning archives the week that is being replaced, cooked or not.
+        let plannedRecipes = Set(s.meals.map(\.recipe))
+        s.plan(start:start.addingTimeInterval(7 * 86400))
+        XCTAssertEqual(s.history.count,14)
+        XCTAssertEqual(s.history.filter(\.cooked).count,1)
+        XCTAssertEqual(Set(s.history.map(\.recipe)),plannedRecipes)
+        // And the new week avoids what was just eaten.
+        XCTAssertTrue(Set(s.meals.map(\.recipe)).isDisjoint(with:plannedRecipes))
+        XCTAssertEqual(s.daysSinceLastEaten(first.recipe,asOf:first.date),0)
+        XCTAssertNil(s.daysSinceLastEaten("nothing-eaten-yet"))
+        XCTAssertEqual(s.timesEaten(first.recipe,asOf:first.date),1)
+        // Recency ranks: yesterday hurts more than last month, which beats never.
+        let today = Date()
+        XCTAssertGreaterThan(s.repeatPenalty(first.recipe,asOf:first.date),
+                             s.repeatPenalty(first.recipe,asOf:first.date.addingTimeInterval(40 * 86400)))
+        XCTAssertEqual(s.repeatPenalty("nothing-eaten-yet",asOf:today),0)
+    }
     func testNoConsumptionWhenPlanningOrSkippingDeduction() {
         var state = FamilyState(); state.stock = [Stock(ingredient:"rice",quantity:2000,confirmed:true)]
         state.plan(start:Date()); XCTAssertEqual(state.stock[0].quantity,2000)
