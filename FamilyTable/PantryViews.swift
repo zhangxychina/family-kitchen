@@ -97,7 +97,7 @@ struct PutAwayView: View {
                     "It counts only after someone confirms the amount and the place, so the shopping list cannot quietly under-buy.",
                     "Children can do this step; changing a location later is always allowed."
                 ])
-                NavigationLink("Edit storage locations",destination:SettingsView())
+                NavigationLink("Edit storage locations",destination:StorageSettingsView())
             }
             ForEach(store.state.purchases.filter{!$0.stored}) { p in PutAwayRow(purchase:p) }
             if store.state.purchases.allSatisfy(\.stored) { Text("All put away. Nice teamwork!") }
@@ -193,7 +193,7 @@ struct KitchenView: View {
                 Label("Add what you have · 添加食材", systemImage: "plus.circle.fill").frame(maxWidth: .infinity)
             }.buttonStyle(.borderedProminent).accessibilityIdentifier("addStock")
             if store.state.locations.isEmpty {
-                NavigationLink { SettingsView() } label: {
+                NavigationLink { StorageSettingsView() } label: {
                     Label("Set up your fridge and cupboards first", systemImage: "refrigerator").foregroundStyle(Brand.clay)
                 }
             }

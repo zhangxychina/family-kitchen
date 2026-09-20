@@ -175,7 +175,7 @@ struct TodayView: View {
         VStack(alignment:.leading,spacing:10) {
             SectionHeading(en:"First, where does food live?",zh:"先告诉我食物放在哪里")
             Text("Add your real fridge shelves, drawers and cupboards once. After that the app can tell everyone where each ingredient is.").font(.footnote).foregroundStyle(.secondary)
-            NavigationLink { SettingsView() } label: { Label("Set up our kitchen",systemImage:"cabinet").frame(maxWidth:.infinity) }
+            NavigationLink { StorageSettingsView() } label: { Label("Set up our kitchen",systemImage:"refrigerator").frame(maxWidth:.infinity) }
                 .buttonStyle(.borderedProminent).controlSize(.large)
         }.kitchenCard()
     }
@@ -385,7 +385,7 @@ struct MealReview: View {
                 Section("Everyone gets a say") {
                     let voters = store.state.members.filter(\.isChild)
                     if voters.isEmpty {
-                        NavigationLink { SettingsView() } label: {
+                        NavigationLink { FamilySettingsView() } label: {
                             Label("Add your family to vote · 添加家庭成员",systemImage:"person.2.badge.plus")
                         }
                         Text("Once the children are listed in settings, each of them gets a vote here.").font(.caption).foregroundStyle(.secondary)

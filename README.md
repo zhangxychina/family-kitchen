@@ -29,23 +29,26 @@ Open **Week**, pick the starting day, tap *Plan this week's menu*. You get seven
 Tap any meal. Each child votes, sees the picture, and can swap the dish — the six closest alternatives come first, the full catalogue is one tap further. A parent confirms each meal, or confirms all fourteen at once. Disagreement is settled by the parent, on purpose.
 
 **3. Shop once · 一次买齐**
-The **Shopping** list is built from the confirmed menu: every ingredient scaled to your family size, added up across the week, minus whatever you have already confirmed in the pantry. Names are in English and Chinese, grouped by aisle-like categories. Tick items off as you go.
+The **Shopping** list is built from the confirmed menu: every ingredient scaled to your family, added up across the week, minus whatever you have already confirmed in your kitchen. Names are in English and Chinese, grouped by aisle-like categories. Tick items off as you go.
 
 **4. Put it away · 收纳归位**
-After shopping, **Put away** suggests a shelf for each item based on how it needs to be stored and how your kitchen is actually laid out. Whoever puts it away confirms where it really went and how much was really bought — children can do this part. Only then does it count as pantry stock.
+After shopping, **Put away** suggests a shelf for each item based on how it needs to be stored and how your kitchen is actually laid out. Whoever puts it away confirms where it really went and how much was really bought — children can do this part. Only then does it count as food you have at home.
 
 **5. Cook tonight · 照着做饭**
-**Today** shows the day's breakfast and dinner, the recipe steps in Chinese, the amounts for your family size, and — the part that saves the most time — where each ingredient is right now. After dinner, one tap records the meal as cooked.
+**Today** shows the day's breakfast and dinner, the recipe steps in whichever language you chose, the amounts for your family, and — the part that saves the most time — where each ingredient is right now. After dinner, one tap records the meal as cooked.
+
+**And in between · Kitchen**
+The **Kitchen** tab is what you have at home, grouped by the shelf it actually sits on — one section per fridge shelf, drawer or cupboard, with anything unplaced at the end. It also holds the photos you take of a shelf, and the ⚙︎ **Settings** for everything below.
 
 ## Make it your kitchen
 
-Name your kitchen in **Pantry → Family & storage** — *Zhang Kitchen*, *The Lee Family Table*, whatever you call it at home — and that name appears at the top of Today and on the week. The app is called Family Kitchen; the kitchen is yours.
+Name your kitchen in **Kitchen → ⚙︎ Settings** — *Zhang Kitchen*, *The Lee Family Table*, whatever you call it at home — and that name appears at the top of Today and on the week. The app is called Family Kitchen; the kitchen is yours.
 
-The same screen sets **day or night view**, and whether recipes are shown in **中文, English or both**.
+Settings is a short menu rather than one long form: **Family & portions**, **Allergies**, **Where food lives**, **Language & appearance** (day or night view, and recipes in 中文, English or both), and **About**. Each row shows what it is currently set to.
 
 ## Who's at the table
 
-Add the people who live here, by name. Mark each one adult or child, and give each child their age. Children get a vote on every meal, and their names appear on the meal screen.
+Add the people who live here under **Settings → Family & portions**. Mark each one adult or child, and give each child their age. Children get a vote on every meal, and their names appear on the meal screen.
 
 **Portions follow who is actually eating.** Recipes are written for five adult portions, and each person is counted from there: an adult is one portion, a child is about a quarter under 2, 0.4 at 2–3, 0.65 at 4–8, 0.85 at 9–13, and a full portion from 14. Add guests for the week, or set any one person's amount by hand — a teenager who eats like two adults, an adult with a small appetite.
 
@@ -176,23 +179,26 @@ Today 页会显示这五步和你当前所在的位置，不需要记顺序。
 点任意一餐：孩子看图投票，也可以换菜——最合适的六个备选排在前面，全部菜品再点一下就能展开。家长逐餐确认，或一次确认全部十四餐。出现分歧时由家长决定，这是有意的设计。
 
 **3. 一次买齐 · Shop once**
-**Shopping** 清单由确认后的菜单生成：每样食材按家庭人数缩放、跨菜合并，再减去你已在储藏中确认的数量。中英文对照，按类别分组，买的时候逐项打勾。
+**Shopping** 清单由确认后的菜单生成：每样食材按家庭份数缩放、跨菜合并，再减去你已在厨房中确认的数量。中英文对照，按类别分组，买的时候逐项打勾。
 
 **4. 收纳归位 · Put it away**
 买完后，**Put away** 会结合储存要求和你家的真实布局，为每件物品建议位置。谁收纳谁确认实际放在哪里、实际买了多少——这一步孩子可以做。确认之后才算入库存。
 
 **5. 照着做饭 · Cook tonight**
-**Today** 显示当天的早餐和晚餐、中文步骤、按家庭人数的用量，以及最省时间的那一项：每样食材现在放在哪里。吃完后一点即可记录为已完成。
+**Today** 显示当天的早餐和晚餐、按所选语言显示的步骤、按家庭份数的用量，以及最省时间的那一项：每样食材现在放在哪里。吃完后一点即可记录为已完成。
+
+**贯穿其中 · Kitchen**
+**Kitchen** 标签页显示家里现有的食材，并按实际存放的位置分组——每个冰箱隔层、抽屉或储物柜一组，位置待确认的排在最后。拍下的货架照片也在这里，右上角的 ⚙︎ **Settings** 通向下面所有设置。
 
 ## 让它成为你家的厨房
 
-在 **Pantry → Family & storage** 里给厨房起个名字——张家厨房、李家餐桌，家里怎么叫就怎么写——这个名字会显示在 Today 和周计划顶部。应用叫 Family Kitchen，厨房是你们自己的。
+在 **Kitchen → ⚙︎ Settings** 里给厨房起个名字——张家厨房、李家餐桌，家里怎么叫就怎么写——这个名字会显示在 Today 和周计划顶部。应用叫 Family Kitchen，厨房是你们自己的。
 
-同一页还可以设置**白天／夜间**显示，以及菜谱用**中文、英文还是双语**。
+设置是一个简短的菜单，而不是一张长表单：**Family & portions**（家人与份量）、**Allergies**（过敏与忌口）、**Where food lives**（食物放在哪里）、**Language & appearance**（语言与显示：白天／夜间，以及菜谱用中文、英文或双语）和 **About**（关于）。每一行都会显示当前的设置值。
 
 ## 家里有谁
 
-在 **Pantry → Family & storage** 中按名字添加家庭成员，标记为成人或孩子，并填写孩子的年龄。孩子会出现在每一餐的投票中，显示的是他们自己的名字。
+在 **Kitchen → ⚙︎ Settings → Family & portions** 中按名字添加家庭成员，标记为成人或孩子，并填写孩子的年龄。孩子会出现在每一餐的投票中，显示的是他们自己的名字。
 
 **份量按真正吃饭的人计算。** 菜谱按五份成人量编写，每个人按比例折算：成人算一份；孩子 2 岁以下约 0.25 份，2–3 岁 0.4 份，4–8 岁 0.65 份，9–13 岁 0.85 份，14 岁起按一份计。可以临时添加客人，也可以手动设定某个人的份量——饭量大的青少年，或食量小的成人。
 
