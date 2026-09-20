@@ -329,9 +329,14 @@ public struct FamilyState: Codable, Sendable {
         let oldRecipes = Set(meals.map(\.recipe))
         let anchor = calendar.startOfDay(for: start)
         let month = calendar.component(.month, from: anchor)
-        // Whatever is being replaced becomes history, so the family keeps its record
-        // and the next plan knows what has just been eaten.
-        for meal in meals { remember(meal, cooked: meal.cooked) }
+        // Days that have already happened become history, so the family keeps its
+        // record and the next plan knows what has just been eaten. Meals still in the
+        // future are simply discarded: replacing a menu you never cooked must not
+        // enter it as something the family ate.
+        let today = calendar.startOfDay(for: Date())
+        for meal in meals where meal.cooked || meal.date < today {
+            remember(meal, cooked: meal.cooked)
+        }
         let dayNumber = calendar.ordinality(of: .day, in: .era, for: anchor) ?? 0
         let week = dayNumber / 7
         var planned: [Meal] = []

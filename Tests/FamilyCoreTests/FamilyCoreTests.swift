@@ -355,14 +355,23 @@ final class FamilyCoreTests: XCTestCase {
         s.finish(first.id,consume:false)
         XCTAssertEqual(s.history.count,1)
         XCTAssertEqual(s.history[0].id,first.id)
-        // Replanning archives the week that is being replaced, cooked or not.
-        let plannedRecipes = Set(s.meals.map(\.recipe))
+        // Replanning a week that has not happened yet discards it: only the meal
+        // actually confirmed as cooked is remembered.
         s.plan(start:start.addingTimeInterval(7 * 86400))
-        XCTAssertEqual(s.history.count,14)
-        XCTAssertEqual(s.history.filter(\.cooked).count,1)
-        XCTAssertEqual(Set(s.history.map(\.recipe)),plannedRecipes)
+        XCTAssertEqual(s.history.count,1)
+        XCTAssertEqual(s.history[0].recipe,first.recipe)
         // And the new week avoids what was just eaten.
-        XCTAssertTrue(Set(s.meals.map(\.recipe)).isDisjoint(with:plannedRecipes))
+        XCTAssertFalse(s.meals.contains { $0.recipe == first.recipe })
+        // A week that has already passed is archived when it is replaced, marked as
+        // planned rather than cooked, because nobody confirmed it.
+        var past = FamilyState()
+        let lastMonth = Calendar.current.date(byAdding:.day,value:-30,to:Date())!
+        past.plan(start:lastMonth)
+        let passedRecipes = Set(past.meals.map(\.recipe))
+        past.plan(start:FamilyState.nextMonday(after:Date()))
+        XCTAssertEqual(past.history.count,14)
+        XCTAssertEqual(past.history.filter(\.cooked).count,0)
+        XCTAssertEqual(Set(past.history.map(\.recipe)),passedRecipes)
         XCTAssertEqual(s.daysSinceLastEaten(first.recipe,asOf:first.date),0)
         XCTAssertNil(s.daysSinceLastEaten("nothing-eaten-yet"))
         XCTAssertEqual(s.timesEaten(first.recipe,asOf:first.date),1)

@@ -16,7 +16,7 @@ Cooking for a family of five is rarely about cooking. It's the deciding, the for
 
 Once a week you sit down together for a few minutes. The app proposes seven days of breakfasts and dinners. The children swap what they don't want. You confirm. From that one decision the app produces the grocery list, tells everyone where to put the food when it comes home, and each evening shows the recipe in Chinese with the exact shelf each ingredient is sitting on.
 
-It is built around one particular family: five people, mild Chinese and simple Western food, dinner on the table in about half an hour, noodles and rice taking turns, and three children who should have a say in what they eat.
+It grew out of one particular family — five people, mild Chinese and simple Western food, dinner on the table in about half an hour, noodles and rice taking turns, children who should have a say in what they eat — but the household, the allergies and the portions are all yours to set.
 
 ## A week in five steps
 
@@ -139,7 +139,7 @@ Fridge ≤ 40°F / 4°C, freezer ≤ 0°F / −18°C. Freeze raw meat and fish m
 
 每周全家只需坐下来几分钟：应用先排出七天的早餐和晚餐，孩子把不想吃的换掉，家长确认。从这一次决定出发，应用会生成采购清单，告诉大家买回来的东西该放哪里，并在每天傍晚显示中文菜谱，以及每样食材此刻放在哪一层。
 
-它是按一个具体的家庭做的：五口人、不辣的中餐和简单西餐、晚餐大约半小时上桌、面食与米饭轮换，以及三个应该对吃什么有发言权的孩子。
+它源于一个具体的家庭：五口人、不辣的中餐和简单西餐、晚餐大约半小时上桌、面食与米饭轮换，以及应该对吃什么有发言权的孩子——但家庭成员、过敏设置和份量都可以按你自己的情况来定。
 
 ## 一周五步
 
