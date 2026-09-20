@@ -83,9 +83,29 @@ public enum Catalog {
     ]
     private static let ingredientByID = Dictionary(uniqueKeysWithValues: ingredients.map { ($0.id, $0) })
     public static func ingredient(_ id: String) -> Ingredient { ingredientByID[id]! }
-    private static let recipeByID = Dictionary(uniqueKeysWithValues: recipes.map { ($0.id, $0) })
+    /// Dishes the family added themselves, kept in their saved file and registered
+    /// here so that planning, shopping and nutrition treat them like any other dish.
+    nonisolated(unsafe) private static var customRecipes: [Recipe] = []
+    nonisolated(unsafe) private static var recipeCache: [Recipe] = builtInRecipes
+    nonisolated(unsafe) private static var recipeByID: [String: Recipe] =
+        Dictionary(uniqueKeysWithValues: builtInRecipes.map { ($0.id, $0) })
+
+    /// Every dish available: the built-in catalogue plus this family's own.
+    public static var recipes: [Recipe] { recipeCache }
     public static func recipe(_ id: String) -> Recipe? { recipeByID[id] }
-    public static let recipes: [Recipe] = [
+    public static var familyAddedRecipes: [Recipe] { customRecipes }
+
+    /// Replaces the family's own dishes. Called whenever their saved file is loaded
+    /// or changed, so the two never drift apart.
+    public static func setCustomRecipes(_ recipes: [Recipe]) {
+        let builtInIDs = Set(builtInRecipes.map(\.id))
+        // A family dish can never shadow a built-in one.
+        customRecipes = recipes.filter { !builtInIDs.contains($0.id) }
+        recipeCache = builtInRecipes + customRecipes
+        recipeByID = Dictionary(recipeCache.map { ($0.id, $0) }) { _, latest in latest }
+    }
+
+    public static let builtInRecipes: [Recipe] = [
         .init(id:"sesame",en:"Sesame chicken & rice",zh:"芝麻鸡配西兰花米饭",breakfast:false,minutes:30,starch:"Rice",protein:"Chicken",vegetable:true,ingredients:[.init("chicken",750),.init("broccoli",650),.init("rice",375),.init("soy",35),.init("oil",25),.init("sesame",15)],steps:["0–5分钟：速煮米按包装加水开煮；鸡肉切成约2厘米小块，西兰花切小朵。生熟砧板分开。","5–20分钟：大平底锅加油，分两批煎鸡块；同时另一锅蒸西兰花6–8分钟。","20–30分钟：鸡肉中心达到74°C / 165°F，拌生抽和芝麻，加少许水收汁；与米饭、菜一起分装。"],favorite:true),
         .init(id:"curry",en:"Mild chicken curry",zh:"不辣咖喱鸡块饭",breakfast:false,minutes:30,starch:"Rice",protein:"Chicken",vegetable:true,ingredients:[.init("chicken",700),.init("carrot",400),.init("potato",400),.init("rice",350),.init("curry",12),.init("oil",25),.init("milk",250),.init("salt",3)],steps:["0–6分钟：速煮米开煮；鸡肉、土豆、胡萝卜切约1厘米小块。","6–12分钟：大锅热油翻炒鸡肉，加入蔬菜与无辣椒咖喱粉。","12–28分钟：加牛奶和清水至接近没过，加盖炖至土豆熟软，鸡肉中心达74°C / 165°F。加盐；配米饭。原料未解冻需另计时间。"],favorite:true),
         .init(id:"beefpasta",en:"Beef & tomato spaghetti",zh:"牛肉粒番茄意面",breakfast:false,minutes:25,starch:"Noodles",protein:"Beef",vegetable:true,ingredients:[.init("beef",650),.init("spaghetti",450),.init("tomato",700),.init("spinach",350),.init("oil",25),.init("salt",3)],steps:["0–7分钟：烧水，牛肉切小粒，菠菜洗净。水开后煮意面，按包装时间。","7–18分钟：另一锅热油煎牛肉，加入碎番茄煮开，拌入菠菜与盐。牛肉中心至少63°C / 145°F并静置3分钟。","18–25分钟：面沥水拌入酱汁，加适量面汤，确认牛肉熟透后分装。"],favorite:true),

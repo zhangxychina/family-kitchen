@@ -1,6 +1,6 @@
-# Zhang Kitchen · 张家厨房
+# Family Kitchen · 家庭厨房
 
-**Version 0.2 · by Frank Zhang**
+**Version 0.3 · by Frank Zhang**
 
 An iPhone app that turns "what's for dinner?" into a question the whole family answers once a week — and then does the shopping list, the fridge map and the recipe for you.
 
@@ -12,7 +12,7 @@ An iPhone app that turns "what's for dinner?" into a question the whole family a
 
 ## What this app is for
 
-Cooking for a family of five is rarely about cooking. It's the deciding, the forgetting, the second trip to the store, and the ten minutes spent looking for the ginger. Zhang Kitchen exists to take those parts away.
+Cooking for a family of five is rarely about cooking. It's the deciding, the forgetting, the second trip to the store, and the ten minutes spent looking for the ginger. Family Kitchen exists to take those parts away.
 
 Once a week you sit down together for a few minutes. The app proposes seven days of breakfasts and dinners. The children swap what they don't want. You confirm. From that one decision the app produces the grocery list, tells everyone where to put the food when it comes home, and each evening shows the recipe in Chinese with the exact shelf each ingredient is sitting on.
 
@@ -37,11 +37,35 @@ After shopping, **Put away** suggests a shelf for each item based on how it need
 **5. Cook tonight · 照着做饭**
 **Today** shows the day's breakfast and dinner, the recipe steps in Chinese, the amounts for your family size, and — the part that saves the most time — where each ingredient is right now. After dinner, one tap records the meal as cooked.
 
+## Make it your kitchen
+
+Name your kitchen in **Pantry → Family & storage** — *Zhang Kitchen*, *The Lee Family Table*, whatever you call it at home — and that name appears at the top of Today and on the week. The app is called Family Kitchen; the kitchen is yours.
+
+The same screen sets **day or night view**, and whether recipes are shown in **中文, English or both**.
+
 ## Who's at the table
 
-Add the people who live here, by name, in **Pantry → Family & storage**. Mark each one child or adult: the children are the ones who get a vote on every meal, and their names appear on the meal screen. Any number of people works — the app has no opinion about how big your family is.
+Add the people who live here, by name. Mark each one adult or child, and give each child their age. Children get a vote on every meal, and their names appear on the meal screen.
 
-Portions follow that list, and the stepper can be raised for guests.
+**Portions follow who is actually eating.** Recipes are written for five adult portions, and each person is counted from there: an adult is one portion, a child is about a quarter under 2, 0.4 at 2–3, 0.65 at 4–8, 0.85 at 9–13, and a full portion from 14. Add guests for the week, or set any one person's amount by hand — a teenager who eats like two adults, an adult with a small appetite.
+
+The shopping list follows that number directly, so two adults and three small children stop buying for five grown-ups.
+
+## Where food lives
+
+Add up to three fridges, three freezers and three cupboards. Each one arrives with the usual shelves — top, middle, bottom, produce drawer, door — which you rename to match your kitchen or delete if you do not have them. Put-away suggestions and "where is the ginger?" both use this layout.
+
+Removing an appliance never deletes the food in it: whatever was stored there simply goes back to having no confirmed place.
+
+## Dishes of your own
+
+Tap **+** on the Recipes screen to add a dish, either by typing it in or by pasting a link.
+
+Pasting a link is **the only time this app uses the internet**. It opens the page you gave it and reads the recipe data most recipe sites publish. What comes back is a draft: the name, the steps, the time and the ingredient lines. Ingredients the app recognises are matched for you; the rest stay as notes, shown with the recipe but deliberately left out of the shopping list and the nutrition estimate, which says so rather than undercounting.
+
+Tell it how many adult portions those amounts serve and everything is rescaled to your family. Saved dishes then behave like any other: planned into weeks, added to the shopping list, counted in nutrition, and editable or deletable at any time.
+
+Imported text stays on your iPhone for your own kitchen. The wording of someone else's recipe belongs to them — the link is kept with the dish, and it is not for republishing.
 
 ## Allergies and foods to avoid
 
@@ -80,7 +104,7 @@ Being honest about this is part of the design.
 - **Nothing is assumed into your pantry.** Only amounts someone confirmed are subtracted from the shopping list.
 - **Planning a meal does not consume ingredients.** Stock changes when you shop, put away, or finish cooking.
 - **Suggested shelves are suggestions**, shown separately from the place you actually confirmed.
-- **Everything stays on this iPhone.** No account, no cloud sync, no uploads. Parent and child roles are a family agreement on a shared device, not passwords.
+- **Everything stays on this iPhone.** No account, no cloud sync, no uploads, no analytics. The single exception is importing a dish from a link, which opens the page you paste — and only then. Parent and child roles are a family agreement on a shared device, not passwords.
 - **Recipe pictures are AI-generated illustrations** made for this app — not photographs of tested cooking.
 - **Times and nutrition are estimates**, not kitchen-tested or laboratory-measured.
 - **Allergen filtering is ingredient-level**, not label-level, and cross-contact is not modelled.
@@ -116,8 +140,8 @@ swift scripts/make_icon.swift FamilyTable/Assets.xcassets/AppIcon.appiconset/ico
 - Note that `swiftc -parse` only checks syntax, never call signatures. Use the `xcodebuild` command above after touching SwiftUI.
 - Saved files are versioned and migrated on load (`FamilyState.currentVersion`, `migrate()`): older files open and are upgraded, and a file written by a *newer* app is refused rather than overwritten. Add fields freely; add a conversion to `migrate()` whenever the shape of existing data changes.
 - Current scope: one active week at a time, on one device. No cloud sync, list export, store grouping, barcode scanning, custom recipes or custom ingredients. 56 dinners, 20 breakfasts, 79 bilingual ingredients with nutrition, allergen and seasonality tables.
-- Still on the list before selling: custom recipes, real food photography, cooking every recipe to verify the times, CloudKit family sharing, dark mode, and App Store paperwork (privacy labels, policy URL, listing).
-- **Not yet accepted on a device.** It compiles, and the core logic is covered by 28 scenarios and ~4,000 assertions, but launch, layout, camera and full interaction have not been signed off on a real iPhone.
+- Still on the list before selling: real food photography, cooking every recipe to verify the times, CloudKit family sharing, and App Store paperwork (privacy labels, policy URL, listing).
+- **Not yet accepted on a device.** It compiles, and the core logic is covered by 34 scenarios and ~4,300 assertions, but launch, layout, camera, importing and full interaction have not been signed off on a real iPhone.
 
 ## Food safety
 
@@ -135,7 +159,7 @@ Fridge ≤ 40°F / 4°C, freezer ≤ 0°F / −18°C. Freeze raw meat and fish m
 
 ## 这个应用是做什么的
 
-给五口之家做饭，难的往往不是做饭本身，而是决定吃什么、忘了买什么、再跑一趟超市，以及找生姜花掉的那十分钟。张家厨房就是来拿掉这些部分的。
+给五口之家做饭，难的往往不是做饭本身，而是决定吃什么、忘了买什么、再跑一趟超市，以及找生姜花掉的那十分钟。家庭厨房就是来拿掉这些部分的。
 
 每周全家只需坐下来几分钟：应用先排出七天的早餐和晚餐，孩子把不想吃的换掉，家长确认。从这一次决定出发，应用会生成采购清单，告诉大家买回来的东西该放哪里，并在每天傍晚显示中文菜谱，以及每样食材此刻放在哪一层。
 
@@ -160,11 +184,35 @@ Today 页会显示这五步和你当前所在的位置，不需要记顺序。
 **5. 照着做饭 · Cook tonight**
 **Today** 显示当天的早餐和晚餐、中文步骤、按家庭人数的用量，以及最省时间的那一项：每样食材现在放在哪里。吃完后一点即可记录为已完成。
 
+## 让它成为你家的厨房
+
+在 **Pantry → Family & storage** 里给厨房起个名字——张家厨房、李家餐桌，家里怎么叫就怎么写——这个名字会显示在 Today 和周计划顶部。应用叫 Family Kitchen，厨房是你们自己的。
+
+同一页还可以设置**白天／夜间**显示，以及菜谱用**中文、英文还是双语**。
+
 ## 家里有谁
 
-在 **Pantry → Family & storage** 中按名字添加家庭成员，并标记为孩子或成人：孩子会出现在每一餐的投票中，显示的是他们自己的名字。人数不限，应用不预设家庭规模。
+在 **Pantry → Family & storage** 中按名字添加家庭成员，标记为成人或孩子，并填写孩子的年龄。孩子会出现在每一餐的投票中，显示的是他们自己的名字。
 
-份量按这份名单计算，有客人时可以用步进器临时调高。
+**份量按真正吃饭的人计算。** 菜谱按五份成人量编写，每个人按比例折算：成人算一份；孩子 2 岁以下约 0.25 份，2–3 岁 0.4 份，4–8 岁 0.65 份，9–13 岁 0.85 份，14 岁起按一份计。可以临时添加客人，也可以手动设定某个人的份量——饭量大的青少年，或食量小的成人。
+
+采购清单直接跟随这个份数，因此"两大三小"的家庭不会再按五个成人去买菜。
+
+## 食物放在哪里
+
+最多可以添加三台冷藏、三台冷冻和三个储物柜。每台新添加的设备都会带上常见的隔层——上层、中层、下层、果蔬抽屉、门格——你可以改名以符合自家布局，或删掉没有的部分。收纳建议和"姜放在哪儿"都基于这份布局。
+
+删除设备不会删掉里面的食物：原本存放在那里的库存只是回到"位置待确认"。
+
+## 自己添加菜品
+
+在 Recipes 页点 **+** 添加菜品：可以手动输入，也可以粘贴网页链接。
+
+粘贴链接是**本应用唯一一次联网**：它会打开你给的网页，读取大多数菜谱网站都会发布的结构化菜谱数据。返回的内容是草稿——菜名、步骤、时间和食材行。应用认识的食材会自动匹配，其余保留为备注，会随菜谱显示，但刻意不计入采购清单和营养估算，并明确标注出来。
+
+填写这些用量对应多少份成人量，其余会按你家的份数换算。保存后的菜品与内置菜品一样：可排入周计划、计入采购清单、计入营养估算，也可以随时编辑或删除。
+
+导入的文字只保存在这台 iPhone 上，供自家使用。别人菜谱的文字版权属于对方——链接会随菜品一起保留，请不要转发发布。
 
 ## 过敏与忌口
 
@@ -203,7 +251,7 @@ Today 页会显示这五步和你当前所在的位置，不需要记顺序。
 - **不替你假设库存。** 只有确认过的数量才会从采购清单中扣除。
 - **只是排进菜单不会消耗食材。** 库存只在采购、收纳、做完饭时变化。
 - **建议位置只是建议**，与你实际确认的位置分开显示。
-- **数据全部留在这台 iPhone 上。** 没有账号、云同步或上传。家长与孩子的角色是共用设备上的家庭约定，不是密码账户。
+- **数据全部留在这台 iPhone 上。** 没有账号、云同步、上传或统计分析。唯一的例外是从链接导入菜品时会打开你粘贴的网页，且仅在那一刻联网。家长与孩子的角色是共用设备上的家庭约定，不是密码账户。
 - **菜品图片是为本应用生成的 AI 示意图**，不是实拍。
 - **时间与营养都是估算**，没有经过厨房实测或实验室测定。
 - **过敏原按食材判断**，不是按包装标签，也不考虑交叉污染。
@@ -239,8 +287,8 @@ swift scripts/make_icon.swift FamilyTable/Assets.xcassets/AppIcon.appiconset/ico
 - 注意 `swiftc -parse` 只检查语法，不检查调用签名。改动 SwiftUI 后请用上面的 `xcodebuild` 验证。
 - 存档带版本号并在读取时迁移（`FamilyState.currentVersion`、`migrate()`）：旧文件会被打开并升级；由**更新版本**写入的文件会被拒绝而不是覆盖。新增字段可以随意添加；既有数据的结构发生变化时，请在 `migrate()` 中补上转换逻辑。
 - 当前范围：单设备、单个进行中的周计划。没有云同步、清单导出、按商店分组、条码扫描、自建菜谱与自建食材。共 56 套晚餐、20 套早餐、79 种双语食材，并配有营养、过敏原与时令数据。
-- 上架前仍待完成：自建菜谱、真实菜品摄影、逐道实测烹饪时间、CloudKit 家庭共享、深色模式，以及 App Store 材料（隐私标签、隐私政策链接、商店页面）。
-- **尚未在设备上完成验收。** 可以编译，核心逻辑有 28 个场景约 4000 条断言覆盖，但启动、布局、相机与完整交互还没有在真机上逐项确认。
+- 上架前仍待完成：真实菜品摄影、逐道实测烹饪时间、CloudKit 家庭共享，以及 App Store 材料（隐私标签、隐私政策链接、商店页面）。
+- **尚未在设备上完成验收。** 可以编译，核心逻辑有 34 个场景约 4300 条断言覆盖，但启动、布局、相机、网页导入与完整交互还没有在真机上逐项确认。
 
 ## 食品安全
 

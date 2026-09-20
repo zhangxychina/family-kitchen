@@ -31,6 +31,46 @@ public struct Recipe: Codable, Identifiable, Sendable {
     /// English steps for a dish the family added themselves. Built-in recipes keep
     /// theirs in `Catalog.stepsEN` instead.
     public var stepsEnglish: [String]? = nil
+    /// Where a dish came from, when it was brought in from a web page.
+    public var sourceURL: String? = nil
+    /// Ingredient lines that could not be matched to the app's own ingredients.
+    /// They are shown with the recipe but left out of the shopping list and the
+    /// nutrition estimate, which says so rather than quietly undercounting.
+    public var unmatchedIngredients: [String]? = nil
+    /// True for a dish this family added themselves.
+    public var isFamilyAdded: Bool { id.hasPrefix("family-") }
+
+    /// Lenient decoding, so a dish saved by an older version still opens when new
+    /// fields are added later.
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(String.self, forKey: .id)
+        en = try c.decode(String.self, forKey: .en)
+        zh = try c.decode(String.self, forKey: .zh)
+        breakfast = try c.decodeIfPresent(Bool.self, forKey: .breakfast) ?? false
+        minutes = try c.decodeIfPresent(Int.self, forKey: .minutes) ?? 30
+        starch = try c.decodeIfPresent(String.self, forKey: .starch) ?? "Other"
+        protein = try c.decodeIfPresent(String.self, forKey: .protein) ?? "Other"
+        vegetable = try c.decodeIfPresent(Bool.self, forKey: .vegetable) ?? false
+        ingredients = try c.decodeIfPresent([Portion].self, forKey: .ingredients) ?? []
+        steps = try c.decodeIfPresent([String].self, forKey: .steps) ?? []
+        favorite = try c.decodeIfPresent(Bool.self, forKey: .favorite) ?? false
+        cuisine = try c.decodeIfPresent(String.self, forKey: .cuisine)
+        heat = try c.decodeIfPresent(Int.self, forKey: .heat) ?? 0
+        stepsEnglish = try c.decodeIfPresent([String].self, forKey: .stepsEnglish)
+        sourceURL = try c.decodeIfPresent(String.self, forKey: .sourceURL)
+        unmatchedIngredients = try c.decodeIfPresent([String].self, forKey: .unmatchedIngredients)
+    }
+    public init(id: String, en: String, zh: String, breakfast: Bool, minutes: Int, starch: String,
+                protein: String, vegetable: Bool, ingredients: [Portion], steps: [String],
+                favorite: Bool, cuisine: String? = nil, heat: Int = 0, stepsEnglish: [String]? = nil,
+                sourceURL: String? = nil, unmatchedIngredients: [String]? = nil) {
+        self.id = id; self.en = en; self.zh = zh; self.breakfast = breakfast; self.minutes = minutes
+        self.starch = starch; self.protein = protein; self.vegetable = vegetable
+        self.ingredients = ingredients; self.steps = steps; self.favorite = favorite
+        self.cuisine = cuisine; self.heat = heat; self.stepsEnglish = stepsEnglish
+        self.sourceURL = sourceURL; self.unmatchedIngredients = unmatchedIngredients
+    }
     public var isSpicy: Bool { heat > 0 }
     public var flavor: String { heat == 0 ? "Mild · 不辣" : "\(cuisine ?? "Spicy") · \(heat == 1 ? "Medium · 中辣" : "Hot · 辣")" }
     public var name: String { "\(en) · \(zh)" }
@@ -256,6 +296,8 @@ public struct FamilyState: Codable, Sendable {
     public var members: [FamilyMember] = []
     /// What has already been eaten, newest last.
     public var history: [MealRecord] = []
+    /// Dishes this family added themselves.
+    public var customRecipes: [Recipe] = []
     /// Allergens this household avoids entirely.
     public var excludedAllergens: Set<Allergen> = []
     /// Day or night view.
@@ -267,7 +309,7 @@ public struct FamilyState: Codable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case version, people, locations, stock, meals, purchases, photoFiles, preferred
         case members, history, excludedAllergens, appearance, recipeLanguage
-        case kitchenName, guests
+        case kitchenName, guests, customRecipes
     }
     /// Every field is decoded leniently, so a file written by an older version of the
     /// app opens instead of being discarded. Fields added later simply take their
@@ -294,11 +336,28 @@ public struct FamilyState: Codable, Sendable {
         recipeLanguage = try container.decodeIfPresent(RecipeLanguage.self, forKey: .recipeLanguage) ?? .both
         kitchenName = try container.decodeIfPresent(String.self, forKey: .kitchenName) ?? ""
         guests = try container.decodeIfPresent(Int.self, forKey: .guests) ?? 0
+        customRecipes = try container.decodeIfPresent([Recipe].self, forKey: .customRecipes) ?? []
+        // Family dishes must be known to the catalogue before anything looks a meal up.
+        Catalog.setCustomRecipes(customRecipes)
         migrate()
     }
 
     /// Bring a decoded file up to the current shape. Additive changes need nothing
     /// here; conversions do.
+    /// Adds or replaces one of the family's own dishes.
+    public mutating func saveCustomRecipe(_ recipe: Recipe) {
+        if let index = customRecipes.firstIndex(where: { $0.id == recipe.id }) { customRecipes[index] = recipe }
+        else { customRecipes.append(recipe) }
+        Catalog.setCustomRecipes(customRecipes)
+    }
+    /// Removes one, along with any planned meal that used it, so nothing refers to a
+    /// dish that no longer exists.
+    public mutating func deleteCustomRecipe(_ id: String) {
+        customRecipes.removeAll { $0.id == id }
+        meals.removeAll { $0.recipe == id }
+        preferred.remove(id)
+        Catalog.setCustomRecipes(customRecipes)
+    }
     public mutating func migrate() {
         if version < 2 {
             // Version 1 kept votes under invented labels — "Child 1", "Child 2".

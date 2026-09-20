@@ -457,6 +457,72 @@ final class FamilyCoreTests: XCTestCase {
         try StateFile.save(s,to:file)
         XCTAssertEqual(try StateFile.load(from:file).kitchenName,"Zhang Kitchen")
     }
+    func testImportReadsSchemaRecipeFromAPage() throws {
+        let page = """
+        <html><head>
+        <script type="application/ld+json">
+        {"@context":"https://schema.org","@graph":[
+          {"@type":"WebPage","name":"Not the recipe"},
+          {"@type":["Recipe"],"name":"Ginger Garlic Chicken &amp; Rice","totalTime":"PT1H15M",
+           "recipeYield":"4 servings",
+           "recipeIngredient":["500 g boneless chicken breast","2 tbsp reduced-sodium soy sauce","1 cup quick-cooking dry rice","a handful of chopped parsley"],
+           "recipeInstructions":[{"@type":"HowToStep","text":"Slice the <b>chicken</b> thinly."},
+                                 {"@type":"HowToSection","itemListElement":[{"@type":"HowToStep","text":"Fry until cooked through."}]},
+                                 "Serve over rice."]}
+        ]}
+        </script></head><body>ignored</body></html>
+        """
+        let imported = try RecipeImport.parse(html:page,sourceURL:"https://example.com/dish")
+        XCTAssertEqual(imported.name,"Ginger Garlic Chicken & Rice")
+        XCTAssertEqual(imported.minutes,75)
+        XCTAssertEqual(imported.yieldText,"4 servings")
+        XCTAssertEqual(imported.ingredientLines.count,4)
+        XCTAssertEqual(imported.steps,["Slice the chicken thinly.","Fry until cooked through.","Serve over rice."])
+        XCTAssertEqual(imported.sourceURL,"https://example.com/dish")
+        // Matching is conservative: known foods are found, unknown ones are left alone.
+        XCTAssertEqual(RecipeImport.matchIngredient(imported.ingredientLines[0])?.id,"chicken")
+        XCTAssertEqual(RecipeImport.matchIngredient(imported.ingredientLines[2])?.id,"rice")
+        XCTAssertNil(RecipeImport.matchIngredient(imported.ingredientLines[3]))
+        XCTAssertEqual(RecipeImport.matchIngredient("2 tbsp smooth peanut butter")?.id,"peanutbutter")
+        // A page with no recipe says so rather than inventing one.
+        XCTAssertThrowsError(try RecipeImport.parse(html:"<html><body>no recipe here</body></html>",sourceURL:"https://example.com"))
+        XCTAssertEqual(RecipeImport.durationMinutes("PT45M"),45)
+        XCTAssertEqual(RecipeImport.durationMinutes("PT2H"),120)
+        XCTAssertNil(RecipeImport.durationMinutes("nonsense"))
+    }
+    func testFamilyAddedDishesBehaveLikeAnyOther() throws {
+        var s = FamilyState()
+        let dish = Recipe(id:"family-test-dish",en:"Grandma's noodles",zh:"外婆的面",breakfast:false,
+                          minutes:25,starch:"Noodles",protein:"Chicken",vegetable:true,
+                          ingredients:[Portion("chicken",500),Portion("noodles",400),Portion("bokchoy",300)],
+                          steps:["把面煮熟。","鸡肉炒香后拌入。"],favorite:false,
+                          stepsEnglish:["Boil the noodles.","Fry the chicken and toss together."],
+                          sourceURL:"https://example.com/noodles",
+                          unmatchedIngredients:["a splash of grandma's secret sauce"])
+        s.saveCustomRecipe(dish)
+        XCTAssertNotNil(Catalog.recipe("family-test-dish"))
+        XCTAssertTrue(dish.isFamilyAdded)
+        XCTAssertTrue(Catalog.recipes.contains { $0.id == "family-test-dish" })
+        // It shops, scales and feeds like any built-in dish.
+        s.meals = [Meal(date:Date(),recipe:dish.id,breakfast:false)]
+        XCTAssertEqual(s.shopping().first { $0.ingredient == "noodles" }?.required,400)
+        XCTAssertGreaterThan(dish.nutrition(per:5).kcal,100)
+        XCTAssertEqual(dish.steps(in:.english).compactMap(\.en).count,2)
+        // It survives a save and reload, unmatched lines and all.
+        let file = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString).appendingPathComponent("state.json")
+        defer { try? FileManager.default.removeItem(at:file.deletingLastPathComponent()) }
+        try StateFile.save(s,to:file)
+        let restored = try StateFile.load(from:file)
+        XCTAssertEqual(restored.customRecipes.count,1)
+        XCTAssertEqual(restored.customRecipes[0].unmatchedIngredients,["a splash of grandma's secret sauce"])
+        XCTAssertEqual(restored.customRecipes[0].sourceURL,"https://example.com/noodles")
+        // Deleting takes its planned meals with it and leaves the catalogue clean.
+        var after = restored
+        after.deleteCustomRecipe("family-test-dish")
+        XCTAssertTrue(after.meals.isEmpty)
+        XCTAssertNil(Catalog.recipe("family-test-dish"))
+        XCTAssertEqual(Catalog.recipes.count,76)
+    }
     func testNoConsumptionWhenPlanningOrSkippingDeduction() {
         var state = FamilyState(); state.stock = [Stock(ingredient:"rice",quantity:2000,confirmed:true)]
         state.plan(start:Date()); XCTAssertEqual(state.stock[0].quantity,2000)

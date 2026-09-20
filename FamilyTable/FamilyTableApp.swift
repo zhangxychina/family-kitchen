@@ -17,6 +17,7 @@ import ImageIO
         if ProcessInfo.processInfo.arguments.contains("--ui-testing") && ProcessInfo.processInfo.arguments.contains("--reset-ui-tests") {
             try? FileManager.default.removeItem(at: directory)
         }
+        defer { Catalog.setCustomRecipes(state.customRecipes) }
         do { state = try StateFile.load(from: file) }
         catch {
             state = FamilyState()
@@ -31,7 +32,15 @@ import ImageIO
     @discardableResult func update(_ action: (inout FamilyState) -> Void) -> Bool {
         guard !loadBlocked else { return false }
         var next = state; action(&next)
-        do { try StateFile.save(next, to: file); state = next; error = nil; return true } catch { self.error = "Could not save changes: \(error.localizedDescription). Please try again."; return false }
+        do {
+            try StateFile.save(next, to: file); state = next; error = nil
+            return true
+        } catch {
+            // A dish that could not be saved must not linger in the catalogue.
+            Catalog.setCustomRecipes(state.customRecipes)
+            self.error = "Could not save changes: \(error.localizedDescription). Please try again."
+            return false
+        }
     }
     func location(_ id: UUID?) -> String { state.locations.first { $0.id == id }?.name ?? "Location unconfirmed · 位置待确认" }
     func importPhoto(_ data: Data) async {
@@ -425,6 +434,7 @@ struct RecipesView: View {
     @EnvironmentObject var store: FamilyStore
     @State private var search = ""
     @State private var seasonalOnly = false
+    @State private var addingDish = false
     @State private var category = "All"
     @State private var flavor = "All"
     private var filtered: [Recipe] {
@@ -439,11 +449,12 @@ struct RecipesView: View {
         ScrollView {
             LazyVStack(spacing:18) {
                 Picker("Meal type", selection:$category) {
-                    Text("All (76)").tag("All")
-                    Text("Dinner (56)").tag("Dinner")
-                    Text("Breakfast (20)").tag("Breakfast")
+                    Text("All").tag("All")
+                    Text("Dinner").tag("Dinner")
+                    Text("Breakfast").tag("Breakfast")
                 }.pickerStyle(.segmented).accessibilityIdentifier("recipeCategory")
-                Text("\(filtered.count) meals · 56 dinners + 20 breakfasts").font(.caption).foregroundStyle(.secondary)
+                Text("\(filtered.count) of \(Catalog.recipes.count) dishes · \(Catalog.recipes.filter{ !$0.breakfast }.count) dinners + \(Catalog.recipes.filter(\.breakfast).count) breakfasts\(store.state.customRecipes.isEmpty ? "" : " · \(store.state.customRecipes.count) of your own")")
+                    .font(.caption).foregroundStyle(.secondary)
                 Picker("Flavor", selection:$flavor) {
                     Text("All flavors").tag("All")
                     Text("Mild · 不辣").tag("Mild")
@@ -463,6 +474,11 @@ struct RecipesView: View {
             }.padding()
         }.background(Brand.paper)
         .navigationTitle("Made for home").searchable(text:$search,prompt:"English or 中文")
+        .toolbar {
+            Button { addingDish = true } label: { Label("Add a dish",systemImage:"plus") }
+                .accessibilityIdentifier("addDish")
+        }
+        .sheet(isPresented:$addingDish) { NavigationStack { AddDishView() } }
     }
 }
 struct RecipeDetail: View {
@@ -487,6 +503,22 @@ struct RecipeDetail: View {
                               complete:recipe.nutritionIsComplete)
                     .listRowInsets(EdgeInsets(top:14,leading:16,bottom:14,trailing:16))
             } header: { Text("Nutrition estimate · 营养估算") }
+            if recipe.isFamilyAdded {
+                Section("Your dish · 自建菜品") {
+                    if let source = recipe.sourceURL, let url = URL(string:source) {
+                        Link("Imported from this page · 来自网页",destination:url).font(.footnote)
+                    }
+                    if let extras = recipe.unmatchedIngredients, !extras.isEmpty {
+                        Text("Not counted in shopping or nutrition · 不计入采购与营养：").font(.footnote)
+                        ForEach(extras,id:\.self) { Text("• \($0)").font(.footnote).foregroundStyle(.secondary) }
+                    }
+                    NavigationLink { AddDishView(existing:recipe) } label: { Label("Edit this dish",systemImage:"pencil") }
+                    Button(role:.destructive) { store.update { $0.deleteCustomRecipe(recipe.id) } } label: {
+                        Label("Delete this dish",systemImage:"trash")
+                    }
+                    Text("Deleting also removes it from any week it was planned into.").font(.caption).foregroundStyle(.secondary)
+                }
+            }
             Section("Allergens & season · 过敏原与时令") {
                 let conflicts = recipe.conflicts(with:store.state.excludedAllergens)
                 if !conflicts.isEmpty {

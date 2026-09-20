@@ -11,10 +11,10 @@ final class FamilyTableUITests: XCTestCase {
     func testCatalogFiltersAndBilingualSearch() {
         app.tabBars.buttons["Recipes"].tap()
         XCTAssertTrue(app.segmentedControls["recipeCategory"].waitForExistence(timeout:5))
-        app.segmentedControls.buttons["Dinner (56)"].tap()
-        XCTAssertTrue(app.staticTexts["56 meals · 56 dinners + 20 breakfasts"].exists)
-        app.segmentedControls.buttons["Breakfast (20)"].tap()
-        XCTAssertTrue(app.staticTexts["20 meals · 56 dinners + 20 breakfasts"].exists)
+        app.segmentedControls.buttons["Dinner"].tap()
+        XCTAssertTrue(app.staticTexts["56 of 76 dishes · 56 dinners + 20 breakfasts"].waitForExistence(timeout:3))
+        app.segmentedControls.buttons["Breakfast"].tap()
+        XCTAssertTrue(app.staticTexts["20 of 76 dishes · 56 dinners + 20 breakfasts"].exists)
         let search = app.searchFields.firstMatch
         search.tap(); search.typeText("香蕉")
         XCTAssertTrue(app.staticTexts["Banana & berry oats"].waitForExistence(timeout:3))
@@ -49,6 +49,16 @@ final class FamilyTableUITests: XCTestCase {
         app.buttons["goShopping"].tap()
         XCTAssertTrue(app.navigationBars["Shopping"].waitForExistence(timeout:5))
         XCTAssertFalse(app.staticTexts["Some meals still need parent approval. List is provisional."].exists)
+    }
+    func testAddingAFamilyDish() {
+        app.tabBars.buttons["Recipes"].tap()
+        app.buttons["addDish"].tap()
+        XCTAssertTrue(app.textFields["English name"].waitForExistence(timeout:5))
+        app.textFields["English name"].tap(); app.textFields["English name"].typeText("Grandma noodles")
+        let step = app.textFields["中文步骤 1"]
+        step.tap(); step.typeText("把面煮熟")
+        app.buttons["Save this dish"].tap()
+        XCTAssertTrue(app.staticTexts["Grandma noodles"].waitForExistence(timeout:5))
     }
     func testRecipeScrollingPerformance() {
         app.tabBars.buttons["Recipes"].tap()
