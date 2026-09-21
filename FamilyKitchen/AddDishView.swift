@@ -99,7 +99,7 @@ struct AddDishView: View {
                 Text(importMessage).font(.footnote).foregroundStyle(Brand.protein)
             }
             InfoNote(title: "What importing does · 导入会做什么", lines: [
-                "This is the only time the app uses the internet: it opens the page you paste and reads the recipe data published on it.",
+                "This opens the page you paste and reads the recipe data published on it. If you use family sharing, saved recipes also sync through iCloud.",
                 "Most recipe sites publish this; some do not, and then the dish has to be typed in by hand.",
                 "Everything imported is a draft for you to check. Ingredients the app recognises can be matched below; the rest are kept as notes and left out of the shopping list.",
                 "Imported text is stored on this iPhone for your own kitchen. The wording of someone else's recipe belongs to them — keep the link, and don't republish it."

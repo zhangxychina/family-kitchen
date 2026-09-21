@@ -693,7 +693,10 @@ public enum StateFile {
         try JSONEncoder().encode(state).write(to: url, options: .atomic)
     }
     public static func load(from url: URL) throws -> FamilyState {
-        let state = try JSONDecoder().decode(FamilyState.self, from: Data(contentsOf: url))
+        try decode(Data(contentsOf: url))
+    }
+    public static func decode(_ data: Data) throws -> FamilyState {
+        let state = try JSONDecoder().decode(FamilyState.self, from: data)
         let ingredientIDs = Set(Catalog.ingredients.map(\.id))
         guard state.version <= FamilyState.currentVersion, (1...12).contains(state.people),
               state.stock.allSatisfy({ ingredientIDs.contains($0.ingredient) && $0.quantity.isFinite && $0.quantity >= 0 }),

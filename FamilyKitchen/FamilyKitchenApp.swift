@@ -16,6 +16,7 @@ import ImageIO
     @Published private(set) var prefersNight: Bool?
     private var appearanceTimer: Timer?
     private var loadBlocked = false
+    let cloud: FamilyCloudController
     let directory: URL
     let file: URL
     init() {
@@ -33,6 +34,7 @@ import ImageIO
         if uiTesting && ProcessInfo.processInfo.arguments.contains("--reset-ui-tests") {
             try? FileManager.default.removeItem(at: directory)
         }
+        cloud = FamilyCloudController(directory: directory)
         defer { Catalog.setCustomRecipes(state.customRecipes) }
         do { state = try StateFile.load(from: file) }
         catch {
@@ -43,6 +45,16 @@ import ImageIO
                     ? "This kitchen was saved by a newer version of \(Brand.appName). Update the app to open it. Your data is untouched."
                     : "Saved data could not be read. Original file is preserved. Restart before making changes or restore your backup."
             }
+        }
+        if let shared = cloud.session { state = shared.local; loadBlocked = false; error = nil }
+        if cloud.loadError != nil { loadBlocked = true; error = cloud.error }
+        cloud.currentLocal = { [weak self] in self?.state ?? FamilyState() }
+        cloud.didChangeState = { [weak self] next in
+            guard let self else { return }
+            self.state = next
+            self.error = nil
+            Catalog.setCustomRecipes(next.customRecipes)
+            self.refreshAppearance()
         }
         refreshAppearance()
         // A phone that was asleep at 7am, or whose clock moved, gets the same answer
@@ -74,10 +86,14 @@ import ImageIO
         }
     }
     @discardableResult func update(_ action: (inout FamilyState) -> Void) -> Bool {
-        guard !loadBlocked else { return false }
+        guard !loadBlocked, cloud.editingAllowed else {
+            error = cloud.error ?? "Shared kitchen is temporarily read-only. Open Family sharing for details. 请到家庭共享查看状态。"
+            Catalog.setCustomRecipes(state.customRecipes)
+            return false
+        }
         var next = state; action(&next)
         do {
-            try StateFile.save(next, to: file); state = next; error = nil
+            try cloud.saveLocal(next); state = next; error = nil
             refreshAppearance()
             return true
         } catch {
@@ -113,13 +129,16 @@ import ImageIO
 
 }
 @main struct FamilyKitchenApp: App {
+    @UIApplicationDelegateAdaptor(FamilyAppDelegate.self) private var appDelegate
     @StateObject private var store = FamilyStore()
     var body: some Scene {
-        WindowGroup { RootView().environmentObject(store).tint(Brand.green) }
+        WindowGroup { RootView().environmentObject(store).environmentObject(store.cloud).tint(Brand.green) }
     }
 }
 struct RootView: View {
     @EnvironmentObject var store: FamilyStore
+    @EnvironmentObject var cloud: FamilyCloudController
+    @ObservedObject private var invitations = FamilyInvitationInbox.shared
     @Environment(\.scenePhase) private var scenePhase
 
     /// nil hands the choice to iOS, which has its own sunrise-to-sunset switching.
@@ -128,17 +147,41 @@ struct RootView: View {
     }
 
     var body: some View {
-        TabView(selection:$store.tab) {
-            NavigationStack { TodayView() }.tabItem { Label("Today", systemImage:"sun.max") }.tag(0)
-            NavigationStack { WeekView() }.tabItem { Label("Week", systemImage:"calendar") }.tag(1)
-            NavigationStack { RecipesView() }.tabItem { Label("Recipes", systemImage:"book.closed") }.tag(2)
-            NavigationStack { ShoppingView() }.tabItem { Label("Shopping", systemImage:"basket") }.tag(3)
-            NavigationStack { KitchenView() }.tabItem { Label("Kitchen", systemImage:"refrigerator") }.tag(4)
+        Group {
+            if cloud.accessBlocked || cloud.loadError != nil {
+                NavigationStack { FamilySharingView(cloud: cloud) }
+            } else {
+                TabView(selection:$store.tab) {
+                    NavigationStack { TodayView() }.tabItem { Label("Today", systemImage:"sun.max") }.tag(0)
+                    NavigationStack { WeekView() }.tabItem { Label("Week", systemImage:"calendar") }.tag(1)
+                    NavigationStack { RecipesView() }.tabItem { Label("Recipes", systemImage:"book.closed") }.tag(2)
+                    NavigationStack { ShoppingView() }.tabItem { Label("Shopping", systemImage:"basket") }.tag(3)
+                    NavigationStack { KitchenView() }.tabItem { Label("Kitchen", systemImage:"refrigerator") }.tag(4)
+                }
+            }
         }.safeAreaInset(edge:.top) { if let error = store.error { Text(error).font(.caption).foregroundStyle(.red).padding().background(Brand.card) } }
+        .safeAreaInset(edge: .bottom) {
+            if cloud.connected && !cloud.accessBlocked {
+                HStack {
+                    Image(systemName: cloud.pending ? "icloud.and.arrow.up" : "icloud")
+                    Text(cloud.status).font(.caption)
+                    Spacer()
+                }.padding(.horizontal).padding(.vertical, 4).background(Brand.card)
+            }
+        }
+        .task {
+            if !ProcessInfo.processInfo.arguments.contains("--ui-testing") { cloud.start() }
+        }
+        .sheet(item: $invitations.invitation) { invitation in
+            FamilyInvitationView(invitation: invitation, cloud: cloud)
+        }
         .preferredColorScheme(scheme)
         // Timers do not fire while the app is in the background, so the evening it
         // spent in a pocket is caught up with here.
-        .onChange(of: scenePhase) { _, phase in if phase == .active { store.refreshAppearance() } }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { store.refreshAppearance() }
+            if !ProcessInfo.processInfo.arguments.contains("--ui-testing") { cloud.setForeground(phase == .active) }
+        }
         .animation(.easeInOut(duration: 0.35), value: scheme)
     }
 }

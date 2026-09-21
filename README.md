@@ -8,6 +8,24 @@ An iPhone app that turns "what's for dinner?" into a question the whole family a
 
 ---
 
+## iCloud family sharing · iCloud 家庭共享（第一版）
+
+This branch adds optional iCloud family sharing under **Kitchen → Settings → Family sharing**.
+Create a family from the local kitchen, then use Apple's sharing panel to invite another iCloud user.
+Recipients open the invitation link and confirm joining. **Find my families** reconnects an existing family after reinstalling.
+
+第一版新增可选的家庭共享：在 **Kitchen → Settings → Family sharing** 中创建家庭，通过系统共享面板邀请家人。
+受邀者打开链接并确认加入；重装后可使用“查找我的家庭”恢复连接。
+菜单、采购、库存、菜谱、家庭资料与历史会同步；照片和显示偏好仍留在本机。
+
+Changes upload after a short debounce. Other foreground devices refresh every 30 seconds, on activation, or through **Sync now**.
+This version does not promise background or instant delivery. Conflicting kitchen transactions require choosing a version; they are never silently merged into duplicate inventory.
+Local and cloud kitchens are stored separately, with local backups before switching or resolving conflicts.
+The first version uses CloudKit owner/member permissions, without separate child-account restrictions.
+
+**Developer setup and two-device acceptance:** [CLOUDKIT_SETUP.md](CLOUDKIT_SETUP.md).
+Full iOS build and live CloudKit sharing remain to be verified with Xcode, a provisioned container and two iCloud accounts.
+
 # English
 
 ## What this app is for
@@ -128,7 +146,7 @@ What it will not do: it cannot plan a week, confirm a meal for a parent, add a d
 
 Tap **+** on the Recipes screen to add a dish, either by typing it in or by pasting a link.
 
-Pasting a link is **the only time this app uses the internet**. It opens the page you gave it and reads the recipe data most recipe sites publish. What comes back is a draft: the name, the steps, the time and the ingredient lines. Ingredients the app recognises are matched for you; the rest stay as notes, shown with the recipe but deliberately left out of the shopping list and the nutrition estimate, which says so rather than undercounting.
+Pasting a link uses the internet, as does optional iCloud family sharing. It opens the page you gave it and reads the recipe data most recipe sites publish. What comes back is a draft: the name, the steps, the time and the ingredient lines. Ingredients the app recognises are matched for you; the rest stay as notes, shown with the recipe but deliberately left out of the shopping list and the nutrition estimate, which says so rather than undercounting.
 
 While you are typing, **Done · 完成** sits above the keyboard. The amounts use a number pad, which has no return key of its own, so without it there was no way to put the keyboard down and reach *Save*.
 
@@ -174,7 +192,7 @@ Being honest about this is part of the design.
 - **Nothing is assumed into your pantry.** Only amounts someone confirmed are subtracted from the shopping list.
 - **Planning a meal does not consume ingredients.** Stock changes when you shop, put away, or finish cooking.
 - **Suggested shelves are suggestions**, shown separately from the place you actually confirmed.
-- **Everything stays on this iPhone.** No account, no cloud sync, no uploads, no analytics. Photos and speech are both read on the device, and a recogniser that would need a server is not used at all. The single exception is importing a dish from a link, which opens the page you paste — and only then. Parent and child roles are a family agreement on a shared device, not passwords.
+- **Local use needs no account.** Optional family sharing uploads kitchen records to iCloud and shares them with invited members. Photos and speech recordings stay on the device; no analytics. Recipe link import fetches the supplied page. Parent and child profiles describe diners; CloudKit owner/member permissions control shared access.
 - **Recipe pictures are AI-generated illustrations** made for this app — not photographs of tested cooking.
 - **Times and nutrition are estimates**, not kitchen-tested or laboratory-measured.
 - **Allergen filtering is ingredient-level**, not label-level, and cross-contact is not modelled.
@@ -210,7 +228,7 @@ swift scripts/make_icon.swift FamilyKitchen/Assets.xcassets/AppIcon.appiconset/i
 - Note that `swiftc -parse` only checks syntax, never call signatures. Use the `xcodebuild` command above after touching SwiftUI.
 - Saved files are versioned and migrated on load (`FamilyState.currentVersion`, `migrate()`): older files open and are upgraded, and a file written by a *newer* app is refused rather than overwritten. Add fields freely; add a conversion to `migrate()` whenever the shape of existing data changes.
 - Spoken and typed commands are parsed in `Sources/FamilyCore/KitchenCommands.swift` — a table of the words families use in both languages, no model and no network, so the whole of it is covered by the core checks. `FamilyKitchen/VoiceInput.swift` is the only part that needs a microphone: two `SFSpeechRecognizer`s, both `requiresOnDeviceRecognition`, fed from one `AVAudioEngine` tap. `FamilyKitchen/KitchenChatView.swift` is the sheet.
-- Current scope: one active week at a time, on one device. No cloud sync, list export, store grouping, barcode scanning, custom recipes or custom ingredients. Spoken and typed commands cover stock, purchases and meal swaps only — not planning, approving, adding dishes or naming shelves. 56 dinners, 20 breakfasts, 79 bilingual ingredients with nutrition, allergen and seasonality tables.
+- Current scope: one active week per kitchen and one connected family per device, with optional iCloud sharing and custom recipes. No list export, store grouping, barcode scanning or custom ingredient definitions. Spoken and typed commands cover stock, purchases and meal swaps only — not planning, approving, adding dishes or naming shelves. 56 dinners, 20 breakfasts, 79 bilingual ingredients with nutrition, allergen and seasonality tables.
 - Still on the list before selling: real food photography, cooking every recipe to verify the times, CloudKit family sharing, and App Store paperwork (privacy labels, policy URL, listing).
 - Core checks: **63 scenarios, ~4,700 assertions**, run without XCTest by `scripts/check_core.py`.
 - UI tests: **15 of 15 pass** on an iPhone 17 simulator (iOS 27), covering planning, the shopping list, adding a dish, adding a fridge, day and night, and the whole of saying and typing a change. One of them (`testTheOtherEarIsOneTapAway`) hit a test-runner crash-and-restart once and passed on the retry and in isolation; it has not been reproduced.
@@ -348,7 +366,7 @@ Today、Week、Shopping 顶部的对话气泡，可以直接听中文或英文�
 
 在 Recipes 页点 **+** 添加菜品：可以手动输入，也可以粘贴网页链接。
 
-粘贴链接是**本应用唯一一次联网**：它会打开你给的网页，读取大多数菜谱网站都会发布的结构化菜谱数据。返回的内容是草稿——菜名、步骤、时间和食材行。应用认识的食材会自动匹配，其余保留为备注，会随菜谱显示，但刻意不计入采购清单和营养估算，并明确标注出来。
+粘贴链接会联网（启用 iCloud 家庭共享后，同步也会联网）：它会打开你给的网页，读取大多数菜谱网站都会发布的结构化菜谱数据。返回的内容是草稿——菜名、步骤、时间和食材行。应用认识的食材会自动匹配，其余保留为备注，会随菜谱显示，但刻意不计入采购清单和营养估算，并明确标注出来。
 
 输入时键盘上方有 **Done · 完成**。用量用的是数字键盘，本身没有回车键，没有这个按钮就没法收起键盘去点*保存*。
 
@@ -394,7 +412,7 @@ Today、Week、Shopping 顶部的对话气泡，可以直接听中文或英文�
 - **不替你假设库存。** 只有确认过的数量才会从采购清单中扣除。
 - **只是排进菜单不会消耗食材。** 库存只在采购、收纳、做完饭时变化。
 - **建议位置只是建议**，与你实际确认的位置分开显示。
-- **数据全部留在这台 iPhone 上。** 没有账号、云同步、上传或统计分析。照片与语音都在本机识别，需要联网才能工作的识别引擎一概不用。唯一的例外是从链接导入菜品时会打开你粘贴的网页，且仅在那一刻联网。家长与孩子的角色是共用设备上的家庭约定，不是密码账户。
+- **本机使用无需账号。** 可选的家庭共享通过 iCloud 上传厨房记录并分享给受邀成员；照片与语音录音仍保留在本机，不做统计分析。链接导入会获取指定网页。家长与孩子资料描述用餐成员，共享访问由 CloudKit 所有者／成员权限控制。
 - **菜品图片是为本应用生成的 AI 示意图**，不是实拍。
 - **时间与营养都是估算**，没有经过厨房实测或实验室测定。
 - **过敏原按食材判断**，不是按包装标签，也不考虑交叉污染。
@@ -430,11 +448,11 @@ swift scripts/make_icon.swift FamilyKitchen/Assets.xcassets/AppIcon.appiconset/i
 - 注意 `swiftc -parse` 只检查语法，不检查调用签名。改动 SwiftUI 后请用上面的 `xcodebuild` 验证。
 - 存档带版本号并在读取时迁移（`FamilyState.currentVersion`、`migrate()`）：旧文件会被打开并升级；由**更新版本**写入的文件会被拒绝而不是覆盖。新增字段可以随意添加；既有数据的结构发生变化时，请在 `migrate()` 中补上转换逻辑。
 - 语音与文字指令的解析在 `Sources/FamilyCore/KitchenCommands.swift`：一张中英文说法对照表，不含模型也不联网，因此可以被核心检查完整覆盖。只有 `FamilyKitchen/VoiceInput.swift` 需要麦克风——两个 `SFSpeechRecognizer`（均设 `requiresOnDeviceRecognition`）共用一个 `AVAudioEngine` 音频分流。`FamilyKitchen/KitchenChatView.swift` 是对应的页面。
-- 当前范围：单设备、单个进行中的周计划。没有云同步、清单导出、按商店分组、条码扫描、自建菜谱与自建食材。语音与文字指令只涉及库存、采购与换菜，不涉及排菜单、确认餐次、添加菜品与命名隔层。共 56 套晚餐、20 套早餐、79 种双语食材，并配有营养、过敏原与时令数据。
+- 当前范围：每个厨房单个进行中的周计划，每台设备连接一个家庭，支持可选的 iCloud 共享及自建菜谱。没有清单导出、按商店分组、条码扫描与自定义食材定义。语音与文字指令只涉及库存、采购与换菜，不涉及排菜单、确认餐次、添加菜品与命名隔层。共 56 套晚餐、20 套早餐、79 种双语食材，并配有营养、过敏原与时令数据。
 - 上架前仍待完成：真实菜品摄影、逐道实测烹饪时间、CloudKit 家庭共享，以及 App Store 材料（隐私标签、隐私政策链接、商店页面）。
 - 核心检查：**63 个场景、约 4700 条断言**，由 `scripts/check_core.py` 在不依赖 XCTest 的情况下运行。
 - 界面测试：在 iPhone 17 模拟器（iOS 27）上**15 条全部通过**，覆盖排菜单、采购清单、添加菜品、添加冰箱、白天与夜间，以及“说一句/输入一句”的全过程。其中 `testTheOtherEarIsOneTapAway` 曾出现过一次测试进程崩溃重启，重试与单独运行均通过，未能复现。
-- **尚未在设备上完成验收。** 模拟器现已覆盖启动、布局、排菜单、采购清单、添加冰箱，以及"说一句/输入一句"的全过程；但覆盖不到相机，也覆盖不到语音识别本身：模拟器没有离线识别语言包，因此界面测试是把转写文本直接交给应用，而不是真的说出来。Apple 的识别能否把"家里已经有胡萝卜了"听对，是唯一仍未验证的一环，需要真机。
+- **尚未在设备上完成验收。** 模拟器现已覆盖启动、布局、排菜单、采购清单、添加冰箱，以及"说一句/输入一句"的全过程；但覆盖不到相机，也覆盖不到语音识别本身：模拟器没有离线识别语言包，因此界面测试是把转写文本直接交给应用，而不是真的说出来。Apple 的语音识别仍需真机验证；新加入的 CloudKit 家庭共享也需要配置容器后进行双账号真机验收。
 
 ## 食品安全
 

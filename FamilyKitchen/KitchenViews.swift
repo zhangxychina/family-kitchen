@@ -411,6 +411,9 @@ struct SettingsView: View {
                     .font(.caption).foregroundStyle(.secondary)
             }
             Section {
+                NavigationLink { FamilySharingView(cloud: store.cloud) } label: {
+                    settingRow("Family sharing", "家庭共享", "icloud", detail: "iCloud")
+                }
                 NavigationLink { FamilySettingsView() } label: {
                     settingRow("Family & portions", "家人与份量", "person.2",
                                detail: store.state.members.isEmpty
@@ -905,8 +908,8 @@ struct AboutSettingsView: View {
             }
             Section {
                 InfoNote(title: "What this edition is · 这一版是什么", lines: [
-                    "Everything lives on this iPhone: no account, no cloud sync, no analytics.",
-                    "The one exception is importing a dish from a link, which opens the page you paste — and only then.",
+                    "Use locally or share a family through iCloud. Shared kitchen data is uploaded only after you connect; no analytics.",
+                    "Importing a dish from a link also opens the page you paste. Photos and speech recordings are never uploaded.",
                     "Parent and child roles are an agreement on a shared device, not password-protected accounts.",
                     "Recipe pictures are AI-generated illustrations made for this app, not photographs of tested cooking.",
                     "Cooking times and nutrition figures are estimates, not kitchen-tested or laboratory-measured."

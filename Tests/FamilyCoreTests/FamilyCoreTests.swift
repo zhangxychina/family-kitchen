@@ -1,6 +1,104 @@
 import XCTest
 @testable import FamilyCore
 final class FamilyCoreTests: XCTestCase {
+    func testCloudPayloadExcludesPhotosAndDevicePreferences() throws {
+        var local = FamilyState()
+        local.photoFiles = ["private-shelf.jpg"]
+        local.appearance = .night
+        local.recipeLanguage = .chinese
+        local.kitchenName = "Shared kitchen"
+        let data = try FamilySharing.payload(local)
+        let text = String(decoding: data, as: UTF8.self)
+        XCTAssertFalse(text.contains("private-shelf"))
+        XCTAssertFalse(text.contains("photoFiles"))
+        XCTAssertFalse(text.contains("appearance"))
+        XCTAssertFalse(text.contains("recipeLanguage"))
+        var device = FamilyState(); device.photoFiles = ["mine.jpg"]
+        let received = try FamilySharing.applying(data, to: device)
+        XCTAssertEqual(received.photoFiles, ["mine.jpg"])
+        XCTAssertEqual(received.appearance, device.appearance)
+        XCTAssertEqual(received.kitchenName, "Shared kitchen")
+    }
+
+    func testCloudMergeKeepsIndependentFamilyAndKitchenEdits() throws {
+        let base = FamilyState()
+        var local = base; local.kitchenName = "Our kitchen"
+        var remote = base; remote.stock = [Stock(ingredient: "chicken", quantity: 200, confirmed: true)]
+        let result = try FamilySharing.merge(base: FamilySharing.payload(base), local: local, remote: FamilySharing.payload(remote))
+        XCTAssertEqual(result.kitchenName, "Our kitchen")
+        XCTAssertEqual(result.stock.count, 1)
+        XCTAssertEqual(result.stock[0].quantity, 200)
+    }
+
+    func testCloudConcurrentPurchasesCannotDoubleCount() throws {
+        var base = FamilyState()
+        base.meals = [Meal(date: Date(), recipe: "sesame", breakfast: false)]
+        var first = base; first.buy("chicken")
+        var second = base; second.buy("chicken")
+        // These purchases have different IDs but represent the same shopping need.
+        XCTAssertThrowsError(try FamilySharing.merge(base: FamilySharing.payload(base), local: first, remote: FamilySharing.payload(second)))
+    }
+
+    func testCloudDeleteVersusEditIsAConflict() throws {
+        var base = FamilyState()
+        base.stock = [Stock(ingredient: "chicken", quantity: 200, confirmed: true)]
+        var local = base; local.stock = []
+        var remote = base; remote.stock[0].quantity = 400
+        XCTAssertThrowsError(try FamilySharing.merge(base: FamilySharing.payload(base), local: local, remote: FamilySharing.payload(remote)))
+        let deleted = try FamilySharing.merge(base: FamilySharing.payload(base), local: local, remote: FamilySharing.payload(base))
+        XCTAssertTrue(deleted.stock.isEmpty)
+    }
+
+    func testCloudIdenticalChangesAreNotAConflict() throws {
+        let base = FamilyState()
+        var changed = base; changed.guests = 2
+        let result = try FamilySharing.merge(base: FamilySharing.payload(base), local: changed, remote: FamilySharing.payload(changed))
+        XCTAssertEqual(result.guests, 2)
+    }
+
+    func testCloudRebasesEditsMadeDuringUpload() throws {
+        let base = FamilyState()
+        var atUpload = base; atUpload.kitchenName = "Home"
+        var acknowledged = atUpload; acknowledged.guests = 2
+        var duringUpload = atUpload
+        duringUpload.stock = [Stock(ingredient: "chicken", quantity: 50, confirmed: true)]
+        let rebased = try FamilySharing.merge(base: FamilySharing.payload(atUpload), local: duringUpload, remote: FamilySharing.payload(acknowledged))
+        XCTAssertEqual(rebased.guests, 2)
+        XCTAssertEqual(rebased.stock.count, 1)
+        XCTAssertEqual(rebased.kitchenName, "Home")
+    }
+
+    func testCloudJournalRestoresUnsyncedWorkingCopyAndAncestor() throws {
+        let dir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let url = dir.appendingPathComponent("session.json")
+        let base = FamilyState()
+        var local = base; local.kitchenName = "Offline edit"
+        let session = FamilyCloudSession(zoneName: "FamilyKitchen-v1", ownerName: "owner", recordName: "Kitchen",
+                                         isOwner: false, accountID: "user", base: try FamilySharing.payload(base), local: local)
+        try session.save(to: url)
+        let restored = try FamilyCloudSession.load(from: url)
+        XCTAssertTrue(restored.hasPendingChanges)
+        XCTAssertEqual(restored.local.kitchenName, "Offline edit")
+        XCTAssertEqual(restored.base, try FamilySharing.payload(base))
+        XCTAssertEqual(restored.accountID, "user")
+    }
+
+    func testCloudPreferencesDoNotCreatePendingUpload() throws {
+        let base = FamilyState()
+        var local = base; local.recipeLanguage = .chinese; local.photoFiles = ["local.jpg"]
+        let session = FamilyCloudSession(zoneName: "z", ownerName: "o", recordName: "r", isOwner: true,
+                                         accountID: "u", base: try FamilySharing.payload(base), local: local)
+        XCTAssertFalse(session.hasPendingChanges)
+    }
+
+    func testCloudRejectsNewerAndInvalidRemoteData() throws {
+        var newer = FamilyState(); newer.version = FamilyState.currentVersion + 1
+        XCTAssertThrowsError(try FamilySharing.applying(JSONEncoder().encode(newer), to: FamilyState()))
+        var invalid = FamilyState(); invalid.people = -1
+        XCTAssertThrowsError(try FamilySharing.applying(JSONEncoder().encode(invalid), to: FamilyState()))
+    }
+
     func testScalingAndAggregation() {
         var s = FamilyState(); s.people = 6
         let date = Date()

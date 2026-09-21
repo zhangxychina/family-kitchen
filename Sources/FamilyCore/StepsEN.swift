@@ -403,10 +403,13 @@ extension Recipe {
         let wantsZh = language.showsChinese || english == nil
         let wantsEn = language.showsEnglish && english != nil
         let count = max(steps.count, english?.count ?? 0)
-        return (0..<count).map { index in
-            (zh: wantsZh && index < steps.count ? steps[index] : nil,
-             en: wantsEn && index < (english?.count ?? 0) ? english?[index] : nil)
-        }.filter { $0.zh != nil || $0.en != nil }
+        var result: [(zh: String?, en: String?)] = []
+        for index in 0..<count {
+            let zh: String? = wantsZh && index < steps.count ? steps[index] : nil
+            let en: String? = wantsEn && index < (english?.count ?? 0) ? english?[index] : nil
+            if zh != nil || en != nil { result.append((zh: zh, en: en)) }
+        }
+        return result
     }
     /// The dish name, written the way this family reads recipes.
     public func title(in language: RecipeLanguage) -> String {
