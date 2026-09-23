@@ -459,6 +459,12 @@ final class FamilyKitchenUITests: XCTestCase {
             XCTAssertTrue(app.tabBars.buttons[tab].waitForExistence(timeout: 20),
                           "\(tab) must be reachable with no iCloud account")
         }
+        // With nothing to report there is no sync status taking room from the tabs.
+        XCTAssertFalse(app.descendants(matching: .any)["syncStatus"].exists,
+                       "a sync line should only appear when there is something to say")
+        for tab in ["Today", "Kitchen"] {
+            XCTAssertTrue(app.tabBars.buttons[tab].isHittable, "\(tab) should not be covered")
+        }
         // Planning is a saved edit, so this also proves the sharing gate does not
         // stand in the way when there is no family.
         planTheWeek()

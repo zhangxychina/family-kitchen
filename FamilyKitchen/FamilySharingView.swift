@@ -247,3 +247,92 @@ struct FamilyInvitationView: View {
         }.interactiveDismissDisabled(cloud.isBusy)
     }
 }
+
+/// What sharing has to say, shown only when there is something to say.
+///
+/// A permanent "Synced" strip is noise: it is true almost all the time, so nobody
+/// reads it, and it took room from the tab bar to say so. This speaks up when the
+/// family's changes have not reached the others yet, when they cannot, or when two
+/// versions need a choice — and after an upload finishes, says "Synced" once and
+/// goes away. It sits inside each tab, so it rests above the tab bar rather than
+/// under it.
+struct SyncStatusBanner: ViewModifier {
+    @EnvironmentObject var cloud: FamilyCloudController
+    @State private var justSynced = false
+    @State private var showingSharing = false
+
+    struct Line: Equatable {
+        var symbol: String
+        var text: String
+        var urgent = false
+        /// Whether tapping it should open Family sharing — only when there is
+        /// something there to do.
+        var opensSharing = false
+    }
+
+    private var line: Line? {
+        guard cloud.connected, !cloud.accessBlocked else { return nil }
+        if cloud.conflict {
+            return Line(symbol: "exclamationmark.icloud", text: "Two versions — tap to choose · 两个版本，点此选择",
+                        urgent: true, opensSharing: true)
+        }
+        if cloud.error != nil {
+            return Line(symbol: "icloud.slash", text: cloud.status, opensSharing: true)
+        }
+        if cloud.pending {
+            return Line(symbol: "icloud.and.arrow.up", text: "Changes waiting to sync · 修改待同步")
+        }
+        if justSynced { return Line(symbol: "checkmark.icloud", text: "Synced · 已同步") }
+        return nil
+    }
+
+    func body(content: Content) -> some View {
+        content
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                if let line {
+                    Group {
+                        if line.opensSharing {
+                            Button { showingSharing = true } label: { capsule(line) }.buttonStyle(.plain)
+                        } else {
+                            capsule(line)
+                        }
+                    }
+                    .padding(.bottom, 6)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .accessibilityIdentifier("syncStatus")
+                }
+            }
+            .animation(.easeInOut(duration: 0.25), value: line)
+            .onChange(of: cloud.pending) { was, now in
+                // An upload just landed: say so once, then get out of the way.
+                guard was, !now, cloud.error == nil, !cloud.conflict else { return }
+                justSynced = true
+                Task { @MainActor in
+                    try? await Task.sleep(nanoseconds: 2_000_000_000)
+                    justSynced = false
+                }
+            }
+            .sheet(isPresented: $showingSharing) {
+                NavigationStack {
+                    FamilySharingView(cloud: cloud)
+                        .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Done") { showingSharing = false } } }
+                }
+            }
+    }
+
+    private func capsule(_ line: Line) -> some View {
+        HStack(spacing: 6) {
+            Image(systemName: line.symbol)
+            Text(line.text).lineLimit(1)
+            if line.opensSharing { Image(systemName: "chevron.right").font(.caption2) }
+        }
+        .font(.caption)
+        .foregroundStyle(line.urgent ? Brand.clay : Color.secondary)
+        .padding(.horizontal, 12).padding(.vertical, 6)
+        .background(.regularMaterial, in: Capsule())
+    }
+}
+
+extension View {
+    func syncStatus() -> some View { modifier(SyncStatusBanner()) }
+}

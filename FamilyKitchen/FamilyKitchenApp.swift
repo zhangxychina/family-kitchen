@@ -155,23 +155,14 @@ struct RootView: View {
                 NavigationStack { FamilySharingView(cloud: cloud) }
             } else {
                 TabView(selection:$store.tab) {
-                    NavigationStack { TodayView() }.tabItem { Label("Today", systemImage:"sun.max") }.tag(0)
-                    NavigationStack { WeekView() }.tabItem { Label("Week", systemImage:"calendar") }.tag(1)
-                    NavigationStack { RecipesView() }.tabItem { Label("Recipes", systemImage:"book.closed") }.tag(2)
-                    NavigationStack { ShoppingView() }.tabItem { Label("Shopping", systemImage:"basket") }.tag(3)
-                    NavigationStack { KitchenView() }.tabItem { Label("Kitchen", systemImage:"refrigerator") }.tag(4)
+                    NavigationStack { TodayView() }.syncStatus().tabItem { Label("Today", systemImage:"sun.max") }.tag(0)
+                    NavigationStack { WeekView() }.syncStatus().tabItem { Label("Week", systemImage:"calendar") }.tag(1)
+                    NavigationStack { RecipesView() }.syncStatus().tabItem { Label("Recipes", systemImage:"book.closed") }.tag(2)
+                    NavigationStack { ShoppingView() }.syncStatus().tabItem { Label("Shopping", systemImage:"basket") }.tag(3)
+                    NavigationStack { KitchenView() }.syncStatus().tabItem { Label("Kitchen", systemImage:"refrigerator") }.tag(4)
                 }
             }
         }.safeAreaInset(edge:.top) { if let error = store.error { Text(error).font(.caption).foregroundStyle(.red).padding().background(Brand.card) } }
-        .safeAreaInset(edge: .bottom) {
-            if cloud.connected && !cloud.accessBlocked {
-                HStack {
-                    Image(systemName: cloud.pending ? "icloud.and.arrow.up" : "icloud")
-                    Text(cloud.status).font(.caption)
-                    Spacer()
-                }.padding(.horizontal).padding(.vertical, 4).background(Brand.card)
-            }
-        }
         // The controller starts under test too. With no iCloud account it does
         // nothing but answer questions, and a feature the tests cannot reach is a
         // feature nothing checks.
