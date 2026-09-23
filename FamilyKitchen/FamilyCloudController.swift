@@ -30,7 +30,7 @@ import Combine
 
     // Set CLOUDKIT_CONTAINER_IDENTIFIER in the app build settings to your team's container.
     static var containerIdentifier: String {
-        Bundle.main.object(forInfoDictionaryKey: "CloudKitContainerIdentifier") as? String ?? "iCloud.com.zhangxychina.familykitchen"
+        Bundle.main.object(forInfoDictionaryKey: "CloudKitContainerIdentifier") as? String ?? "iCloud.com.jiatingchufang.app"
     }
     lazy var container = CKContainer(identifier: Self.containerIdentifier)
     @Published private(set) var session: FamilyCloudSession?

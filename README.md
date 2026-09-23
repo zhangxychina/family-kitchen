@@ -213,6 +213,7 @@ Being honest about this is part of the design.
 1. Install the full Xcode (16 or newer) on a Mac.
 2. Open `FamilyKitchen.xcodeproj` and choose the **FamilyKitchen** scheme.
 3. To use a simulator, pick one and press **⌘R**. No account or API key is ever required.
+   To sign for a real iPhone, copy `Config/Signing.local.example.xcconfig` to `Config/Signing.local.xcconfig` and put your team ID in it. That file is git-ignored, so your team never reaches a commit.
 4. To use a real iPhone: connect it, enable Developer Mode, then under **Signing & Capabilities** choose your own Apple team and, if needed, a unique bundle identifier. Then run.
 5. The camera needs a real iPhone; the simulator can still import from Photos. Photo access uses the system picker, so only the pictures you choose ever reach the app.
 

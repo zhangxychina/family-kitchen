@@ -6,7 +6,8 @@
 
 1. 安装完整 Xcode 及 iOS SDK，打开 `FamilyKitchen.xcodeproj`，选择 FamilyKitchen target。
 2. 在 Signing & Capabilities 中选择自己的 Apple Developer Team，并设置该 Team 可用的 Bundle Identifier。
-3. 添加 iCloud capability，勾选 CloudKit，创建或选择该 Team 的容器。本仓库已配置为 `iCloud.com.zhangxychina.familykitchen`（Bundle ID `com.zhangxychina.familykitchen`，Team `2HKWUJYXM7`）；换用其他账号时，三者都需在 `scripts/create_project.py` 中改成自己的。注意：`com.familykitchen.app` 已被他人注册，不能使用。
+3. 添加 iCloud capability，勾选 CloudKit，创建或选择该 Team 的容器。产品标识统一写在 `scripts/create_project.py` 的 `APP_ID`（当前 `com.jiatingchufang.app`），容器 `iCloud.com.jiatingchufang.app` 与 UI 测试的标识都由它派生。上架后标识**永久不可更改**，且任何人都查得到，因此只写产品名，不写个人信息。`com.familykitchen.app` 已被他人注册，不能使用。
+   - **签名团队不进仓库**：把 `Config/Signing.local.example.xcconfig` 复制为 `Config/Signing.local.xcconfig`，填入自己的 Team ID。该文件已被 git 忽略；缺少它时工程照常打开和构建，只是未签名。请在这个文件里设置团队，不要在 Xcode 的界面里选——界面里的选择会写进工程文件，下次提交就会带上。
 4. 将 Debug 和 Release 的 `CLOUDKIT_CONTAINER_IDENTIFIER` 都设置为实际容器 ID。`FamilyKitchen.entitlements` 和 `Info.plist` 均引用此变量，必须保持一致。若修改工程生成器配置，也更新 `scripts/create_project.py`，防止重新生成工程后丢失设置。
 5. 保持 `CKSharingSupported = YES`。应用通过 SwiftUI AppDelegate + SceneDelegate 同时接收冷启动和运行中的共享邀请。
 6. 在两台 iPhone 上分别登录不同 iCloud 账号，启用应用的 iCloud 访问，用同一 Team、Bundle ID、容器和 CloudKit 环境签名安装。

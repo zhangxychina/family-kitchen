@@ -10,7 +10,7 @@ Family Kitchen 0.4。
 
 模拟器**覆盖不到**的两件事，仍然只能在真机上验收：相机，以及语音识别本身——模拟器没有离线识别语言包，界面测试是把转写文本直接交给应用（见 `VoiceListener.scriptedReadings`）。也就是说"听到什么之后做得对不对"已经验证，"能不能听对"尚未验证。不要把模拟器通过等同于真机通过。
 
-设备要求：iOS 17 或更新，连接这台 Mac、解锁并信任电脑、启用 Developer Mode；Xcode 中选择 Apple Team，Bundle Identifier 为 `com.zhangxychina.familykitchen`，Team 与 iCloud 容器已写入 `scripts/create_project.py`，重新生成工程不会丢失（最初的 `com.familykitchen.app` 已被他人注册，无法使用）。无需购买服务或上架。
+设备要求：iOS 17 或更新，连接这台 Mac、解锁并信任电脑、启用 Developer Mode；Xcode 中选择 Apple Team，Bundle Identifier 为 `com.jiatingchufang.app`，iCloud 容器为 `iCloud.com.jiatingchufang.app`，均由 `scripts/create_project.py` 的 `APP_ID` 生成；签名团队写在 git 忽略的 `Config/Signing.local.xcconfig` 中（见 CLOUDKIT_SETUP.md 第 3 步）。无需购买服务或上架。
 
 ## 自动化验收
 

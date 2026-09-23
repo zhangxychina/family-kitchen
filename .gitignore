@@ -5,3 +5,4 @@ DerivedData/
 xcuserdata/
 build/
 *.swp
+Config/Signing.local.xcconfig

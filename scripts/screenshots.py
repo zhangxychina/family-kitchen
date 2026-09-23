@@ -16,7 +16,7 @@ root = Path(__file__).resolve().parents[1]
 device = sys.argv[1] if len(sys.argv) > 1 else "iPhone 18 Pro Max"
 xcode = {"DEVELOPER_DIR": "/Applications/Xcode.app/Contents/Developer"}
 out = root / "Screenshots"
-bundle = "com.zhangxychina.familykitchen"
+bundle = "com.jiatingchufang.app"
 
 
 def run(args, **kw):
