@@ -32,6 +32,7 @@ final class FamilyAppDelegate: NSObject, UIApplicationDelegate {
 
 struct FamilySharingView: View {
     @ObservedObject var cloud: FamilyCloudController
+    @Environment(\.scenePhase) private var scenePhase
     @State private var confirmCreate = false
     @State private var confirmDisconnect = false
     @State private var familyToJoin: FamilyCloudController.RemoteFamily?
@@ -66,7 +67,9 @@ struct FamilySharingView: View {
             Text("Already invited? Open the invitation link on this iPhone and confirm — there is nothing to do here first. 已收到邀请：在本机打开链接并确认即可，无需先在此设置。")
                 .font(.footnote).foregroundStyle(.secondary)
             if !cloud.setupReady {
-                Text("Finish steps 1 and 2 first. 请先完成第 1、2 步。")
+                Text(cloud.containerCheck.isWaiting || cloud.accountCheck.isWaiting
+                     ? "Waiting on step 2 — nothing to do but wait; this unlocks by itself. 正在等待第 2 步完成，无需操作，完成后会自动解锁。"
+                     : "Finish steps 1 and 2 first. 请先完成第 1、2 步。")
                     .font(.footnote).foregroundStyle(Brand.clay)
             }
         }
@@ -85,6 +88,7 @@ struct FamilySharingView: View {
         HStack(alignment: .top, spacing: 12) {
             switch check {
             case .ready: Image(systemName: "checkmark.circle.fill").foregroundStyle(Brand.protein)
+            case .waiting: Image(systemName: "clock.fill").foregroundStyle(Brand.amber)
             case .blocked: Image(systemName: "exclamationmark.circle.fill").foregroundStyle(Brand.clay)
             case .checking: ProgressView().controlSize(.small).frame(width: 20)
             case .unchecked: Image(systemName: "\(number).circle").foregroundStyle(.secondary)
@@ -152,7 +156,22 @@ struct FamilySharingView: View {
             }.font(.footnote)
         }
         .navigationTitle("Family sharing · 家庭共享")
-        .task { if !cloud.connected { await cloud.runSetupChecks() } }
+        // Check on arrival, then keep checking quietly while something is only
+        // waiting — a container Apple is still preparing turns ready on its own, and
+        // nobody should have to keep tapping to find out when.
+        .task {
+            guard !cloud.connected else { return }
+            await cloud.runSetupChecks()
+            while !Task.isCancelled, !cloud.connected {
+                try? await Task.sleep(nanoseconds: 60_000_000_000)
+                if cloud.accountCheck.isWaiting || cloud.containerCheck.isWaiting {
+                    await cloud.runSetupChecks(quietly: true)
+                }
+            }
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active, !cloud.connected { Task { await cloud.runSetupChecks(quietly: true) } }
+        }
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $cloud.sharePresentation) { presentation in
             FamilyCloudSharingSheet(presentation: presentation, cloud: cloud)

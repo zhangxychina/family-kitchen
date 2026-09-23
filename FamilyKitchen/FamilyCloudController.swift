@@ -1,5 +1,6 @@
 import Foundation
 import CloudKit
+import os
 import Combine
 
 @MainActor final class FamilyCloudController: ObservableObject {
@@ -217,13 +218,17 @@ import Combine
         case unchecked
         case checking
         case ready(String)
+        /// Not yet, but nothing for the family to fix — Apple is still preparing the
+        /// container, or the network is away. Checked again without being asked.
+        case waiting(String)
         case blocked(String)
         var isReady: Bool { if case .ready = self { return true }; return false }
+        var isWaiting: Bool { if case .waiting = self { return true }; return false }
         var detail: String? {
             switch self {
             case .unchecked: return nil
             case .checking: return "Checking · 检查中"
-            case .ready(let text), .blocked(let text): return text
+            case .ready(let text), .waiting(let text), .blocked(let text): return text
             }
         }
     }
@@ -235,8 +240,10 @@ import Combine
     /// order they fail: is there an iCloud account, and can this build reach its
     /// CloudKit container. Reported separately because the fixes are different — one
     /// is the family's to do in Settings, the other is the developer's.
-    func runSetupChecks() async {
-        accountCheck = .checking; containerCheck = .checking
+    func runSetupChecks(quietly: Bool = false) async {
+        // A background re-check keeps showing the last answer instead of flickering
+        // through "Checking" once a minute.
+        if !quietly { accountCheck = .checking; containerCheck = .checking }
         let status: CKAccountStatus
         do { status = try await container.accountStatus() }
         catch {
@@ -264,9 +271,32 @@ import Combine
             _ = try await container.userRecordID()
             containerCheck = .ready("\(Self.containerIdentifier) · 可用")
         } catch {
-            containerCheck = .blocked(offline(error)
-                ? "Could not reach iCloud just now — check the connection and try again. 暂时无法连接 iCloud，请检查网络后重试。"
-                : "This build cannot reach \(Self.containerIdentifier). The container must exist for this app's Apple Developer team. 此版本无法访问该 CloudKit 容器，需在开发者账号下创建。")
+            Self.log.error("Container check failed: \(String(describing: error), privacy: .public)")
+            containerCheck = containerStatus(for: error)
+        }
+    }
+
+    static let log = Logger(subsystem: Bundle.main.bundleIdentifier ?? "FamilyKitchen", category: "iCloud")
+
+    /// Turns CloudKit's answer into something a family can act on — and says which
+    /// answer it was, so a wrong guess here can never hide the real one again.
+    private func containerStatus(for error: Error) -> SetupCheck {
+        let ck = error as? CKError
+        let code = ck.map { " (CloudKit \($0.errorCode))" } ?? ""
+        switch ck?.code {
+        case .badContainer?:
+            // What a brand-new container returns until Apple's servers can hand out
+            // its configuration: minutes, occasionally about an hour.
+            return .waiting("Apple is still preparing this app's iCloud storage. A new container can take up to an hour to become available — this screen checks again by itself. Apple 正在准备本应用的 iCloud 存储，新容器最长约需一小时生效，本页会自动重新检查。" + code)
+        case .notAuthenticated?, .permissionFailure?:
+            return .blocked("iCloud is switched off for Family Kitchen on this iPhone. Turn it on in Settings → [your name] → iCloud, in the list of apps using iCloud. 本机关闭了本应用的 iCloud，请在 设置 → [你的名字] → iCloud 的应用列表中打开。" + code)
+        case .missingEntitlement?:
+            return .blocked("This build is not signed for \(Self.containerIdentifier). Check the iCloud capability in Xcode. 此版本签名中缺少该容器的 iCloud 权限，请在 Xcode 中检查。" + code)
+        default:
+            if offline(error) {
+                return .waiting("Could not reach iCloud just now. It will check again once the connection is back. 暂时连不上 iCloud，网络恢复后会自动重新检查。" + code)
+            }
+            return .blocked("iCloud answered: \(error.localizedDescription) iCloud 返回错误。" + code)
         }
     }
 
