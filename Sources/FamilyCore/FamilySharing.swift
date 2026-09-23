@@ -92,7 +92,15 @@ public struct FamilyCloudSession: Codable {
         self.zoneName = zoneName; self.ownerName = ownerName; self.recordName = recordName
         self.isOwner = isOwner; self.accountID = accountID; self.base = base; self.local = local
     }
-    public var hasPendingChanges: Bool { (try? FamilySharing.payload(local)) != base }
+    /// Whether the working copy has moved on from the last acknowledged cloud state.
+    ///
+    /// When the working copy cannot even be encoded there is nothing meaningful to
+    /// say, and claiming "waiting to sync" would leave that badge on forever with no
+    /// way to clear it. The next sync surfaces the real error instead.
+    public var hasPendingChanges: Bool {
+        guard let current = try? FamilySharing.payload(local) else { return false }
+        return current != base
+    }
     public func save(to url: URL) throws {
         try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
         try JSONEncoder().encode(self).write(to: url, options: .atomic)

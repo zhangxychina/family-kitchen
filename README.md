@@ -18,10 +18,20 @@ Recipients open the invitation link and confirm joining. **Find my families** re
 受邀者打开链接并确认加入；重装后可使用“查找我的家庭”恢复连接。
 菜单、采购、库存、菜谱、家庭资料与历史会同步；照片和显示偏好仍留在本机。
 
+**设置在应用内完成**：**Kitchen → ⚙︎ Settings → Family sharing** 会先检查两件在上传任何数据之前就能确认的事——本机是否登录 iCloud、此版本能否访问 CloudKit 容器——不通过时用明确的文字说明是哪一项。两步都通过之前，"创建/加入"保持不可用，不会让人点了"创建"才发现 iCloud 没开。
+
+**离线不等于故障**：已经在本机的厨房数据，在连不上 iCloud 时照常可读；需要等待账号确认的是**上传**，不是查看。其间的修改会保留，能连上后再上传。只有在账号确实变更或权限被收回时，才会隐藏共享厨房。
+
 Changes upload after a short debounce. Other foreground devices refresh every 30 seconds, on activation, or through **Sync now**.
 This version does not promise background or instant delivery. Conflicting kitchen transactions require choosing a version; they are never silently merged into duplicate inventory.
 Local and cloud kitchens are stored separately, with local backups before switching or resolving conflicts.
 The first version uses CloudKit owner/member permissions, without separate child-account restrictions.
+
+**Setting it up** happens in the app: **Kitchen → ⚙︎ Settings → Family sharing** asks the two questions that can be answered before anything leaves the phone — is there an iCloud account, and can this build reach its CloudKit container — and says which, in words, when the answer is no. Creating or joining stays switched off until both pass, so nobody finds out that iCloud is turned off on this iPhone *after* tapping Create.
+
+<p align="center"><img src="Screenshots/08-family-sharing-setup.png" width="280" alt="Family sharing setup: step 1 iCloud account flagged as missing with a link to iPhone Settings, step 2 CloudKit container still to check, and what gets shared" /></p>
+
+**Offline is not a failure.** A kitchen already on this iPhone stays readable when iCloud cannot be reached; what waits for the account to be confirmed is uploading, not reading. Changes made meanwhile are kept and go up when it can be reached. The shared kitchen is hidden only when the account has actually changed or access was taken away.
 
 **Developer setup and two-device acceptance:** [CLOUDKIT_SETUP.md](CLOUDKIT_SETUP.md).
 Full iOS build and live CloudKit sharing remain to be verified with Xcode, a provisioned container and two iCloud accounts.
@@ -229,9 +239,9 @@ swift scripts/make_icon.swift FamilyKitchen/Assets.xcassets/AppIcon.appiconset/i
 - Saved files are versioned and migrated on load (`FamilyState.currentVersion`, `migrate()`): older files open and are upgraded, and a file written by a *newer* app is refused rather than overwritten. Add fields freely; add a conversion to `migrate()` whenever the shape of existing data changes.
 - Spoken and typed commands are parsed in `Sources/FamilyCore/KitchenCommands.swift` — a table of the words families use in both languages, no model and no network, so the whole of it is covered by the core checks. `FamilyKitchen/VoiceInput.swift` is the only part that needs a microphone: two `SFSpeechRecognizer`s, both `requiresOnDeviceRecognition`, fed from one `AVAudioEngine` tap. `FamilyKitchen/KitchenChatView.swift` is the sheet.
 - Current scope: one active week per kitchen and one connected family per device, with optional iCloud sharing and custom recipes. No list export, store grouping, barcode scanning or custom ingredient definitions. Spoken and typed commands cover stock, purchases and meal swaps only — not planning, approving, adding dishes or naming shelves. 56 dinners, 20 breakfasts, 79 bilingual ingredients with nutrition, allergen and seasonality tables.
-- Still on the list before selling: real food photography, cooking every recipe to verify the times, CloudKit family sharing, and App Store paperwork (privacy labels, policy URL, listing).
-- Core checks: **63 scenarios, ~4,700 assertions**, run without XCTest by `scripts/check_core.py`.
-- UI tests: **15 of 15 pass** on an iPhone 17 simulator (iOS 27), covering planning, the shopping list, adding a dish, adding a fridge, day and night, and the whole of saying and typing a change. One of them (`testTheOtherEarIsOneTapAway`) hit a test-runner crash-and-restart once and passed on the retry and in isolation; it has not been reproduced.
+- Still on the list before selling: real food photography, cooking every recipe to verify the times, a two-device CloudKit acceptance run, and App Store paperwork (privacy labels, policy URL, listing).
+- Core checks: **72 scenarios, ~4,700 assertions**, run without XCTest by `scripts/check_core.py`.
+- UI tests: **17 of 17 pass** on an iPhone 17 simulator (iOS 27), covering planning, the shopping list, adding a dish, adding a fridge, day and night, family-sharing setup, and the whole of saying and typing a change. One of them (`testTheOtherEarIsOneTapAway`) hit a test-runner crash-and-restart once and passed on the retry and in isolation; it has not been reproduced.
 - **Not yet accepted on a device.** The simulator now covers launch, layout, planning, the list, adding a fridge, and the whole of saying and typing a change. It cannot cover the camera, and it cannot cover speech: a simulator has no offline recogniser, so the UI tests hand the app a transcript instead of a spoken one. Whether Apple's recogniser actually hears "家里已经有胡萝卜了" correctly is the one thing still untested, and it needs a real iPhone.
 
 ## Food safety
@@ -449,9 +459,9 @@ swift scripts/make_icon.swift FamilyKitchen/Assets.xcassets/AppIcon.appiconset/i
 - 存档带版本号并在读取时迁移（`FamilyState.currentVersion`、`migrate()`）：旧文件会被打开并升级；由**更新版本**写入的文件会被拒绝而不是覆盖。新增字段可以随意添加；既有数据的结构发生变化时，请在 `migrate()` 中补上转换逻辑。
 - 语音与文字指令的解析在 `Sources/FamilyCore/KitchenCommands.swift`：一张中英文说法对照表，不含模型也不联网，因此可以被核心检查完整覆盖。只有 `FamilyKitchen/VoiceInput.swift` 需要麦克风——两个 `SFSpeechRecognizer`（均设 `requiresOnDeviceRecognition`）共用一个 `AVAudioEngine` 音频分流。`FamilyKitchen/KitchenChatView.swift` 是对应的页面。
 - 当前范围：每个厨房单个进行中的周计划，每台设备连接一个家庭，支持可选的 iCloud 共享及自建菜谱。没有清单导出、按商店分组、条码扫描与自定义食材定义。语音与文字指令只涉及库存、采购与换菜，不涉及排菜单、确认餐次、添加菜品与命名隔层。共 56 套晚餐、20 套早餐、79 种双语食材，并配有营养、过敏原与时令数据。
-- 上架前仍待完成：真实菜品摄影、逐道实测烹饪时间、CloudKit 家庭共享，以及 App Store 材料（隐私标签、隐私政策链接、商店页面）。
-- 核心检查：**63 个场景、约 4700 条断言**，由 `scripts/check_core.py` 在不依赖 XCTest 的情况下运行。
-- 界面测试：在 iPhone 17 模拟器（iOS 27）上**15 条全部通过**，覆盖排菜单、采购清单、添加菜品、添加冰箱、白天与夜间，以及“说一句/输入一句”的全过程。其中 `testTheOtherEarIsOneTapAway` 曾出现过一次测试进程崩溃重启，重试与单独运行均通过，未能复现。
+- 上架前仍待完成：真实菜品摄影、逐道实测烹饪时间、CloudKit 双设备实机验收，以及 App Store 材料（隐私标签、隐私政策链接、商店页面）。
+- 核心检查：**72 个场景、约 4700 条断言**，由 `scripts/check_core.py` 在不依赖 XCTest 的情况下运行。
+- 界面测试：在 iPhone 17 模拟器（iOS 27）上**17 条全部通过**，覆盖排菜单、采购清单、添加菜品、添加冰箱、白天与夜间、家庭共享的设置流程，以及“说一句/输入一句”的全过程。其中 `testTheOtherEarIsOneTapAway` 曾出现过一次测试进程崩溃重启，重试与单独运行均通过，未能复现。
 - **尚未在设备上完成验收。** 模拟器现已覆盖启动、布局、排菜单、采购清单、添加冰箱，以及"说一句/输入一句"的全过程；但覆盖不到相机，也覆盖不到语音识别本身：模拟器没有离线识别语言包，因此界面测试是把转写文本直接交给应用，而不是真的说出来。Apple 的语音识别仍需真机验证；新加入的 CloudKit 家庭共享也需要配置容器后进行双账号真机验收。
 
 ## 食品安全

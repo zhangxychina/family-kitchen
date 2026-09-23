@@ -22,6 +22,7 @@ these is edited or kept by hand.
 | `05-listening.png` | Saying a change: the app listening, with the words appearing as they are heard |
 | `06-understood.png` | What it understood, in both languages, waiting to be confirmed |
 | `07-done.png` | Confirmed, with the change taken and an Undo beside it |
+| `08-family-sharing-setup.png` | The family-sharing setup, as it looks before an iCloud account exists |
 
 ## About the voice pictures
 

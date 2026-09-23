@@ -36,7 +36,12 @@ import Combine
     @Published private(set) var session: FamilyCloudSession?
     @Published private(set) var isBusy = false
     @Published private(set) var changingFamily = false
+    /// True only when this device must not show the shared kitchen at all: the iCloud
+    /// account has actually changed, or access was taken away.
     @Published private(set) var accessBlocked = false
+    /// Whether the iCloud identity behind the cached kitchen has been confirmed since
+    /// launch. False simply means "not checked yet" — being offline is not suspicious.
+    @Published private(set) var identityConfirmed = false
     @Published private(set) var canWrite = true
     @Published private(set) var status = "Local kitchen · 本机厨房"
     @Published var error: String?
@@ -65,8 +70,11 @@ import Combine
             do {
                 session = try FamilyCloudSession.load(from: sessionURL)
                 status = "Waiting for iCloud · 等待同步"
-                // Do not show a previous account's cached kitchen until identity is checked.
-                accessBlocked = true
+                // The cached kitchen is already on this iPhone and is shown while the
+                // account is checked. Hiding it would take the shopping list away in
+                // exactly the place it is needed — a shop with no signal. What waits
+                // for confirmation is uploading, which `sync` does only after `verify`.
+                identityConfirmed = false
             } catch { loadError = error; self.error = "Could not read shared kitchen. Its file is preserved. 共享数据无法读取，原文件已保留。" }
         }
     }
@@ -75,7 +83,7 @@ import Combine
         guard observers.isEmpty else { return }
         observers.append(NotificationCenter.default.addObserver(forName: .CKAccountChanged, object: nil, queue: .main) { [weak self] _ in
             Task { @MainActor in
-                self?.accessBlocked = self?.connected ?? false
+                self?.identityConfirmed = false
                 self?.availableFamilies = []
                 self?.sharePresentation = nil
                 self?.conflict = false; self?.conflictRemote = nil
@@ -153,8 +161,38 @@ import Combine
         guard let saved = try result.saveResults[record.recordID]?.get() else { throw SharingError.invalidFamily }
         return saved
     }
+    /// How many rescue copies to keep. Each connect, disconnect and resolved conflict
+    /// writes one, so an unbounded folder is a slow leak on a phone that syncs for
+    /// years — and a folder nobody can find is not much of a safety net anyway.
+    static let backupsKept = 20
+
+    private var backupsDirectory: URL { directory.appendingPathComponent("Backups") }
+
     private func backup(_ state: FamilyState) throws {
-        try StateFile.save(state, to: directory.appendingPathComponent("Backups/\(UUID().uuidString).json"))
+        let stamp = ISO8601DateFormatter().string(from: Date()).replacingOccurrences(of: ":", with: "-")
+        try StateFile.save(state, to: backupsDirectory.appendingPathComponent("\(stamp)-\(UUID().uuidString.prefix(8)).json"))
+        pruneBackups()
+    }
+
+    /// Newest kept, oldest dropped. Never throws: losing an old copy must not stop
+    /// the thing the copy was protecting.
+    private func pruneBackups() {
+        let keys: Set<URLResourceKey> = [.contentModificationDateKey]
+        guard let files = try? FileManager.default.contentsOfDirectory(
+            at: backupsDirectory, includingPropertiesForKeys: Array(keys)) else { return }
+        let sorted = files.filter { $0.pathExtension == "json" }.sorted {
+            let a = (try? $0.resourceValues(forKeys: keys).contentModificationDate) ?? .distantPast
+            let b = (try? $1.resourceValues(forKeys: keys).contentModificationDate) ?? .distantPast
+            return a > b
+        }
+        for file in sorted.dropFirst(Self.backupsKept) { try? FileManager.default.removeItem(at: file) }
+    }
+
+    /// How many rescue copies are on this iPhone, and where they are, so the setup
+    /// screen can say so rather than leaving them invisible.
+    var backupCount: Int {
+        (try? FileManager.default.contentsOfDirectory(atPath: backupsDirectory.path))?
+            .filter { $0.hasSuffix(".json") }.count ?? 0
     }
     private func attach(_ record: CKRecord, owner: Bool, accountID: String, local: FamilyState) throws {
         let data = try payload(record)
@@ -167,9 +205,69 @@ import Combine
                                       recordName: record.recordID.recordName, isOwner: owner,
                                       accountID: accountID, base: data, local: state)
         try persist(next)
-        accessBlocked = false; conflict = false; conflictRemote = nil
+        accessBlocked = false; identityConfirmed = true; conflict = false; conflictRemote = nil
         didChangeState?(state)
         status = "Synced · 已同步"
+    }
+
+    // MARK: - Setting it up
+
+    /// One line of the setup screen: what was checked, and what came back.
+    enum SetupCheck: Equatable {
+        case unchecked
+        case checking
+        case ready(String)
+        case blocked(String)
+        var isReady: Bool { if case .ready = self { return true }; return false }
+        var detail: String? {
+            switch self {
+            case .unchecked: return nil
+            case .checking: return "Checking · 检查中"
+            case .ready(let text), .blocked(let text): return text
+            }
+        }
+    }
+    @Published private(set) var accountCheck: SetupCheck = .unchecked
+    @Published private(set) var containerCheck: SetupCheck = .unchecked
+    var setupReady: Bool { accountCheck.isReady && containerCheck.isReady }
+
+    /// Answers the two questions that decide whether sharing can work at all, in the
+    /// order they fail: is there an iCloud account, and can this build reach its
+    /// CloudKit container. Reported separately because the fixes are different — one
+    /// is the family's to do in Settings, the other is the developer's.
+    func runSetupChecks() async {
+        accountCheck = .checking; containerCheck = .checking
+        let status: CKAccountStatus
+        do { status = try await container.accountStatus() }
+        catch {
+            accountCheck = .blocked("Could not ask iCloud: \(error.localizedDescription) 无法查询 iCloud 状态。")
+            containerCheck = .unchecked
+            return
+        }
+        switch status {
+        case .available:
+            accountCheck = .ready("Signed in · 已登录")
+        case .noAccount:
+            accountCheck = .blocked("No iCloud account on this iPhone. Sign in under Settings → [your name]. 本机未登录 iCloud，请在“设置”中登录。")
+            containerCheck = .unchecked; return
+        case .restricted:
+            accountCheck = .blocked("iCloud is restricted on this iPhone, often by Screen Time. 本机 iCloud 受限，可能由屏幕使用时间限制。")
+            containerCheck = .unchecked; return
+        case .temporarilyUnavailable:
+            accountCheck = .blocked("iCloud is temporarily unavailable. Try again shortly. iCloud 暂时不可用，请稍后再试。")
+            containerCheck = .unchecked; return
+        default:
+            accountCheck = .blocked("iCloud status could not be determined. iCloud 状态无法确定。")
+            containerCheck = .unchecked; return
+        }
+        do {
+            _ = try await container.userRecordID()
+            containerCheck = .ready("\(Self.containerIdentifier) · 可用")
+        } catch {
+            containerCheck = .blocked(offline(error)
+                ? "Could not reach iCloud just now — check the connection and try again. 暂时无法连接 iCloud，请检查网络后重试。"
+                : "This build cannot reach \(Self.containerIdentifier). The container must exist for this app's Apple Developer team. 此版本无法访问该 CloudKit 容器，需在开发者账号下创建。")
+        }
     }
 
     func createFamily() async {
@@ -266,7 +364,7 @@ import Combine
         defer { isBusy = false; Catalog.setCustomRecipes(currentLocal?().customRecipes ?? []) }
         do {
             try await verify(start.accountID)
-            accessBlocked = false
+            accessBlocked = false; identityConfirmed = true
             let db = database(start.isOwner)
             let record = try await db.record(for: recordID(start))
             canWrite = try await writable(record, owner: start.isOwner)
@@ -350,7 +448,7 @@ import Combine
             try backup(session.local)
             let local = FileManager.default.fileExists(atPath: localURL.path) ? try StateFile.load(from: localURL) : FamilyState()
             try FileManager.default.removeItem(at: sessionURL)
-            self.session = nil; accessBlocked = false; canWrite = true
+            self.session = nil; accessBlocked = false; identityConfirmed = false; canWrite = true
             conflict = false; conflictRemote = nil; sharePresentation = nil
             availableFamilies = []; error = nil; status = "Local kitchen · 本机厨房"
             didChangeState?(local)
@@ -359,16 +457,36 @@ import Combine
 
     private func report(_ failure: Error) {
         error = failure.localizedDescription
+        // Only two things justify hiding a kitchen that is already on this iPhone:
+        // the account really is a different one, or this device's access was removed.
+        // "I could not reach iCloud" is neither.
         if let e = failure as? SharingError {
-            switch e { case .account, .changedAccount: accessBlocked = connected; default: break }
+            switch e { case .changedAccount: accessBlocked = connected; default: break }
         }
         if let e = failure as? CKError {
             switch e.code {
-            case .notAuthenticated, .permissionFailure, .unknownItem, .zoneNotFound, .userDeletedZone:
+            case .permissionFailure, .unknownItem, .zoneNotFound, .userDeletedZone:
                 accessBlocked = connected
             default: break
             }
         }
-        status = connected ? "Sync paused — retry available · 同步暂停，可重试" : "iCloud unavailable · iCloud 暂不可用"
+        if connected {
+            status = offline(failure)
+                ? "Offline — using this iPhone's copy · 离线，使用本机副本"
+                : "Sync paused — retry available · 同步暂停，可重试"
+        } else {
+            status = "iCloud unavailable · iCloud 暂不可用"
+        }
+    }
+
+    /// Whether a failure is simply the network being away.
+    private func offline(_ failure: Error) -> Bool {
+        guard let e = failure as? CKError else { return (failure as NSError).domain == NSURLErrorDomain }
+        switch e.code {
+        case .networkUnavailable, .networkFailure, .serviceUnavailable, .requestRateLimited,
+             .zoneBusy, .notAuthenticated:
+            return true
+        default: return false
+        }
     }
 }

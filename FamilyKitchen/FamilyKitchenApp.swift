@@ -86,8 +86,11 @@ import ImageIO
         }
     }
     @discardableResult func update(_ action: (inout FamilyState) -> Void) -> Bool {
-        guard !loadBlocked, cloud.editingAllowed else {
-            error = cloud.error ?? "Shared kitchen is temporarily read-only. Open Family sharing for details. 请到家庭共享查看状态。"
+        // A saved file this app could not read is nothing to do with sharing, and the
+        // message explaining it was already set at launch. Leave it standing.
+        guard !loadBlocked else { Catalog.setCustomRecipes(state.customRecipes); return false }
+        guard cloud.editingAllowed else {
+            error = cloud.error ?? "The shared kitchen is read-only just now. Open Family sharing for details. 共享厨房暂时只读，详见“家庭共享”。"
             Catalog.setCustomRecipes(state.customRecipes)
             return false
         }
@@ -169,9 +172,10 @@ struct RootView: View {
                 }.padding(.horizontal).padding(.vertical, 4).background(Brand.card)
             }
         }
-        .task {
-            if !ProcessInfo.processInfo.arguments.contains("--ui-testing") { cloud.start() }
-        }
+        // The controller starts under test too. With no iCloud account it does
+        // nothing but answer questions, and a feature the tests cannot reach is a
+        // feature nothing checks.
+        .task { cloud.start() }
         .sheet(item: $invitations.invitation) { invitation in
             FamilyInvitationView(invitation: invitation, cloud: cloud)
         }
@@ -180,7 +184,7 @@ struct RootView: View {
         // spent in a pocket is caught up with here.
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { store.refreshAppearance() }
-            if !ProcessInfo.processInfo.arguments.contains("--ui-testing") { cloud.setForeground(phase == .active) }
+            cloud.setForeground(phase == .active)
         }
         .animation(.easeInOut(duration: 0.35), value: scheme)
     }

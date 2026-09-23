@@ -449,6 +449,44 @@ final class FamilyKitchenUITests: XCTestCase {
         XCTAssertGreaterThan(pageBrightness(), 0.7, "matching a light phone means the light view")
     }
 
+    // MARK: - Family sharing
+
+    /// The whole app must work for a family that never sets sharing up — which is
+    /// every family until they do, and every family afterwards whenever iCloud is
+    /// out of reach.
+    func testTheAppIsWholeWithNoICloudAccount() {
+        for tab in ["Today", "Week", "Recipes", "Shopping", "Kitchen"] {
+            XCTAssertTrue(app.tabBars.buttons[tab].waitForExistence(timeout: 20),
+                          "\(tab) must be reachable with no iCloud account")
+        }
+        // Planning is a saved edit, so this also proves the sharing gate does not
+        // stand in the way when there is no family.
+        planTheWeek()
+        app.tabBars.buttons["Shopping"].tap()
+        XCTAssertTrue(app.buttons["openShopCheck"].waitForExistence(timeout: 20),
+                      "a local edit must still be saveable with no iCloud")
+    }
+
+    func testFamilySharingSetupExplainsEachStepBeforeUploadingAnything() {
+        openSettings("Family sharing")
+        XCTAssertTrue(app.staticTexts["Local kitchen · 本机厨房"].waitForExistence(timeout: 20))
+        // The two questions that can be answered before anything leaves the phone.
+        XCTAssertTrue(app.staticTexts["1 · iCloud account · iCloud 账号"].waitForExistence(timeout: 20))
+        XCTAssertTrue(app.staticTexts["2 · CloudKit container · CloudKit 容器"].exists)
+
+        // A simulator has no iCloud account, so step 1 should say so in words and
+        // offer the place to fix it — and creating must not be offered.
+        let explained = app.staticTexts.containing(
+            NSPredicate(format: "label CONTAINS %@", "No iCloud account")).firstMatch
+        XCTAssertTrue(explained.waitForExistence(timeout: 20),
+                      "a missing account should be named, not discovered after tapping Create")
+        XCTAssertTrue(reveal(app.buttons["Open iPhone Settings · 打开系统设置"]))
+        let create = app.buttons["Create family from this kitchen · 用当前厨房创建家庭"]
+        XCTAssertTrue(reveal(create))
+        XCTAssertFalse(create.isEnabled, "nothing should be uploadable until the checks pass")
+        XCTAssertFalse(app.staticTexts["Family connected · 已连接家庭"].exists)
+    }
+
     func testRecipeScrollingPerformance() {
         app.tabBars.buttons["Recipes"].tap()
         measure(metrics: [XCTClockMetric(), XCTMemoryMetric(), XCTCPUMetric()]) {

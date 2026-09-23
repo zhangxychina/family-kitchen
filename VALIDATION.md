@@ -5,6 +5,15 @@ Family Kitchen 0.4。菜单：56 套晚餐 + 20 套早餐。配图 70/76（待�
 核心回归：PASS
 
 ```text
+RUN testCloudPayloadExcludesPhotosAndDevicePreferences
+RUN testCloudMergeKeepsIndependentFamilyAndKitchenEdits
+RUN testCloudConcurrentPurchasesCannotDoubleCount
+RUN testCloudDeleteVersusEditIsAConflict
+RUN testCloudIdenticalChangesAreNotAConflict
+RUN testCloudRebasesEditsMadeDuringUpload
+RUN testCloudJournalRestoresUnsyncedWorkingCopyAndAncestor
+RUN testCloudPreferencesDoNotCreatePendingUpload
+RUN testCloudRejectsNewerAndInvalidRemoteData
 RUN testScalingAndAggregation
 RUN testPurchasedAndStoredNeverDoubleCount
 RUN testReplaceRecomputesAndClearsVotes
@@ -68,6 +77,15 @@ RUN testEverySuggestedSentenceActuallyWorks
 RUN testAnAmountSpokenForOneFoodDoesNotSpeakForTheOther
 RUN testTheEarThatUnderstoodTheKitchenIsTheOneBelieved
 RUN testANamedWeekdayFindsTheDayTheMenuActuallyCovers
+PASS testCloudPayloadExcludesPhotosAndDevicePreferences
+PASS testCloudMergeKeepsIndependentFamilyAndKitchenEdits
+PASS testCloudConcurrentPurchasesCannotDoubleCount
+PASS testCloudDeleteVersusEditIsAConflict
+PASS testCloudIdenticalChangesAreNotAConflict
+PASS testCloudRebasesEditsMadeDuringUpload
+PASS testCloudJournalRestoresUnsyncedWorkingCopyAndAncestor
+PASS testCloudPreferencesDoNotCreatePendingUpload
+PASS testCloudRejectsNewerAndInvalidRemoteData
 PASS testScalingAndAggregation
 PASS testPurchasedAndStoredNeverDoubleCount
 PASS testReplaceRecomputesAndClearsVotes
@@ -131,7 +149,7 @@ PASS testEverySuggestedSentenceActuallyWorks
 PASS testAnAmountSpokenForOneFoodDoesNotSpeakForTheOther
 PASS testTheEarThatUnderstoodTheKitchenIsTheOneBelieved
 PASS testANamedWeekdayFindsTheDayTheMenuActuallyCovers
-63 scenarios passed; 4718 assertions.
+72 scenarios passed; 4742 assertions.
 
 ```
 

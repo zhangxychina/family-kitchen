@@ -38,6 +38,66 @@ struct FamilySharingView: View {
     @State private var showJoinConfirmation = false
     @State private var keepDeviceVersion = false
 
+    /// Four steps, in the order they fail. The first two are questions about this
+    /// iPhone that can be answered before anything is uploaded, so a family finds out
+    /// that iCloud is switched off here rather than after tapping Create.
+    @ViewBuilder private var setup: some View {
+        Section("Set up family sharing · 设置家庭共享") {
+            step(1, "iCloud account", "iCloud 账号", cloud.accountCheck)
+            if case .blocked = cloud.accountCheck {
+                Button("Open iPhone Settings · 打开系统设置") {
+                    if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
+                }.font(.footnote)
+            }
+            step(2, "CloudKit container", "CloudKit 容器", cloud.containerCheck)
+            Button("Check again · 重新检查") { Task { await cloud.runSetupChecks() } }
+                .font(.footnote).disabled(cloud.isBusy)
+        }
+        Section("3 · Before you start · 开始之前") {
+            Text("Your kitchen is copied to your own private iCloud storage. Only people you invite can open it, and only from their own iPhone. 厨房数据会复制到你的私人 iCloud，仅受邀成员可在自己的 iPhone 上访问。")
+            Text("Menus, shopping, stock, recipes, family settings and meal history travel. Photos, voice and this phone's display settings stay here. 菜单、采购、库存、菜谱、家庭资料与用餐记录会同步；照片、语音与本机显示设置不会。")
+            Text("Your current kitchen is kept as it is. Returning to it later restores exactly this. 当前的本机厨房会原样保留，之后可随时恢复。")
+        }.font(.footnote).foregroundStyle(.secondary)
+        Section("4 · Create or join · 创建或加入") {
+            Button("Create family from this kitchen · 用当前厨房创建家庭") { confirmCreate = true }
+                .disabled(cloud.isBusy || cloud.loadError != nil || !cloud.setupReady)
+            Button("Find my families · 查找我的家庭") { Task { await cloud.findFamilies() } }
+                .disabled(cloud.isBusy || cloud.loadError != nil || !cloud.setupReady)
+            Text("Already invited? Open the invitation link on this iPhone and confirm — there is nothing to do here first. 已收到邀请：在本机打开链接并确认即可，无需先在此设置。")
+                .font(.footnote).foregroundStyle(.secondary)
+            if !cloud.setupReady {
+                Text("Finish steps 1 and 2 first. 请先完成第 1、2 步。")
+                    .font(.footnote).foregroundStyle(Brand.clay)
+            }
+        }
+        if !cloud.availableFamilies.isEmpty {
+            Section("Available families · 可连接家庭") {
+                ForEach(cloud.availableFamilies) { family in
+                    Button(family.name) { familyToJoin = family; showJoinConfirmation = true }
+                        .disabled(cloud.isBusy)
+                }
+            }
+        }
+    }
+
+    @ViewBuilder private func step(_ number: Int, _ en: String, _ zh: String,
+                                   _ check: FamilyCloudController.SetupCheck) -> some View {
+        HStack(alignment: .top, spacing: 12) {
+            switch check {
+            case .ready: Image(systemName: "checkmark.circle.fill").foregroundStyle(Brand.protein)
+            case .blocked: Image(systemName: "exclamationmark.circle.fill").foregroundStyle(Brand.clay)
+            case .checking: ProgressView().controlSize(.small).frame(width: 20)
+            case .unchecked: Image(systemName: "\(number).circle").foregroundStyle(.secondary)
+            }
+            VStack(alignment: .leading, spacing: 2) {
+                Text("\(number) · \(en) · \(zh)").font(.subheadline)
+                if let detail = check.detail {
+                    Text(detail).font(.caption).foregroundStyle(.secondary)
+                }
+            }
+        }
+    }
+
     var body: some View {
         List {
             Section("iCloud family · iCloud 家庭") {
@@ -51,6 +111,10 @@ struct FamilySharingView: View {
                 Section {
                     if let session = cloud.session, !cloud.accessBlocked {
                         LabeledContent("Your role · 你的权限", value: session.isOwner ? "Owner · 所有者" : (cloud.canWrite ? "Can edit · 可编辑" : "View only · 仅查看"))
+                    }
+                    if !cloud.identityConfirmed && !cloud.accessBlocked {
+                        Text("Not checked with iCloud since the app opened — you are looking at this iPhone's copy. Changes are kept here and go up once it can be reached. 本次打开后尚未与 iCloud 核对，当前显示本机副本；修改会先保存在本机，能连上后再上传。")
+                            .font(.caption).foregroundStyle(.secondary)
                     }
                     Button("Sync now · 立即同步") { Task { await cloud.sync() } }
                         .disabled(cloud.isBusy || cloud.conflict)
@@ -74,23 +138,13 @@ struct FamilySharingView: View {
                     Text("Restores the kitchen saved before connecting. This device's shared copy is backed up, including unsynced edits. It does not remove cloud membership. 恢复连接前的本机厨房，并备份共享副本；不会退出云端家庭。")
                 }
             } else {
-                Section {
-                    Button("Create family from this kitchen · 用当前厨房创建家庭") { confirmCreate = true }
-                        .disabled(cloud.isBusy || cloud.loadError != nil)
-                    Button("Find my families · 查找我的家庭") { Task { await cloud.findFamilies() } }
-                        .disabled(cloud.isBusy || cloud.loadError != nil)
-                    Text("To join a new family, ask its owner to send you an iCloud invitation and open the link on this iPhone. 加入新家庭：请家人发送邀请链接，在本机打开。")
-                        .font(.subheadline).foregroundStyle(.secondary)
-                }
-                if !cloud.availableFamilies.isEmpty {
-                    Section("Available families · 可连接家庭") {
-                        ForEach(cloud.availableFamilies) { family in
-                            Button(family.name) { familyToJoin = family; showJoinConfirmation = true }
-                                .disabled(cloud.isBusy)
-                        }
-                    }
-                }
+                setup
             }
+            Section("Rescue copies · 本机备份") {
+                Text(cloud.backupCount == 0
+                     ? "None yet. One is saved before connecting, before disconnecting and before resolving a clash. 暂无。连接、断开与处理冲突前都会各存一份。"
+                     : "\(cloud.backupCount) kept on this iPhone, newest first; the oldest are dropped past \(FamilyCloudController.backupsKept). They are never uploaded. 本机保留 \(cloud.backupCount) 份，超过 \(FamilyCloudController.backupsKept) 份后删除最旧的；不会上传。")
+            }.font(.footnote)
             Section("Shared with your family · 共享内容") {
                 Text("Menus, shopping, stock, recipes, family settings and meal history. 菜单、采购、库存、菜谱、家庭资料与用餐记录。")
                 Text("Photos, voice recordings, language and appearance are not uploaded. 照片、语音录音、语言与外观设置不上传。")
@@ -98,6 +152,7 @@ struct FamilySharingView: View {
             }.font(.footnote)
         }
         .navigationTitle("Family sharing · 家庭共享")
+        .task { if !cloud.connected { await cloud.runSetupChecks() } }
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $cloud.sharePresentation) { presentation in
             FamilyCloudSharingSheet(presentation: presentation, cloud: cloud)

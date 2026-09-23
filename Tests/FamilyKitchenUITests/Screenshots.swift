@@ -42,6 +42,19 @@ final class FamilyKitchenScreenshots: XCTestCase {
 
         app.tabBars.buttons["Shopping"].tap(); settle()
         capture("04-shopping")
+
+        // The setup wizard, as it looks before an iCloud account exists — which is
+        // the state it was written for.
+        app.tabBars.buttons["Kitchen"].tap()
+        if app.buttons["openSettings"].waitForExistence(timeout: 10) {
+            app.buttons["openSettings"].tap()
+            let sharing = app.buttons.containing(
+                NSPredicate(format: "label CONTAINS %@", "Family sharing")).firstMatch
+            if sharing.waitForExistence(timeout: 10) {
+                sharing.tap(); settle(); settle()
+                capture("08-family-sharing-setup")
+            }
+        }
     }
 
     /// The spoken change, with a reading already in hand — see `VoiceListener
