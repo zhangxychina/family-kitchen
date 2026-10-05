@@ -481,12 +481,20 @@ final class FamilyKitchenUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["2 · CloudKit container · CloudKit 容器"].exists)
 
         // A simulator has no iCloud account, so step 1 should say so in words and
-        // offer the place to fix it — and creating must not be offered.
-        let explained = app.staticTexts.containing(
+        // offer the place to fix it — and creating must not be offered. A build made
+        // with signing off cannot ask iCloud anything, and must say that instead of
+        // stopping: CloudKit ends an unentitled app rather than returning an error.
+        let noAccount = app.staticTexts.containing(
             NSPredicate(format: "label CONTAINS %@", "No iCloud account")).firstMatch
-        XCTAssertTrue(explained.waitForExistence(timeout: 20),
-                      "a missing account should be named, not discovered after tapping Create")
-        XCTAssertTrue(reveal(app.buttons["Open iPhone Settings · 打开系统设置"]))
+        let notSigned = app.staticTexts.containing(
+            NSPredicate(format: "label CONTAINS %@", "is not signed for")).firstMatch
+        let deadline = Date().addingTimeInterval(20)
+        while !noAccount.exists && !notSigned.exists && Date() < deadline { Thread.sleep(forTimeInterval: 0.25) }
+        XCTAssertTrue(noAccount.exists || notSigned.exists,
+                      "what blocks sharing should be named, not discovered after tapping Create")
+        if noAccount.exists {
+            XCTAssertTrue(reveal(app.buttons["Open iPhone Settings · 打开系统设置"]))
+        }
         let create = app.buttons["Create family from this kitchen · 用当前厨房创建家庭"]
         XCTAssertTrue(reveal(create))
         XCTAssertFalse(create.isEnabled, "nothing should be uploadable until the checks pass")

@@ -8,7 +8,8 @@ struct DraftIngredient: Identifiable {
     var sourceText: String? = nil
     var ingredient: String? = nil
     var amount: String = ""
-    var matched: Bool { ingredient != nil && Double(amount) ?? 0 > 0 }
+    /// The amount as a number the shopping list can use, or nil when it is not one.
+    var quantity: Double? { parseAmount(amount).flatMap { $0 > 0 ? $0 : nil } }
 }
 
 /// Add a dish of your own, by hand or from a link.
@@ -38,14 +39,16 @@ struct AddDishView: View {
     @State private var stepsZh: [String] = [""]
     @State private var stepsEn: [String] = [""]
     @State private var sourceURL: String?
+    private var sourceLink: URL? { Recipe.safeLink(sourceURL) }
 
     private let starches = ["Rice", "Noodles", "Bread", "Oats", "Couscous", "Other"]
     private let proteins = ["Chicken", "Beef", "Pork", "Turkey", "Fish", "Shellfish",
                             "Tofu", "Egg", "Dairy", "Legumes", "Other"]
 
+    /// A name in either language, and a method in either language.
     private var canSave: Bool {
-        !(en.trimmingCharacters(in: .whitespaces).isEmpty && zh.trimmingCharacters(in: .whitespaces).isEmpty)
-            && !cleanedSteps(stepsZh).isEmpty || !cleanedSteps(stepsEn).isEmpty
+        let named = !en.trimmingCharacters(in: .whitespaces).isEmpty || !zh.trimmingCharacters(in: .whitespaces).isEmpty
+        return named && (!cleanedSteps(stepsZh).isEmpty || !cleanedSteps(stepsEn).isEmpty)
     }
 
     var body: some View {
@@ -57,7 +60,7 @@ struct AddDishView: View {
             Section {
                 Button { save() } label: { Label("Save this dish", systemImage: "tray.and.arrow.down").frame(maxWidth: .infinity) }
                     .buttonStyle(.borderedProminent).disabled(!canSave)
-                if let sourceURL, let url = URL(string: sourceURL) {
+                if let url = sourceLink {
                     Link("Original page · 原始网页", destination: url).font(.footnote)
                 }
             } footer: {
@@ -146,7 +149,7 @@ struct AddDishView: View {
         Section("The dish · 菜品") {
             TextField("English name", text: $en)
             TextField("中文名称", text: $zh)
-            Picker("Meal", selection: $breakfast) { Text("Dinner").tag(true == false); Text("Breakfast").tag(true) }
+            Picker("Meal", selection: $breakfast) { Text("Dinner").tag(false); Text("Breakfast").tag(true) }
                 .pickerStyle(.segmented)
             Stepper("About \(minutes) minutes, whole meal", value: $minutes, in: 5...180, step: 5)
             Picker("Main starch", selection: $starch) { ForEach(starches, id: \.self) { Text($0) } }
@@ -224,11 +227,14 @@ struct AddDishView: View {
         // Amounts are stored against five adult portions, the scale the catalogue uses.
         let factor = 5 / max(1, basePortions)
         let portions = drafts.compactMap { draft -> Portion? in
-            guard let id = draft.ingredient, let amount = Double(draft.amount), amount > 0 else { return nil }
+            guard let id = draft.ingredient, let amount = draft.quantity else { return nil }
             return Portion(id, amount * factor)
         }
+        // A line that did not become a counted portion — never matched, or matched but
+        // given no usable amount — is kept as a note rather than silently dropped.
         let notes = drafts.compactMap { draft -> String? in
-            guard draft.ingredient == nil, let text = draft.sourceText?.trimmingCharacters(in: .whitespaces), !text.isEmpty else { return nil }
+            guard draft.ingredient == nil || draft.quantity == nil,
+                  let text = draft.sourceText?.trimmingCharacters(in: .whitespaces), !text.isEmpty else { return nil }
             return text
         }
         let recipe = Recipe(id: existing?.id ?? "family-\(UUID().uuidString)",
@@ -241,7 +247,6 @@ struct AddDishView: View {
                             vegetable: vegetable,
                             ingredients: portions,
                             steps: chinese.isEmpty ? english : chinese,
-                            favorite: false,
                             stepsEnglish: english.isEmpty ? nil : english,
                             sourceURL: sourceURL,
                             unmatchedIngredients: notes.isEmpty ? nil : notes)
@@ -256,12 +261,14 @@ struct AddDishView: View {
         sourceURL = existing.sourceURL
         basePortions = 5
         drafts = existing.ingredients.map {
-            DraftIngredient(ingredient: $0.ingredient,
-                            amount: $0.quantity.formatted(.number.precision(.fractionLength(0...2))))
+            DraftIngredient(ingredient: $0.ingredient, amount: amountText($0.quantity))
         }
         drafts += (existing.unmatchedIngredients ?? []).map { DraftIngredient(sourceText: $0) }
         if drafts.isEmpty { drafts = [DraftIngredient()] }
-        stepsZh = existing.steps.isEmpty ? [""] : existing.steps
+        // A dish written only in English keeps the same words in both lists; they
+        // belong in the English boxes alone.
+        let englishOnly = existing.stepsEnglish != nil && existing.steps == existing.stepsEnglish
+        stepsZh = existing.steps.isEmpty || englishOnly ? [""] : existing.steps
         stepsEn = existing.stepsEnglish ?? [""]
     }
 }

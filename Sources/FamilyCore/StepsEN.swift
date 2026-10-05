@@ -398,6 +398,10 @@ extension Recipe {
 
     /// The steps to show, as (Chinese, English) pairs. A missing translation never
     /// hides the method: whichever language exists is shown.
+    ///
+    /// A dish the family wrote only in English keeps those words in `steps` too, so
+    /// older versions of the app still have a method to show. Those are the same
+    /// sentence twice, and are printed once.
     public func steps(in language: RecipeLanguage) -> [(zh: String?, en: String?)] {
         let english = englishSteps
         let wantsZh = language.showsChinese || english == nil
@@ -405,18 +409,13 @@ extension Recipe {
         let count = max(steps.count, english?.count ?? 0)
         var result: [(zh: String?, en: String?)] = []
         for index in 0..<count {
-            let zh: String? = wantsZh && index < steps.count ? steps[index] : nil
-            let en: String? = wantsEn && index < (english?.count ?? 0) ? english?[index] : nil
+            let original = index < steps.count ? steps[index] : nil
+            let translated = index < (english?.count ?? 0) ? english?[index] : nil
+            var zh: String? = wantsZh ? original : nil
+            let en: String? = wantsEn ? translated : nil
+            if zh != nil, zh == en { zh = nil }
             if zh != nil || en != nil { result.append((zh: zh, en: en)) }
         }
         return result
-    }
-    /// The dish name, written the way this family reads recipes.
-    public func title(in language: RecipeLanguage) -> String {
-        switch language {
-        case .both: return name
-        case .chinese: return zh
-        case .english: return en
-        }
     }
 }

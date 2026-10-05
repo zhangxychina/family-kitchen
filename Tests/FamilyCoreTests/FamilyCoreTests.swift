@@ -170,9 +170,6 @@ final class FamilyCoreTests: XCTestCase {
     func testNewPlanKeepsPurchasedGroceries() {
         var s = FamilyState(); s.meals = [Meal(date:Date(),recipe:"sesame",breakfast:false)]; s.buy("chicken"); s.plan(start:Date()); XCTAssertEqual(s.purchases.count,1)
     }
-    func testRecognitionDoesNotInventResults() async {
-        do { _ = try await ManualOnlyRecognizer().labels(from:Data()); XCTFail("Must fail honestly") } catch { XCTAssertTrue(error is RecognitionError) }
-    }
     func testExpandedCatalogCountsAndIdentifiers() {
         XCTAssertEqual(Catalog.recipes.filter { !$0.breakfast }.count, 56)
         XCTAssertEqual(Catalog.recipes.filter(\.breakfast).count, 20)
@@ -497,9 +494,6 @@ final class FamilyCoreTests: XCTestCase {
     }
     func testRecipeLanguagePreferenceSelectsText() {
         let recipe = Catalog.recipe("sesame")!
-        XCTAssertEqual(recipe.title(in:.chinese),recipe.zh)
-        XCTAssertEqual(recipe.title(in:.english),recipe.en)
-        XCTAssertEqual(recipe.title(in:.both),recipe.name)
         let both = recipe.steps(in:.both)
         XCTAssertEqual(both.count,recipe.steps.count)
         XCTAssertTrue(both.allSatisfy { $0.zh != nil && $0.en != nil })
@@ -593,7 +587,7 @@ final class FamilyCoreTests: XCTestCase {
         let dish = Recipe(id:"family-test-dish",en:"Grandma's noodles",zh:"外婆的面",breakfast:false,
                           minutes:25,starch:"Noodles",protein:"Chicken",vegetable:true,
                           ingredients:[Portion("chicken",500),Portion("noodles",400),Portion("bokchoy",300)],
-                          steps:["把面煮熟。","鸡肉炒香后拌入。"],favorite:false,
+                          steps:["把面煮熟。","鸡肉炒香后拌入。"],
                           stepsEnglish:["Boil the noodles.","Fry the chicken and toss together."],
                           sourceURL:"https://example.com/noodles",
                           unmatchedIngredients:["a splash of grandma's secret sauce"])
@@ -762,7 +756,7 @@ final class FamilyCoreTests: XCTestCase {
         XCTAssertTrue(String(decoding:encoded,as:UTF8.self).contains("cupboard"))
         let decoded = try JSONDecoder().decode(Appliance.self,from:encoded)
         XCTAssertEqual(decoded.kind,.pantry)
-        XCTAssertEqual(decoded.fullName,"Larder · Basement")
+        XCTAssertEqual(decoded.name,"Larder"); XCTAssertEqual(decoded.place,"Basement")
     }
 
     // MARK: - Checking the shelf before shopping
@@ -1214,5 +1208,198 @@ final class FamilyCoreTests: XCTestCase {
             return XCTFail("tomorrow is before this menu starts")
         }
         XCTAssertTrue(en.contains("tomorrow"), en)
+    }
+
+    // MARK: - Audit regressions
+
+    private func familyDish(breakfast: Bool, steps: [String] = ["Cook it."], english: [String]? = nil) -> Recipe {
+        Recipe(id: "family-audit", en: "Audit dish", zh: "测试菜", breakfast: breakfast, minutes: 20,
+               starch: "Rice", protein: "Chicken", vegetable: true,
+               ingredients: [Portion("chicken", 500)], steps: steps, stepsEnglish: english)
+    }
+
+    func testChangingAFamilyDishMealTypeKeepsTheSavedFileReadable() throws {
+        var s = FamilyState()
+        s.saveCustomRecipe(familyDish(breakfast: false))
+        s.meals = [Meal(date: Date(), recipe: "family-audit", breakfast: false)]
+        s.saveCustomRecipe(familyDish(breakfast: true))
+        XCTAssertTrue(s.meals.isEmpty, "a dinner slot cannot hold a breakfast dish")
+        let reloaded = try StateFile.decode(JSONEncoder().encode(s))
+        XCTAssertEqual(reloaded.customRecipes.first?.breakfast, true)
+        Catalog.setCustomRecipes([])
+    }
+
+    func testHostileDurationsDoNotOverflow() {
+        XCTAssertNil(RecipeImport.durationMinutes("PT999999999999999999H"))
+        XCTAssertNil(RecipeImport.durationMinutes("PT99999999999999999999999M"))
+        XCTAssertEqual(RecipeImport.durationMinutes("PT1H15M"), 75)
+    }
+
+    func testAmountsRoundTripWithoutGroupingSeparators() {
+        XCTAssertEqual(amountText(1500), "1500")
+        XCTAssertEqual(amountText(333.333333), "333.33")
+        XCTAssertEqual(parseAmount(amountText(1234.5)), 1234.5)
+        XCTAssertEqual(parseAmount("1,500"), 1500)
+        XCTAssertEqual(parseAmount("0,5"), 0.5)
+        XCTAssertEqual(parseAmount(" 2.25 "), 2.25)
+        XCTAssertNil(parseAmount("inf"))
+        XCTAssertNil(parseAmount("nan"))
+        XCTAssertNil(parseAmount(""))
+        XCTAssertNil(parseAmount("-3"))
+    }
+
+    func testEnglishOnlyFamilyDishShowsEachStepOnce() {
+        let steps = ["Boil.", "Serve."]
+        let dish = familyDish(breakfast: false, steps: steps, english: steps)
+        let both = dish.steps(in: .both)
+        XCTAssertEqual(both.count, 2)
+        XCTAssertTrue(both.allSatisfy { ($0.zh == nil) != ($0.en == nil) }, "each step printed once")
+        XCTAssertEqual(dish.steps(in: .chinese).count, 2, "never an empty method")
+    }
+
+    func testOnlyHTTPSSourceLinksAreOffered() {
+        var dish = familyDish(breakfast: false)
+        dish.sourceURL = "https://example.com/recipe"
+        XCTAssertEqual(dish.sourceLink?.absoluteString, "https://example.com/recipe")
+        for bad in ["tel:5551234", "sms:5551234", "javascript:alert(1)", "http://example.com", "file:///etc/passwd", "otherapp://do"] {
+            dish.sourceURL = bad
+            XCTAssertNil(dish.sourceLink, bad)
+        }
+    }
+
+    func testCookingRemovesStockThatIsUsedUp() {
+        var s = FamilyState()
+        s.stock = [Stock(ingredient: "chicken", quantity: 10, confirmed: true)]
+        s.meals = [Meal(date: Date(), recipe: "sesame", breakfast: false)]
+        s.finish(s.meals[0].id, consume: true)
+        XCTAssertFalse(s.stock.contains { $0.ingredient == "chicken" }, "a used-up shelf entry is not left behind at 0 g")
+    }
+
+    func testSwapScoresAreStableWithLongHistory() {
+        var s = FamilyState()
+        s.plan(start: FamilyState.nextMonday(after: Date()))
+        let start = Date(timeIntervalSinceNow: -700 * 86_400)
+        s.history = (0..<1500).map { i in
+            MealRecord(date: start.addingTimeInterval(Double(i) * 40_000), recipe: Catalog.builtInRecipes[i % Catalog.builtInRecipes.count].id,
+                       breakfast: false, cooked: true, people: 5)
+        }
+        let meal = s.meals.first { !$0.breakfast }!
+        let first = s.swapOptions(for: meal).map(\.id)
+        XCTAssertEqual(first, s.swapOptions(for: meal).map(\.id))
+        XCTAssertEqual(Array(first.prefix(6)), s.swapOptions(for: meal, limit: 6).map(\.id))
+    }
+
+    func testHistoryCountsTheFamilyListNotTheDefaultHeadcount() {
+        var s = FamilyState()
+        s.members = [FamilyMember(name: "A", isChild: false), FamilyMember(name: "B", isChild: true, age: 6)]
+        s.guests = 1
+        s.meals = [Meal(date: Date(), recipe: "sesame", breakfast: false)]
+        s.finish(s.meals[0].id, consume: false)
+        XCTAssertEqual(s.history.last?.people, 3)
+    }
+
+    func testTheMandarinReadingWinsWhenTheListNeedsCarrots() {
+        var s = FamilyState()
+        s.meals = [Meal(date: Date(), recipe: "curry", breakfast: false)]   // curry uses carrots
+        let readings = [SpokenReading(locale: "en-US", text: "jah lee yee jing yo who law bo luh", confidence: 0.93),
+                        SpokenReading(locale: "zh-CN", text: "家里已经有胡萝卜了", confidence: 0.55)]
+        XCTAssertEqual(s.bestReading(among: readings)?.locale, "zh-CN")
+        guard case .command(let command) = s.interpret("家里已经有胡萝卜了") else { return XCTFail("expected a command") }
+        XCTAssertEqual(command.steps.first?.action, .haveAtHome(ingredient: "carrot", quantity: s.shopping().first { $0.ingredient == "carrot" }!.shortage))
+        // With nothing planned the list asks for nothing, so there is nothing to tick off.
+        if case .command = FamilyState().interpret("家里已经有胡萝卜了") { XCTFail("an empty kitchen has no shortage to cover") }
+    }
+
+    // MARK: - Reading the app's own entitlements
+
+    private func le(_ v: UInt32) -> [UInt8] { withUnsafeBytes(of: v.littleEndian, Array.init) }
+    private func le64(_ v: UInt64) -> [UInt8] { withUnsafeBytes(of: v.littleEndian, Array.init) }
+    private func be(_ v: UInt32) -> [UInt8] { withUnsafeBytes(of: v.bigEndian, Array.init) }
+    private func name16(_ s: String) -> [UInt8] { Array(s.utf8) + Array(repeating: 0, count: 16 - s.utf8.count) }
+
+    /// A minimal 64-bit Mach-O: a header, then either a code signature carrying the
+    /// given entitlements or a `__TEXT,__entitlements` section holding them.
+    private func machO(signatureEntitlements: String?, sectionEntitlements: String? = nil) -> Data {
+        var commands: [UInt8] = []
+        var payload: [UInt8] = []
+        var count: UInt32 = 0
+        let headerSize = 32
+        // Lay out commands first with placeholder offsets, then append payload.
+        let segmentSize = 72 + 80
+        let signatureCommandSize = 16
+        let commandsSize = (sectionEntitlements != nil ? segmentSize : 0) + signatureCommandSize
+        var payloadOffset = headerSize + commandsSize
+        if let text = sectionEntitlements {
+            let blob = Array(text.utf8)
+            commands += le(0x19) + le(UInt32(segmentSize)) + name16("__TEXT") + Array(repeating: 0, count: 40)
+            commands += le(1) + le(0)
+            commands += name16("__entitlements") + name16("__TEXT") + le64(0) + le64(UInt64(blob.count))
+            commands += le(UInt32(payloadOffset)) + Array(repeating: 0, count: 28)
+            payload += blob; payloadOffset += blob.count; count += 1
+        }
+        var signature = be(0xfade0cc0)
+        if let text = signatureEntitlements {
+            let blob = be(0xfade7171) + be(UInt32(8 + text.utf8.count)) + Array(text.utf8)
+            signature += be(UInt32(12 + 8 + blob.count)) + be(1) + be(5) + be(20) + blob
+        } else {
+            let directory = be(0xfade0c02) + be(8)
+            signature += be(UInt32(12 + 8 + directory.count)) + be(1) + be(0) + be(20) + directory
+        }
+        commands += le(0x1d) + le(UInt32(signatureCommandSize)) + le(UInt32(payloadOffset)) + le(UInt32(signature.count))
+        payload += signature; count += 1
+        let header = le(0xfeedfacf) + le(0x0100000c) + le(0) + le(2) + le(count) + le(UInt32(commands.count)) + le(0) + le(0)
+        return Data(header + commands + payload)
+    }
+
+    func testEntitlementsAreFoundInADeviceSignature() {
+        let plist = "<plist><dict><key>com.apple.developer.icloud-container-identifiers</key><array><string>iCloud.com.example.app</string></array></dict></plist>"
+        let binary = machO(signatureEntitlements: plist)
+        XCTAssertEqual(SignedEntitlements.contains("iCloud.com.example.app", inExecutable: binary), .present)
+        XCTAssertEqual(SignedEntitlements.contains("iCloud.com.other.app", inExecutable: binary), .absent)
+    }
+
+    func testEntitlementsAreFoundInASimulatorSection() {
+        let binary = machO(signatureEntitlements: nil, sectionEntitlements: "<string>iCloud.com.example.app</string>")
+        XCTAssertEqual(SignedEntitlements.contains("iCloud.com.example.app", inExecutable: binary), .present)
+    }
+
+    func testABuildSignedWithoutEntitlementsHasNone() {
+        // What "signing switched off" produces: a linker signature, no entitlements.
+        XCTAssertEqual(SignedEntitlements.contains("iCloud.com.example.app", inExecutable: machO(signatureEntitlements: nil)), .absent)
+    }
+
+    func testAnUnreadableBinaryIsNeverReportedAsMissingEntitlements() {
+        XCTAssertEqual(SignedEntitlements.contains("x", inExecutable: Data()), .unknown)
+        XCTAssertEqual(SignedEntitlements.contains("x", inExecutable: Data([0xca, 0xfe, 0xba, 0xbe] + Array(repeating: 0, count: 40))), .unknown)
+        var truncated = machO(signatureEntitlements: "<string>x</string>")
+        truncated.removeLast(10)
+        XCTAssertEqual(SignedEntitlements.contains("x", inExecutable: truncated), .unknown)
+    }
+
+    func testTheScreenshotSentenceIsActedOnInAnEmptyKitchen() {
+        // Mirrors testCaptureSayingSomething, which starts from a reset kitchen.
+        let kitchen = FamilyState()
+        let readings = [SpokenReading(locale: "en-US", text: "jah lee yee jing yo who law bo luh", confidence: 0.93),
+                        SpokenReading(locale: "zh-CN", text: "家里已经有500克胡萝卜了", confidence: 0.55)]
+        let chosen = kitchen.bestReading(among: readings)
+        XCTAssertEqual(chosen?.locale, "zh-CN")
+        guard case .command(let command) = kitchen.interpret(chosen?.text ?? "") else { return XCTFail("expected a command") }
+        XCTAssertEqual(command.steps.first?.action, .haveAtHome(ingredient: "carrot", quantity: 500))
+    }
+
+    func testTheCatalogCanBeReadWhileItIsReplaced() {
+        // Run under the thread sanitizer (swift test --sanitize=thread) to prove it.
+        let dish = Recipe(id: "family-race", en: "Race", zh: "并发", breakfast: false, minutes: 10, starch: "Rice",
+                          protein: "Egg", vegetable: true, ingredients: [Portion("egg", 2)], steps: ["x"])
+        DispatchQueue.concurrentPerform(iterations: 2_000) { i in
+            if i % 2 == 0 { Catalog.setCustomRecipes(i % 4 == 0 ? [dish] : []) }
+            else {
+                let all = Catalog.recipes
+                XCTAssertTrue(all.count == Catalog.builtInRecipes.count || all.count == Catalog.builtInRecipes.count + 1)
+                _ = Catalog.recipe("family-race")
+            }
+        }
+        Catalog.setCustomRecipes([])
+        XCTAssertNil(Catalog.recipe("family-race"))
     }
 }

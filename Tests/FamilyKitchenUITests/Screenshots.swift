@@ -60,8 +60,12 @@ final class FamilyKitchenScreenshots: XCTestCase {
     /// The spoken change, with a reading already in hand — see `VoiceListener
     /// .scriptedReadings` for why this is not a microphone.
     func testCaptureSayingSomething() {
-        app.launchArguments = ["--ui-testing", "--voice-heard=en-US:0.93:jah lee yee jing yo who law bo luh",
-                               "--voice-heard=zh-CN:0.55:家里已经有胡萝卜了"]
+        // The sentence says how much, so it can be acted on whatever the kitchen holds:
+        // without an amount, "we have carrots" only means something when this week's
+        // list is asking for them, and this test starts from an empty kitchen.
+        app.launchArguments = ["--ui-testing", "--reset-ui-tests",
+                               "--voice-heard=en-US:0.93:jah lee yee jing yo who law bo luh",
+                               "--voice-heard=zh-CN:0.55:家里已经有500克胡萝卜了"]
         app.launch()
         app.tabBars.buttons["Shopping"].tap()
         XCTAssertTrue(app.buttons["openKitchenChat"].waitForExistence(timeout: 15))

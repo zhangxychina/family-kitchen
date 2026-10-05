@@ -129,6 +129,14 @@ import ImageIO
         } catch { self.error = "Could not import photo. Please try another image. " + error.localizedDescription }
     }
     enum PhotoError: Error { case unreadable }
+    /// Forgets a shelf photo and removes its file. The file goes only once the kitchen
+    /// no longer lists it, so a failed save never leaves an entry pointing at nothing.
+    func deletePhoto(_ name: String) {
+        guard !name.contains("/"), !name.contains("..") else { return }
+        if update({ $0.photoFiles.removeAll { $0 == name } }) {
+            try? FileManager.default.removeItem(at: directory.appendingPathComponent(name))
+        }
+    }
 
 }
 @main struct FamilyKitchenApp: App {
@@ -502,8 +510,9 @@ struct MealReview: View {
 
     /// Suggested alternatives first; the full catalog stays one tap away.
     @ViewBuilder private func swapSection(for m: Meal) -> some View {
-        let suggestions = store.state.swapOptions(for:m,includeSpicy:includeSpicy,limit:showAllSwaps ? nil : 6)
-        let total = store.state.swapOptions(for:m,includeSpicy:includeSpicy).count
+        let options = store.state.swapOptions(for:m,includeSpicy:includeSpicy)
+        let suggestions = showAllSwaps ? options : Array(options.prefix(6))
+        let total = options.count
         Section {
             Text(showAllSwaps ? "All \(m.breakfast ? "breakfasts" : "dinners") in the catalog." : "Closest matches for this day: mild, quick, and not already on this week's plan.").font(.footnote).foregroundStyle(.secondary)
             ForEach(suggestions) { alternative in
@@ -577,7 +586,12 @@ struct RecipesView: View {
 }
 struct RecipeDetail: View {
     @EnvironmentObject var store: FamilyStore
-    let recipe: Recipe
+    @Environment(\.dismiss) private var dismiss
+    /// The dish as it was when this screen opened. What is shown is always the
+    /// catalogue's current copy, so an edit made from here appears on return.
+    private let opened: Recipe
+    init(recipe: Recipe) { opened = recipe }
+    private var recipe: Recipe { Catalog.recipe(opened.id) ?? opened }
     @State private var previewPeople: Int? = nil
     private var servings: Double { previewPeople.map(Double.init) ?? store.state.servings }
     var body: some View {
@@ -599,7 +613,7 @@ struct RecipeDetail: View {
             } header: { Text("Nutrition estimate · 营养估算") }
             if recipe.isFamilyAdded {
                 Section("Your dish · 自建菜品") {
-                    if let source = recipe.sourceURL, let url = URL(string:source) {
+                    if let url = recipe.sourceLink {
                         Link("Imported from this page · 来自网页",destination:url).font(.footnote)
                     }
                     if let extras = recipe.unmatchedIngredients, !extras.isEmpty {
@@ -607,7 +621,7 @@ struct RecipeDetail: View {
                         ForEach(extras,id:\.self) { Text("• \($0)").font(.footnote).foregroundStyle(.secondary) }
                     }
                     NavigationLink { AddDishView(existing:recipe) } label: { Label("Edit this dish",systemImage:"pencil") }
-                    Button(role:.destructive) { store.update { $0.deleteCustomRecipe(recipe.id) } } label: {
+                    Button(role:.destructive) { if store.update({ $0.deleteCustomRecipe(recipe.id) }) { dismiss() } } label: {
                         Label("Delete this dish",systemImage:"trash")
                     }
                     Text("Deleting also removes it from any week it was planned into.").font(.caption).foregroundStyle(.secondary)

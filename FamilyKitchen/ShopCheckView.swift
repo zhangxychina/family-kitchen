@@ -41,8 +41,8 @@ struct ShopCheckView: View {
     private var confirmations: [ScanConfirmation] {
         findings.compactMap { finding in
             guard accepted.contains(finding.ingredient),
-                  let quantity = Double(amounts[finding.ingredient] ?? ""),
-                  quantity.isFinite, quantity > 0 else { return nil }
+                  let quantity = parseAmount(amounts[finding.ingredient] ?? ""),
+                  quantity > 0 else { return nil }
             return ScanConfirmation(ingredient: finding.ingredient, quantity: quantity, location: chosenLocation)
         }
     }
@@ -288,8 +288,6 @@ struct ShopCheckView: View {
     private func fillAmount(_ finding: ScanFinding) {
         guard amounts[finding.ingredient] == nil else { return }
         let suggested = store.state.suggestedScanQuantity(finding.ingredient, at: chosenLocation)
-        amounts[finding.ingredient] = suggested > 0
-            ? suggested.formatted(.number.precision(.fractionLength(0...2)))
-            : ""
+        amounts[finding.ingredient] = suggested > 0 ? amountText(suggested) : ""
     }
 }

@@ -27,6 +27,9 @@ import AVFoundation
     private var onDone: (([SpokenReading]) -> Void)?
     /// Set only under `--ui-testing`; see `scriptedReadings`.
     private var scripted: [SpokenReading]?
+    /// Bumped by `cancel`, so a start still waiting on the permission prompt knows the
+    /// sheet it belonged to has gone and does not switch the microphone on for nobody.
+    private var attempt = 0
 
     /// The locales this app listens in, in the order they are offered.
     static let locales = ["en-US", "zh-CN"]
@@ -91,6 +94,8 @@ import AVFoundation
     /// Starts listening. `completion` is called once, with a reading per language.
     func start(completion: @escaping ([SpokenReading]) -> Void) async {
         guard !isListening else { return }
+        attempt += 1
+        let thisAttempt = attempt
         let scripted = Self.scriptedReadings
         if !scripted.isEmpty {
             self.scripted = scripted
@@ -105,7 +110,9 @@ import AVFoundation
             failure = Self.availabilityNote()
             return
         }
-        guard await Self.requestPermission() else {
+        let allowed = await Self.requestPermission()
+        guard thisAttempt == attempt, !isListening else { return }
+        guard allowed else {
             failure = "Family Kitchen needs the microphone and speech recognition to listen. Allow both in Settings, or type what you want to change."
             return
         }
@@ -138,6 +145,14 @@ import AVFoundation
 
         let input = engine.inputNode
         let format = input.outputFormat(forBus: 0)
+        // With no usable input — a call in progress, or a route with no microphone —
+        // the format comes back empty, and installing a tap on it raises an exception
+        // Swift cannot catch. Say so instead.
+        guard format.sampleRate > 0, format.channelCount > 0 else {
+            failure = "The microphone is not available right now — it may be in use by a call. Try again, or type instead."
+            teardown()
+            return
+        }
         // The requests are handed to the tap directly. Appending a buffer is safe from
         // the audio thread, and hopping to the main actor for every 23 milliseconds of
         // sound would cost latency and risk losing a buffer under load.
@@ -178,6 +193,7 @@ import AVFoundation
 
     /// Abandons a session without reporting anything — the family closed the sheet.
     func cancel() {
+        attempt += 1
         onDone = nil
         scripted = nil
         isListening = false

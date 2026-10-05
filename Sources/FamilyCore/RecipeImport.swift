@@ -54,13 +54,19 @@ public enum RecipeImport {
         // Some sites serve a different page to clients that do not look like browsers.
         request.setValue("Mozilla/5.0 (compatible; FamilyKitchen/1.0)", forHTTPHeaderField: "User-Agent")
         request.setValue("text/html", forHTTPHeaderField: "Accept")
-        let data: Data
+        var data = Data()
         do {
-            let (body, response) = try await session.data(for: request)
+            let (bytes, response) = try await session.bytes(for: request)
             if let http = response as? HTTPURLResponse, !(200..<300).contains(http.statusCode) {
                 throw ImportError.network("The site answered \(http.statusCode).")
             }
-            data = body
+            // A recipe page is tens of kilobytes. Anything vastly larger is not a page
+            // worth holding in memory on a phone, whatever it claims to be.
+            if response.expectedContentLength > maximumPageBytes { throw ImportError.network("That page is too large to read.") }
+            for try await byte in bytes {
+                data.append(byte)
+                if data.count > maximumPageBytes { throw ImportError.network("That page is too large to read.") }
+            }
         } catch let error as ImportError {
             throw error
         } catch {
@@ -71,6 +77,9 @@ public enum RecipeImport {
         }
         return try parse(html: html, sourceURL: url.absoluteString)
     }
+
+    /// The most of a page that is ever read.
+    static let maximumPageBytes = 8 * 1024 * 1024
 
     /// Pulls a recipe out of a page's JSON-LD. Kept separate from fetching so it can
     /// be tested without a network.
@@ -173,20 +182,27 @@ public enum RecipeImport {
     }
 
     /// ISO 8601 durations, as used by `totalTime`: PT1H15M, PT45M, PT2H.
+    ///
+    /// The page is someone else's text, so the arithmetic is checked: a duration of a
+    /// billion hours is nonsense to ignore, not a reason for the app to crash.
     static func durationMinutes(_ text: String) -> Int? {
         guard text.hasPrefix("P") else { return nil }
         guard let timePart = text.split(separator: "T").last, text.contains("T") else { return nil }
         var minutes = 0
         var number = ""
         for character in timePart {
-            if character.isNumber { number.append(character); continue }
+            if character.isASCII, character.isNumber { number.append(character); continue }
             let value = Int(number) ?? 0
+            let added: Int
             switch character {
-            case "H", "h": minutes += value * 60
-            case "M", "m": minutes += value
-            default: break
+            case "H", "h": added = min(value, 10_000) * 60
+            case "M", "m": added = min(value, 600_000)
+            default: added = 0
             }
             number = ""
+            minutes += added
+            // A week of cooking is already beyond any recipe; past that it is noise.
+            if minutes > 10_080 { return nil }
         }
         return minutes > 0 ? minutes : nil
     }

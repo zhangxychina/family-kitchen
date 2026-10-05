@@ -2,6 +2,7 @@ import SwiftUI
 import PhotosUI
 import UIKit
 import AVFoundation
+import ImageIO
 
 struct ShoppingView: View {
     @EnvironmentObject var store: FamilyStore
@@ -127,7 +128,7 @@ struct PutAwayRow: View {
     @State private var location = ""
     @State private var amount = ""
     var item: Ingredient { Catalog.ingredient(purchase.ingredient) }
-    var validAmount: Double? { guard let n = Double(amount), n.isFinite, n > 0 else { return nil }; return n }
+    var validAmount: Double? { parseAmount(amount).flatMap { $0 > 0 ? $0 : nil } }
     var compatible: [Location] { store.state.locations.filter { $0.zone == item.storage || (item.storage == "Refrigerated" && $0.zone == "Frozen" && item.category == "Protein") } }
     var body: some View {
         Section(item.name) {
@@ -138,7 +139,7 @@ struct PutAwayRow: View {
             Picker("Actual location",selection:$location) { Text("Choose…").tag(""); ForEach(compatible) { l in Text(store.state.describe(l)).tag(l.id.uuidString) } }
             if compatible.isEmpty { Text("Add a \(item.storage) location in Settings first.").foregroundStyle(.orange) }
             Button("Placed here — confirm") { if let id = UUID(uuidString:location), let qty = validAmount { store.update { $0.storePurchase(purchase.id,location:id,actualQuantity:qty) } } }.disabled(validAmount == nil || UUID(uuidString:location) == nil)
-        }.onAppear { if amount.isEmpty { amount = String(purchase.quantity) } }
+        }.onAppear { if amount.isEmpty { amount = amountText(purchase.quantity) } }
     }
 }
 /// What is in this kitchen right now, and where it is.
@@ -213,8 +214,13 @@ struct KitchenView: View {
         } message: { Text("Allow camera access in Settings, or use Import photos instead.") }
         .fullScreenCover(isPresented:$camera) { CameraCapture { data in Task { await store.importPhoto(data) } } }
         .sheet(isPresented:Binding(get:{selectedPhoto != nil},set:{if !$0 {selectedPhoto = nil}}), onDismiss:{ if addAfterPhoto { addAfterPhoto = false; add = true } }) {
-            NavigationStack { if let name = selectedPhoto, let img = UIImage(contentsOfFile:store.directory.appendingPathComponent(name).path) {
-                ScrollView { Image(uiImage:img).resizable().scaledToFit(); Text("Inspect this photo, then confirm each ingredient manually. Existing ingredient + location entries are replaced, not duplicated.").padding(); Button("Add what you see") { addAfterPhoto = true; selectedPhoto = nil }.buttonStyle(.borderedProminent) }.toolbar { Button("Done") { selectedPhoto = nil } }
+            NavigationStack { if let name = selectedPhoto {
+                ScrollView {
+                    ShelfPhoto(url:store.directory.appendingPathComponent(name), maxPixels:2000, fill:false)
+                    Text("Inspect this photo, then confirm each ingredient manually. Existing ingredient + location entries are replaced, not duplicated.").padding()
+                    Button("Add what you see") { addAfterPhoto = true; selectedPhoto = nil }.buttonStyle(.borderedProminent)
+                    Button("Delete this photo",role:.destructive) { store.deletePhoto(name); selectedPhoto = nil }.padding(.top)
+                }.toolbar { Button("Done") { selectedPhoto = nil } }
             } }
         }
         .onChange(of:photos) { _, items in Task { for p in items { do { if let data = try await p.loadTransferable(type:Data.self) { await store.importPhoto(data) } } catch { store.error = "Photo import failed: \(error.localizedDescription)" } }; photos = [] } }
@@ -302,9 +308,10 @@ struct KitchenView: View {
                     .disabled(!CameraAccess.hasCamera)
                 if !store.state.photoFiles.isEmpty {
                     ScrollView(.horizontal) { LazyHStack { ForEach(store.state.photoFiles,id:\.self) { name in
-                        if let image = UIImage(contentsOfFile:store.directory.appendingPathComponent(name).path) {
-                            Button { selectedPhoto = name } label: { Image(uiImage:image).resizable().scaledToFill().frame(width:90,height:90).clipped().cornerRadius(10) }.buttonStyle(.plain)
-                        }
+                        Button { selectedPhoto = name } label: {
+                            ShelfPhoto(url:store.directory.appendingPathComponent(name), maxPixels:270)
+                                .frame(width:90,height:90).clipped().cornerRadius(10)
+                        }.buttonStyle(.plain)
                     } } }
                 }
                 InfoNote(title:"What happens to these photos · 照片如何处理",lines:[
@@ -377,7 +384,7 @@ struct StockEditor: View {
     @State private var amount = ""
     @State private var location = ""
     @State private var confirmed = false
-    var quantity: Double? { guard let n = Double(amount), n.isFinite, n >= 0 else { return nil }; return n }
+    var quantity: Double? { parseAmount(amount) }
     var body: some View {
         Form {
             Section("Identify & measure") {
@@ -395,7 +402,7 @@ struct StockEditor: View {
                 }; if saved { dismiss() }
             }.disabled(quantity == nil)
         }.navigationTitle(existing == nil ? "Confirm ingredient" : "Correct inventory").toolbar { Button("Cancel") { dismiss() } }
-        .onAppear { if let s = existing { ingredient = s.ingredient; amount = String(s.quantity); location = s.location?.uuidString ?? ""; confirmed = s.confirmed } }
+        .onAppear { if let s = existing { ingredient = s.ingredient; amount = amountText(s.quantity); location = s.location?.uuidString ?? ""; confirmed = s.confirmed } }
     }
 }
 /// Settings as a short menu of focused screens, rather than one very long form.
@@ -404,9 +411,9 @@ struct SettingsView: View {
     var body: some View {
         List {
             Section("Our kitchen · 我们的厨房") {
-                TextField("Name your kitchen, e.g. Zhang Kitchen", text: Binding(
-                    get: { store.state.kitchenName },
-                    set: { v in store.update { $0.kitchenName = String(v.prefix(40)) } }))
+                InlineTextField(prompt: "Name your kitchen, e.g. Zhang Kitchen", value: store.state.kitchenName) { v in
+                    store.update { $0.kitchenName = String(v.trimmingCharacters(in: .whitespaces).prefix(40)) }
+                }
                 Text("Shown at the top of Today and on the week. Leave it empty to just say \(Brand.appName).")
                     .font(.caption).foregroundStyle(.secondary)
             }
@@ -571,7 +578,9 @@ struct FamilyMemberEditor: View {
         List {
             if let member {
                 Section("Name · 名字") {
-                    TextField("Name", text: Binding(get: { member.name }, set: { v in update { $0.name = v } }))
+                    InlineTextField(prompt: "Name", value: member.name) { v in
+                        update { $0.name = String(v.trimmingCharacters(in: .whitespaces).prefix(40)) }
+                    }
                 }
                 Section("They are · 身份") {
                     Picker("They are", selection: Binding(
@@ -919,9 +928,6 @@ struct AboutSettingsView: View {
     }
 }
 
-/// One shelf, drawer or cupboard space.
-/// One shelf, drawer or door. Renaming it, changing how cold it is, and removing it
-/// are all one tap away, because no two kitchens are laid out the same.
 /// A text field that saves when you finish, not on every letter.
 ///
 /// Writing through to the store on each keystroke rewrites the whole family file and
@@ -941,13 +947,17 @@ struct InlineTextField: View {
         TextField(prompt, text: $draft)
             .focused($editing)
             .submitLabel(.done)
-            .onSubmit { commit(draft) }
-            .onChange(of: editing) { _, nowEditing in if !nowEditing { commit(draft) } }
+            .onSubmit(finish)
+            .onChange(of: editing) { _, nowEditing in if !nowEditing { finish() } }
             .onChange(of: value) { _, latest in if !editing { draft = latest } }
             .onAppear { draft = value }
     }
+    /// Leaving a field untouched is not an edit, and must not rewrite the kitchen.
+    private func finish() { if draft != value { commit(draft) } }
 }
 
+/// One shelf, drawer or door. Renaming it, changing how cold it is, and removing it
+/// are all one tap away, because no two kitchens are laid out the same.
 struct LocationRow: View {
     @EnvironmentObject var store: FamilyStore
     let location: Location
@@ -978,6 +988,43 @@ struct LocationRow: View {
             Button(role: .destructive) {
                 store.update { $0.removeLocation(location.id) }
             } label: { Image(systemName: "minus.circle") }.buttonStyle(.borderless)
+        }
+    }
+}
+
+/// A shelf photo, decoded off the main thread at the size it is shown. A list of
+/// 1600-pixel JPEGs decoded on every redraw is what makes a scroll view stutter.
+struct ShelfPhoto: View {
+    let url: URL
+    let maxPixels: CGFloat
+    var fill = true
+    @State private var image: UIImage?
+    @State private var missing = false
+    var body: some View {
+        Group {
+            if let image {
+                if fill { Image(uiImage: image).resizable().scaledToFill() }
+                else { Image(uiImage: image).resizable().scaledToFit() }
+            } else {
+                ZStack {
+                    Brand.placeholder
+                    if missing { Image(systemName: "photo.badge.exclamationmark").foregroundStyle(.secondary) }
+                }
+            }
+        }
+        .task(id: url) {
+            let size = maxPixels
+            let address = url
+            let decoded = await Task.detached(priority: .utility) { () -> CGImage? in
+                guard let source = CGImageSourceCreateWithURL(address as CFURL, nil) else { return nil }
+                return CGImageSourceCreateThumbnailAtIndex(source, 0, [
+                    kCGImageSourceCreateThumbnailFromImageAlways: true,
+                    kCGImageSourceCreateThumbnailWithTransform: true,
+                    kCGImageSourceThumbnailMaxPixelSize: size
+                ] as CFDictionary)
+            }.value
+            image = decoded.map { UIImage(cgImage: $0) }
+            missing = decoded == nil
         }
     }
 }

@@ -202,10 +202,6 @@ public enum KitchenTalk {
         return best?.mood
     }
 
-    static func hasSwapMarker(_ sentence: [String]) -> Bool {
-        markers.contains { $0.mood == .swap && index(of: atomize($0.phrase), in: sentence) != nil }
-    }
-
     // MARK: Food
 
     /// Every ingredient named in a sentence, in the order they were said. Longer

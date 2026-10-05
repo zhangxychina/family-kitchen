@@ -7,18 +7,21 @@ import SwiftUI
 /// The app does not claim to know whether the second kind was eaten.
 struct HistoryView: View {
     @EnvironmentObject var store: FamilyStore
-    @State private var showPlannedOnly = false
+    @State private var cookedOnly = false
 
-    private var records: [MealRecord] {
-        store.state.history.filter { !showPlannedOnly || $0.cooked }.sorted { $0.date > $1.date }
-    }
-    private var weeks: [Date] {
-        var seen: [Date] = []
-        for record in records {
-            let week = Calendar.current.dateInterval(of: .weekOfYear, for: record.date)?.start ?? record.date
-            if !seen.contains(week) { seen.append(week) }
+    /// The record grouped by week, newest first, worked out in one pass. Two years of
+    /// meals is about a hundred weeks; re-sorting and re-filtering the whole history
+    /// for each of them is what made this screen slow to open.
+    private var weeks: [(start: Date, records: [MealRecord])] {
+        let calendar = Calendar.current
+        var order: [Date] = []
+        var grouped: [Date: [MealRecord]] = [:]
+        for record in store.state.history.filter({ !cookedOnly || $0.cooked }).sorted(by: { $0.date > $1.date }) {
+            let week = calendar.dateInterval(of: .weekOfYear, for: record.date)?.start ?? record.date
+            if grouped[week] == nil { order.append(week) }
+            grouped[week, default: []].append(record)
         }
-        return seen
+        return order.map { ($0, grouped[$0] ?? []) }
     }
     /// The dishes that have come round most often lately — the honest answer to
     /// "are we eating the same thing all the time?"
@@ -43,7 +46,7 @@ struct HistoryView: View {
                 }
             } else {
                 Section {
-                    Toggle("Confirmed meals only · 只看已确认", isOn: $showPlannedOnly)
+                    Toggle("Confirmed meals only · 只看已确认", isOn: $cookedOnly)
                     Text("\(store.state.history.filter(\.cooked).count) cooked · \(store.state.history.count) recorded in total")
                         .font(.footnote).foregroundStyle(.secondary)
                 }
@@ -67,9 +70,9 @@ struct HistoryView: View {
                         }
                     }
                 }
-                ForEach(weeks, id: \.self) { week in
-                    Section(week.formatted(.dateTime.month(.abbreviated).day()) + " · week of") {
-                        ForEach(records.filter { Calendar.current.dateInterval(of: .weekOfYear, for: $0.date)?.start == week }) { record in
+                ForEach(weeks, id: \.start) { week in
+                    Section(week.start.formatted(.dateTime.month(.abbreviated).day()) + " · week of") {
+                        ForEach(week.records) { record in
                             if let recipe = Catalog.recipe(record.recipe) {
                                 HStack(spacing: 12) {
                                     RecipeArtwork(recipe: recipe, height: 52).frame(width: 52).clipShape(RoundedRectangle(cornerRadius: 10))

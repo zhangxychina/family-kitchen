@@ -16,7 +16,7 @@ import Combine
         var name: String { record["name"] as? String ?? "Family Kitchen" }
     }
     enum SharingError: LocalizedError {
-        case account, changedAccount, invalidFamily, alreadyConnected, readOnly, busy
+        case account, changedAccount, invalidFamily, alreadyConnected, readOnly, busy, notEntitled
         var errorDescription: String? {
             switch self {
             case .account: return "Sign in to iCloud in iPhone Settings first. 请先在 iPhone 设置中登录 iCloud。"
@@ -25,16 +25,44 @@ import Combine
             case .alreadyConnected: return "Return to your local kitchen before joining another family. 请先返回本机厨房，再加入其他家庭。"
             case .readOnly: return "You have view-only access. Ask the owner for editing access. 当前只有查看权限。"
             case .busy: return "Please wait for the current iCloud operation. 请等待当前同步完成。"
+            case .notEntitled: return FamilyCloudController.notEntitledMessage
             }
         }
     }
 
     // Set CLOUDKIT_CONTAINER_IDENTIFIER in the app build settings to your team's container.
-    static var containerIdentifier: String {
+    nonisolated static var containerIdentifier: String {
         Bundle.main.object(forInfoDictionaryKey: "CloudKitContainerIdentifier") as? String ?? "iCloud.com.jiatingchufang.app"
     }
-    lazy var container = CKContainer(identifier: Self.containerIdentifier)
-    @Published private(set) var session: FamilyCloudSession?
+    /// Whether this build was signed with the iCloud container. CloudKit does not
+    /// answer "no" to an unentitled build — creating the container stops the app — so
+    /// the signature is read first. A signature this app cannot read counts as yes,
+    /// which is how every build behaved before the check existed.
+    static let isEntitled: Bool = {
+        guard let url = Bundle.main.executableURL,
+              let binary = try? Data(contentsOf: url, options: .alwaysMapped) else { return true }
+        let answer = SignedEntitlements.contains(containerIdentifier, inExecutable: binary)
+        if answer == .absent { log.error("Build is not signed for \(containerIdentifier, privacy: .public); iCloud stays off") }
+        return answer != .absent
+    }()
+    nonisolated static var notEntitledMessage: String {
+        "This build is not signed for \(containerIdentifier), so iCloud sharing is off. Build it with signing on and the iCloud capability in Xcode. 此版本未带 iCloud 容器签名，家庭共享不可用；请在 Xcode 中开启签名与 iCloud 功能后重新构建。"
+    }
+    /// Made on first use, and never for a build that is not entitled to it.
+    private lazy var entitledContainer: CKContainer? = Self.isEntitled ? CKContainer(identifier: Self.containerIdentifier) : nil
+    var container: CKContainer {
+        get throws {
+            guard let entitledContainer else { throw SharingError.notEntitled }
+            return entitledContainer
+        }
+    }
+    @Published private(set) var session: FamilyCloudSession? {
+        didSet { pending = session?.hasPendingChanges ?? false }
+    }
+    /// Whether this phone holds edits the cloud has not acknowledged. Worked out once
+    /// per change rather than on demand: answering it means encoding the whole
+    /// kitchen, and the sync banner asks on every redraw of every tab.
+    @Published private(set) var pending = false
     @Published private(set) var isBusy = false
     @Published private(set) var changingFamily = false
     /// True only when this device must not show the shared kitchen at all: the iCloud
@@ -60,7 +88,6 @@ import Combine
     var currentLocal: (() -> FamilyState)?
     var didChangeState: ((FamilyState) -> Void)?
     var connected: Bool { session != nil }
-    var pending: Bool { session?.hasPendingChanges ?? false }
     var editingAllowed: Bool { loadError == nil && !changingFamily && !accessBlocked && canWrite && !conflict }
 
     init(directory: URL) {
@@ -70,6 +97,7 @@ import Combine
         if FileManager.default.fileExists(atPath: sessionURL.path) {
             do {
                 session = try FamilyCloudSession.load(from: sessionURL)
+                pending = session?.hasPendingChanges ?? false
                 status = "Waiting for iCloud · 等待同步"
                 // The cached kitchen is already on this iPhone and is shown while the
                 // account is checked. Hiding it would take the shopping list away in
@@ -113,7 +141,7 @@ import Combine
         guard var next = session else { try StateFile.save(state, to: localURL); return }
         next.local = state
         try persist(next)
-        status = next.hasPendingChanges ? "Changes waiting to sync · 修改待同步" : "Synced · 已同步"
+        status = pending ? "Changes waiting to sync · 修改待同步" : "Synced · 已同步"
         retryTask?.cancel()
         retryTask = Task { [weak self] in
             do { try await Task.sleep(nanoseconds: 800_000_000) } catch { return }
@@ -133,8 +161,8 @@ import Combine
     private func verify(_ expected: String) async throws {
         guard try await account() == expected else { throw SharingError.changedAccount }
     }
-    private func database(_ owner: Bool) -> CKDatabase {
-        owner ? container.privateCloudDatabase : container.sharedCloudDatabase
+    private func database(_ owner: Bool) throws -> CKDatabase {
+        owner ? try container.privateCloudDatabase : try container.sharedCloudDatabase
     }
     private func recordID(_ session: FamilyCloudSession) -> CKRecord.ID {
         CKRecord.ID(recordName: session.recordName,
@@ -243,6 +271,12 @@ import Combine
     func runSetupChecks(quietly: Bool = false) async {
         // A background re-check keeps showing the last answer instead of flickering
         // through "Checking" once a minute.
+        guard Self.isEntitled else {
+            // Nothing can be asked of iCloud from this build, the account included.
+            accountCheck = .unchecked
+            containerCheck = .blocked(Self.notEntitledMessage)
+            return
+        }
         if !quietly { accountCheck = .checking; containerCheck = .checking }
         let status: CKAccountStatus
         do { status = try await container.accountStatus() }
@@ -306,7 +340,7 @@ import Combine
         defer { isBusy = false; changingFamily = false; Catalog.setCustomRecipes(currentLocal?().customRecipes ?? []) }
         do {
             let user = try await account()
-            let db = container.privateCloudDatabase
+            let db = try container.privateCloudDatabase
             let zone = CKRecordZone(zoneName: "FamilyKitchen-v1")
             _ = try await db.save(zone)
             let id = CKRecord.ID(recordName: "Kitchen", zoneID: zone.zoneID)
@@ -336,7 +370,7 @@ import Combine
             let user = try await account()
             var found: [RemoteFamily] = []
             for owner in [true, false] {
-                let db = database(owner)
+                let db = try database(owner)
                 for zone in try await db.allRecordZones() where zone.zoneID.zoneName == "FamilyKitchen-v1" {
                     let id = CKRecord.ID(recordName: "Kitchen", zoneID: zone.zoneID)
                     do { found.append(RemoteFamily(record: try await db.record(for: id), isOwner: owner)) }
@@ -395,7 +429,7 @@ import Combine
         do {
             try await verify(start.accountID)
             accessBlocked = false; identityConfirmed = true
-            let db = database(start.isOwner)
+            let db = try database(start.isOwner)
             let record = try await db.record(for: recordID(start))
             canWrite = try await writable(record, owner: start.isOwner)
             let remote = try payload(record)
@@ -420,7 +454,7 @@ import Combine
             next.base = outgoing
             try persist(next)
             didChangeState?(next.local)
-            error = nil; status = next.hasPendingChanges ? "Changes waiting to sync · 修改待同步" : "Synced · 已同步"
+            error = nil; status = pending ? "Changes waiting to sync · 修改待同步" : "Synced · 已同步"
         } catch { report(error) }
     }
 
@@ -452,7 +486,7 @@ import Combine
         defer { isBusy = false }
         do {
             try await verify(session.accountID)
-            let db = database(session.isOwner)
+            let db = try database(session.isOwner)
             let record = try await db.record(for: recordID(session))
             let share: CKShare
             if let reference = record.share, let existing = try await db.record(for: reference.recordID) as? CKShare {
@@ -466,7 +500,7 @@ import Combine
                 for value in result.saveResults.values { _ = try value.get() }
             }
             try await verify(session.accountID)
-            sharePresentation = SharePresentation(share: share, container: container)
+            sharePresentation = SharePresentation(share: share, container: try container)
         } catch { report(error) }
     }
 

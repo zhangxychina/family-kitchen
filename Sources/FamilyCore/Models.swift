@@ -25,7 +25,6 @@ public struct Recipe: Codable, Identifiable, Sendable {
     public var vegetable: Bool
     public var ingredients: [Portion]
     public var steps: [String]
-    public var favorite: Bool
     public var cuisine: String? = nil
     public var heat: Int = 0
     /// English steps for a dish the family added themselves. Built-in recipes keep
@@ -54,7 +53,6 @@ public struct Recipe: Codable, Identifiable, Sendable {
         vegetable = try c.decodeIfPresent(Bool.self, forKey: .vegetable) ?? false
         ingredients = try c.decodeIfPresent([Portion].self, forKey: .ingredients) ?? []
         steps = try c.decodeIfPresent([String].self, forKey: .steps) ?? []
-        favorite = try c.decodeIfPresent(Bool.self, forKey: .favorite) ?? false
         cuisine = try c.decodeIfPresent(String.self, forKey: .cuisine)
         heat = try c.decodeIfPresent(Int.self, forKey: .heat) ?? 0
         stepsEnglish = try c.decodeIfPresent([String].self, forKey: .stepsEnglish)
@@ -63,13 +61,22 @@ public struct Recipe: Codable, Identifiable, Sendable {
     }
     public init(id: String, en: String, zh: String, breakfast: Bool, minutes: Int, starch: String,
                 protein: String, vegetable: Bool, ingredients: [Portion], steps: [String],
-                favorite: Bool, cuisine: String? = nil, heat: Int = 0, stepsEnglish: [String]? = nil,
+                cuisine: String? = nil, heat: Int = 0, stepsEnglish: [String]? = nil,
                 sourceURL: String? = nil, unmatchedIngredients: [String]? = nil) {
         self.id = id; self.en = en; self.zh = zh; self.breakfast = breakfast; self.minutes = minutes
         self.starch = starch; self.protein = protein; self.vegetable = vegetable
-        self.ingredients = ingredients; self.steps = steps; self.favorite = favorite
+        self.ingredients = ingredients; self.steps = steps
         self.cuisine = cuisine; self.heat = heat; self.stepsEnglish = stepsEnglish
         self.sourceURL = sourceURL; self.unmatchedIngredients = unmatchedIngredients
+    }
+    /// The page a dish was imported from, as a link that is safe to open. Only https
+    /// is offered: a shared kitchen's data comes from other people's phones, and a
+    /// `tel:` or another app's scheme must never sit behind "Imported from this page".
+    public var sourceLink: URL? { Recipe.safeLink(sourceURL) }
+    public static func safeLink(_ address: String?) -> URL? {
+        guard let address, let url = URL(string: address), url.scheme?.lowercased() == "https",
+              url.host?.isEmpty == false else { return nil }
+        return url
     }
     public var isSpicy: Bool { heat > 0 }
     public var flavor: String { heat == 0 ? "Mild · 不辣" : "\(cuisine ?? "Spicy") · \(heat == 1 ? "Medium · 中辣" : "Hot · 辣")" }
@@ -342,12 +349,15 @@ public struct FamilyState: Codable, Sendable {
         migrate()
     }
 
-    /// Bring a decoded file up to the current shape. Additive changes need nothing
-    /// here; conversions do.
     /// Adds or replaces one of the family's own dishes.
+    ///
+    /// A dish moved between breakfast and dinner can no longer fill the slots it was
+    /// planned into, so those meals are taken off the plan — a dinner slot holding a
+    /// breakfast is a file this app refuses to open.
     public mutating func saveCustomRecipe(_ recipe: Recipe) {
         if let index = customRecipes.firstIndex(where: { $0.id == recipe.id }) { customRecipes[index] = recipe }
         else { customRecipes.append(recipe) }
+        meals.removeAll { $0.recipe == recipe.id && $0.breakfast != recipe.breakfast }
         Catalog.setCustomRecipes(customRecipes)
     }
     /// Removes one, along with any planned meal that used it, so nothing refers to a
@@ -358,6 +368,8 @@ public struct FamilyState: Codable, Sendable {
         preferred.remove(id)
         Catalog.setCustomRecipes(customRecipes)
     }
+    /// Bring a decoded file up to the current shape. Additive changes need nothing
+    /// here; conversions do.
     public mutating func migrate() {
         if version < 2 {
             // Version 1 kept votes under invented labels — "Child 1", "Child 2".
@@ -525,10 +537,14 @@ public struct FamilyState: Codable, Sendable {
                 - (onPlan.contains(recipe.id) ? 20 : 0)
                 - (recipe.isSpicy ? 6 : 0)
         }
+        // Each score walks the meal history, so it is worked out once per dish rather
+        // than on every comparison the sort makes.
         let options = Catalog.recipes
             .filter { $0.breakfast == meal.breakfast && $0.id != meal.recipe && (includeSpicy || !$0.isSpicy)
                       && $0.isSafe(for: excludedAllergens) }
-            .sorted { score($0) == score($1) ? $0.id < $1.id : score($0) > score($1) }
+            .map { ScoredRecipe(recipe: $0, score: score($0)) }
+            .sorted(by: ScoredRecipe.ranksAhead)
+            .map(\.recipe)
         guard let limit else { return options }
         return Array(options.prefix(limit))
     }
@@ -544,8 +560,11 @@ public struct FamilyState: Codable, Sendable {
             if cooked { history[existing].cooked = true }
             return
         }
+        // Who was actually at the table: the family list when there is one, since
+        // `people` is only the fallback headcount and stays at its default otherwise.
+        let diners = members.isEmpty ? people : members.count + max(0, guests)
         history.append(MealRecord(id: meal.id, date: meal.date, recipe: meal.recipe,
-                                  breakfast: meal.breakfast, cooked: cooked, people: people))
+                                  breakfast: meal.breakfast, cooked: cooked, people: diners))
         pruneHistory()
     }
     /// Keeps roughly two years of meals, so the file cannot grow without limit.
@@ -576,6 +595,8 @@ public struct FamilyState: Codable, Sendable {
                     let used = min(remaining, stock[j].quantity); stock[j].quantity -= used; remaining -= used
                 }
             }
+            // A shelf entry cooked down to nothing is not something to find there.
+            stock.removeAll { $0.confirmed && $0.quantity <= 0 }
         }
         meals[i].cooked = true
         remember(meals[i], cooked: true)
@@ -646,33 +667,31 @@ public struct FamilyState: Codable, Sendable {
         func pantryScore(_ recipe: Recipe) -> Double { pantryScores[recipe.id, default: 0] }
         for day in 0..<7 {
             guard let date = calendar.date(byAdding: .day, value: day, to: anchor) else { continue }
-            let breakfastOptions = breakfasts.filter { !used.contains($0.id) }
-            let breakfast = breakfastOptions.sorted { a, b in
-                func score(_ recipe: Recipe) -> Double {
-                    (preferred.contains(recipe.id) ? 3 : 0) + pantryScore(recipe)
-                        + recipe.seasonalScore(month: month) * 3
-                        - repeatPenalty(recipe.id, asOf: date)
-                        - (oldRecipes.contains(recipe.id) ? 12 : 0)
-                }
-                return score(a) == score(b) ? rotationRank(a, in: breakfasts, salt: 0) < rotationRank(b, in: breakfasts, salt: 0) : score(a) > score(b)
-            }.first
+            func breakfastScore(_ recipe: Recipe) -> Double {
+                (preferred.contains(recipe.id) ? 3 : 0) + pantryScore(recipe)
+                    + recipe.seasonalScore(month: month) * 3
+                    - repeatPenalty(recipe.id, asOf: date)
+                    - (oldRecipes.contains(recipe.id) ? 12 : 0)
+            }
+            let breakfast = breakfasts.filter { !used.contains($0.id) }
+                .map { ScoredRecipe(recipe: $0, score: breakfastScore($0), tieBreak: rotationRank($0, in: breakfasts, salt: 0)) }
+                .min(by: ScoredRecipe.ranksAhead)?.recipe
             if let recipe = breakfast { planned.append(Meal(date: date, recipe: recipe.id, breakfast: true)); used.insert(recipe.id) }
-            let candidates = dinners.filter { !used.contains($0.id) }
-            let selected = candidates.sorted { a, b in
-                func score(_ recipe: Recipe) -> Double {
-                    let balance = recipe.starch == previousStarch ? -100.0 : 0
-                    let proteinVariety = -Double(proteins[recipe.protein, default: 0]) * 8 - (recipe.protein == previousProtein ? 12 : 0)
-                    let rotation = -Double(rotationRank(recipe, in: dinners, salt: day)) * 0.35
-                    let featured = day == 0 && rotationRank(recipe, in: dinners, salt: 0) == 0 ? 40.0 : 0
-                    // Produce at its peak is cheaper and tastes better, so it earns a
-                    // real but modest nudge — never enough to override variety.
-                    let season = recipe.seasonalScore(month: month) * 5
-                    return featured + balance + proteinVariety + rotation + pantryScore(recipe) + season
-                        - repeatPenalty(recipe.id, asOf: date)
-                        + (preferred.contains(recipe.id) ? 5 : 0) - (oldRecipes.contains(recipe.id) ? 14 : 0)
-                }
-                return score(a) == score(b) ? a.id < b.id : score(a) > score(b)
-            }.first
+            func dinnerScore(_ recipe: Recipe) -> Double {
+                let balance = recipe.starch == previousStarch ? -100.0 : 0
+                let proteinVariety = -Double(proteins[recipe.protein, default: 0]) * 8 - (recipe.protein == previousProtein ? 12 : 0)
+                let rotation = -Double(rotationRank(recipe, in: dinners, salt: day)) * 0.35
+                let featured = day == 0 && rotationRank(recipe, in: dinners, salt: 0) == 0 ? 40.0 : 0
+                // Produce at its peak is cheaper and tastes better, so it earns a
+                // real but modest nudge — never enough to override variety.
+                let season = recipe.seasonalScore(month: month) * 5
+                return featured + balance + proteinVariety + rotation + pantryScore(recipe) + season
+                    - repeatPenalty(recipe.id, asOf: date)
+                    + (preferred.contains(recipe.id) ? 5 : 0) - (oldRecipes.contains(recipe.id) ? 14 : 0)
+            }
+            let selected = dinners.filter { !used.contains($0.id) }
+                .map { ScoredRecipe(recipe: $0, score: dinnerScore($0)) }
+                .min(by: ScoredRecipe.ranksAhead)?.recipe
             if let recipe = selected {
                 planned.append(Meal(date: date, recipe: recipe.id, breakfast: false))
                 used.insert(recipe.id); previousStarch = recipe.starch; previousProtein = recipe.protein
@@ -685,6 +704,19 @@ public struct FamilyState: Codable, Sendable {
         let weekday = calendar.component(.weekday, from: date)
         let offset = ((9 - weekday) % 7 == 0) ? 7 : (9 - weekday) % 7
         return calendar.date(byAdding: .day, value: offset, to: calendar.startOfDay(for: date))!
+    }
+}
+/// A dish with its score worked out once, so a sort compares numbers instead of
+/// rescoring both sides of every comparison.
+struct ScoredRecipe {
+    let recipe: Recipe
+    let score: Double
+    /// Settles equal scores; without one, the dish id does.
+    var tieBreak: Int? = nil
+    static func ranksAhead(_ a: ScoredRecipe, _ b: ScoredRecipe) -> Bool {
+        guard a.score == b.score else { return a.score > b.score }
+        if let x = a.tieBreak, let y = b.tieBreak, x != y { return x < y }
+        return a.recipe.id < b.recipe.id
     }
 }
 public enum StateFile {
@@ -727,16 +759,8 @@ public enum StateFile {
 public protocol PantryRecognizing {
     func labels(from image: Data) async throws -> [(label: String, confidence: Double)]
 }
-/// For anywhere recognition is unavailable — the family types what they see instead.
-public struct ManualOnlyRecognizer: PantryRecognizing {
-    public init() {}
-    public func labels(from image: Data) async throws -> [(label: String, confidence: Double)] {
-        throw RecognitionError.notConfigured
-    }
-}
 public enum StateError: Error, Equatable {
     case invalidData
     /// The saved file was written by a later version of the app.
     case newerVersion
 }
-public enum RecognitionError: Error { case notConfigured }

@@ -108,11 +108,6 @@ public struct Appliance: Codable, Identifiable, Sendable, Hashable {
         place = try c.decodeIfPresent(String.self, forKey: .place) ?? ""
     }
 
-    /// How this appliance reads on its own: "Fridge · Garage".
-    public var fullName: String {
-        place.trimmingCharacters(in: .whitespaces).isEmpty ? name : "\(name) · \(place)"
-    }
-
     /// Rooms offered as a starting point. Anything can be typed instead.
     public static let suggestedPlaces = ["Kitchen", "Garage", "Basement", "Laundry room", "Utility room", "Outside"]
 }

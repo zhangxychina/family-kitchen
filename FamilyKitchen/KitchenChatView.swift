@@ -14,6 +14,11 @@ private struct ChatTurn: Identifiable {
     var applied = false
     /// The kitchen exactly as it stood before this turn changed it.
     var before: FamilyState?
+    /// What the shared kitchen looked like straight after, so undo can tell whether
+    /// anything — another family member's sync included — has changed it since.
+    var after: Data?
+    /// Set when undo was refused because the kitchen had moved on.
+    var undoRefused = false
 }
 
 /// Say it or type it: the short way to change what is on the menu and what is on the
@@ -160,6 +165,10 @@ struct KitchenChatView: View {
                     Spacer()
                     if canUndo(turn) { Button("Undo · 撤销") { undo(turn) }.font(.footnote) }
                 }
+                if turn.undoRefused {
+                    Text("The kitchen has changed since, so this can no longer be undone here. Change it back on the list or the meal itself. 之后厨房又有改动，这里无法撤销，请在清单或餐次中修改。")
+                        .font(.caption).foregroundStyle(Brand.clay)
+                }
             } else {
                 HStack(spacing: 12) {
                     Button("Do it · 就这么办") { apply(turn, command) }
@@ -262,6 +271,7 @@ struct KitchenChatView: View {
         guard store.update({ $0.perform(command) }) else { return }
         turns[index].applied = true
         turns[index].before = before
+        turns[index].after = try? FamilySharing.payload(store.state)
     }
 
     private func choose(_ turn: ChatTurn, meal: UUID, recipe: String) {
@@ -280,11 +290,30 @@ struct KitchenChatView: View {
         turn.before != nil && turns.last(where: \.applied)?.id == turn.id
     }
 
+    /// Puts the kitchen back exactly as it was — but only if nothing else has changed
+    /// it since. Restoring a snapshot over a sync that arrived from another phone
+    /// would quietly throw that family member's changes away.
     private func undo(_ turn: ChatTurn) {
         guard let index = turns.firstIndex(where: { $0.id == turn.id }), let before = turns[index].before else { return }
-        guard store.update({ $0 = before }) else { return }
+        guard let after = turns[index].after, (try? FamilySharing.payload(store.state)) == after else {
+            turns[index].before = nil
+            turns[index].undoRefused = true
+            return
+        }
+        let restored = store.update { current in
+            var previous = before
+            // Display settings belong to this phone and are not part of the sentence.
+            previous.photoFiles = current.photoFiles
+            previous.appearance = current.appearance
+            previous.recipeLanguage = current.recipeLanguage
+            previous.nightStartHour = current.nightStartHour
+            previous.nightEndHour = current.nightEndHour
+            current = previous
+        }
+        guard restored else { return }
         turns[index].applied = false
         turns[index].before = nil
+        turns[index].after = nil
     }
 }
 
